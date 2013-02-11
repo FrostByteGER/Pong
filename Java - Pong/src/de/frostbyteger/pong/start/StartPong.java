@@ -14,6 +14,7 @@ public class StartPong {
 		container.setTargetFrameRate(Pong.fps);
 		container.setShowFPS(false); //TODO: Delete this
 		container.start();
+		//TODO: Commit test
 
 	}
 	
