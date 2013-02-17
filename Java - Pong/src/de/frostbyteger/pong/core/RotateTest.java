@@ -12,7 +12,7 @@ import org.newdawn.slick.geom.Transform;
 public class RotateTest extends BasicGame{
 	
 	protected Shape dummy;
-	protected float rotate = 1000.045f; // or   0
+	protected float rotate = 0.045f;
 	protected int radius = 15;
 	int i;
 	
@@ -38,13 +38,13 @@ public class RotateTest extends BasicGame{
 
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
-		rotate += 0.002;
+		rotate += 0.0002;
 	}
 	
 	
 	public static void main(String[] args) throws SlickException {
 
-		AppGameContainer container = new AppGameContainer(new RotateTest("ROTATE TEST")); // Java Centauri - DEVTEST 0.01
+		AppGameContainer container = new AppGameContainer(new RotateTest("ROTATE TEST"));
 		container.setDisplayMode(640, 480, false);
 		container.setTargetFrameRate(60);
 		container.setShowFPS(false);

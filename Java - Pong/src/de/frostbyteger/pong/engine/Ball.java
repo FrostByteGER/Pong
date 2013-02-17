@@ -142,7 +142,7 @@ public class Ball {
 			} else {
 				this.vector.set(speedX, speedY);
 			}
-		}
+		} 
 
 	}
 	
@@ -156,6 +156,7 @@ public class Ball {
 			if (y >= Pong.resY) { 
 				vector2f.set(vector2f.getX(), -vector2f.getY());
 			}
+			
 			if(x >= Pong.resX - 20){
 				estimatedY = y;
 				return;
@@ -182,6 +183,20 @@ public class Ball {
 				}
 	
 			}
+		}
+	}
+	
+	public void addDebugVelocity(float acceleration, int delta){
+		float hip = (float) (acceleration * delta + velocity) / 100;
+		if (vector.getX() < 0) {
+			vector.set(vector.getX() - hip, vector.getY());
+		} else {
+			vector.set(vector.getX() + hip, vector.getY());
+		}
+		if (vector.getY() < 0) {
+			vector.set(vector.getX(), vector.getY() - hip);
+		} else {
+			vector.set(vector.getX(), vector.getY() + hip);
 		}
 	}
 }

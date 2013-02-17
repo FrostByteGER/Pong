@@ -6,12 +6,13 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.KeyListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
-
+import org.newdawn.slick.geom.Circle;
 import de.frostbyteger.pong.engine.Ball;
 import de.frostbyteger.pong.engine.Border;
 import de.frostbyteger.pong.engine.Difficulty;
@@ -56,7 +57,9 @@ public class Pong extends BasicGame implements KeyListener {
 	
 	public static final int fps = 60;
 	
-	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Achievements","Options","Quit Game"};
+	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Achievements","Options","Help","Quit Game"};
+	private String[] options = {""}; //TODO: Fill with information
+	private String[] help = {"How to Play:","Player 1 Controls:","Player 2 Controls:","How to navigate:","Menu Controls:"};
 	private String[] difficultymenu = {"Easy","Medium","Hard","Unbeatable"};
 	private String[] difficultyexplanation = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
 	private Color cpuselection = Color.gray;
@@ -74,7 +77,11 @@ public class Pong extends BasicGame implements KeyListener {
 	private UnicodeFont mediumfont;
 	private UnicodeFont bigfont;
 	
-	protected float estimatedY;
+	private Image arrow_left;
+	private Image arrow_right;
+	
+	private Circle estimatedPoint;
+	
 	protected double hip = 0;
 	protected Random rndm = new Random();
 
@@ -105,6 +112,11 @@ public class Pong extends BasicGame implements KeyListener {
 		bigfont.addAsciiGlyphs();
 		bigfont.getEffects().add(new ColorEffect());
 		bigfont.loadGlyphs();
+		
+		arrow_left = new Image("data/arrow_left.png");
+		arrow_right = new Image("data/arrow_right.png");
+		
+		estimatedPoint = new Circle(-10, -10, 1f);
 
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.LEFT;
@@ -118,22 +130,25 @@ public class Pong extends BasicGame implements KeyListener {
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[0])/2, resY/2, menu[0], cpuselection);		
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[1])/2, resY/2 + 20, menu[1], pvpselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[2])/2, resY/2 + 40, menu[2], lanselection);
-			normalfont.drawString(resX/2 - normalfont.getWidth(menu[6])/2, resY/2 + 60, menu[6], quitselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[7])/2, resY/2 + 60, menu[7], quitselection);
+			g.drawString("BETA 0.9f", resX - 85, resY - 15);
 
 		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
-			//TODO: Add small difficulty previews to the left and right side of the focused difficulty to show the player how to navigate
 			bigfont.drawString(resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
 			mediumfont.drawString(resX/2 - mediumfont.getWidth(ai)/2, resY/2 - 30, ai,Color.cyan);
 			normalfont.drawString(resX/2 - normalfont.getWidth(difficultymenu[difficultyselection])/2, resY/2, difficultymenu[difficultyselection],Color.white);
 			smallfont.drawString(resX/2 - smallfont.getWidth(difficultyexplanation[difficultyselection])/2, resY/2 + 20, difficultyexplanation[difficultyselection],Color.lightGray);
+			arrow_left.draw(resX/2 - normalfont.getWidth(difficultymenu[difficultyselection])/2 - 45, resY/2 + 2, 0.4f);
+			arrow_right.draw(resX/2 + normalfont.getWidth(difficultymenu[difficultyselection])/2 + 13, resY/2 + 2, 0.4f);
 		}
 		
 		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN){
 			pad1.draw(g);
 			pad2.draw(g);
 			ball.draw(g);
+			g.fill(estimatedPoint);
 			//TODO: Change this or use another font
 			g.drawString(Integer.toString(pad1.getPoints()), resX / 2 - 20, resY / 2);
 			g.drawString(":", resX / 2, resY / 2);
@@ -213,19 +228,25 @@ public class Pong extends BasicGame implements KeyListener {
 					currentgamestate = GameState.Play;
 				}
 				if(playerselection == 2){
-					//TODO: Add Lanmode to game
-					//currentmenustate = MenuState.LAN;
-					//newGame();
+					/*TODO
+					 *Add Lanmode to game
+					 *currentmenustate = MenuState.LAN;
+					 *newGame();
+					 */
 				}
 				if(playerselection == 3){
 					gc.exit();
 				}
-				//TODO: Add Challenge Mode, Achievements and Options to the menu
+				//TODO: Add Challenge Mode, Achievements, Options and Help to the menu
 				
 			}
 		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
+			if(input.isKeyPressed(Input.KEY_ESCAPE)){
+				abort();	
+			}
+			
 			if(input.isKeyPressed(Input.KEY_LEFT) && difficultyselection > 0){
 				difficultyselection -= 1;
 			}
@@ -258,184 +279,216 @@ public class Pong extends BasicGame implements KeyListener {
 		}
 		
 		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.LAN || currentmenustate == MenuState.PvP ){
-		// Pause Game
-		if (gc.hasFocus() == false || gc.isPaused() == false && input.isKeyPressed(Input.KEY_P) ) {
-			gc.setPaused(true);
-		}
-		if(gc.hasFocus() == true && input.isKeyPressed(Input.KEY_P) && gc.isPaused() == true){
-			gc.setPaused(false);
-		}
-		
-		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			playerselection = 0;
-			difficultyselection = 1;
-			currentgamestate = GameState.Start;
-			lastcollision = Border.NONE;
-			lastpadcollision = Border.NONE;
-			currentmenustate = MenuState.Main;
+			// Pause Game
+			if (gc.hasFocus() == false || gc.isPaused() == false && input.isKeyPressed(Input.KEY_P) ) {
+				gc.setPaused(true);
+			}
+			if(gc.hasFocus() == true && input.isKeyPressed(Input.KEY_P) && gc.isPaused() == true){
+				gc.setPaused(false);
+			}
 			
-		}
-		
-		if (gc.isPaused() == false) {
-
-			if (currentgamestate == GameState.Play || currentgamestate == GameState.BallIsOut) {
-
-				// For player 1
-				if (input.isKeyDown(Input.KEY_UP)) {
-					if (pad1.getShape().getMinY() > 0.0) {
-						pad1.getShape().setY((float) ((pad1.getShape().getY() - 10.0)));
-					}
-
-				}
-				if (input.isKeyDown(Input.KEY_DOWN)) {
-					if (pad1.getShape().getMaxY() < resY) {
-						pad1.getShape().setY((float) ((pad1.getShape().getY() + 10.0)));
-					}
-
-				}
-				
-				if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
-					// For player 2
-					if (input.isKeyDown(Input.KEY_W)) {
-						if (pad2.getShape().getMinY() > 0.0) {
-							pad2.getShape().setY((float) ((pad2.getShape().getY() - 10.0)));
-						}
-
-					}
-					if (input.isKeyDown(Input.KEY_S)) {
-						if (pad2.getShape().getMaxY() < resY) {
-							pad2.getShape().setY((float) ((pad2.getShape().getY() + 10.0)));
-						}
-
-					}
-				}
-
+			if(input.isKeyPressed(Input.KEY_ESCAPE)){
+				abort();
 			}
-
-			if (currentgamestate == GameState.Play) {
-				
-				if(currentmenustate == MenuState.CPU){
-					if (DEBUG_AI) {
-						if (ball.getShape().getMinY() >= resY - pad2.getHEIGHT() / 2) {
-						} else if (ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
-						} else {
-							pad2.getShape().setCenterY(ball.getShape().getCenterY());
+			
+			if (gc.isPaused() == false) {
+	
+				if (currentgamestate == GameState.Play || currentgamestate == GameState.BallIsOut) {
+	
+					// For player 1
+					if (input.isKeyDown(Input.KEY_UP)) {
+						if (pad1.getShape().getMinY() > 0.0) {
+							pad1.getShape().setY((float) ((pad1.getShape().getY() - 10.0)));
 						}
-					}else{
-						/* TODO: Fix AI bugs:
-						 * Glitching out of the map boundaries
-						 * Glitching/Hopping while standing on one position if ball is in AI's side of the field
-						 * Strange static position on the top of the mapboundary if ball flies on startup into the enemy side of the field
-						 */
-						if(ball.getShape().getCenterX() > resX/2 && collision == false){
-							ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
-							collision = true;
+	
+					}
+					if (input.isKeyDown(Input.KEY_DOWN)) {
+						if (pad1.getShape().getMaxY() < resY) {
+							pad1.getShape().setY((float) ((pad1.getShape().getY() + 10.0)));
 						}
-							
-						}if(lastpadcollision == lastpadcollision.RIGHT ){
-							if(pad2.getShape().getCenterY() > resY/2){
-								pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 2.0f);
-							}else if(pad2.getShape().getCenterY() < resY/2){
-								pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 2.0f);
+	
+					}
+					
+					if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
+						// For player 2
+						if (input.isKeyDown(Input.KEY_W)) {
+							if (pad2.getShape().getMinY() > 0.0) {
+								pad2.getShape().setY((float) ((pad2.getShape().getY() - 10.0)));
 							}
-						}else if(ball.getShape().getCenterX() > resX/2 && lastpadcollision != lastpadcollision.RIGHT){
-							if (ball.getShape().getMinY() >= resY - pad2.getHEIGHT() / 2) {
+	
+						}
+						if (input.isKeyDown(Input.KEY_S)) {
+							if (pad2.getShape().getMaxY() < resY) {
+								pad2.getShape().setY((float) ((pad2.getShape().getY() + 10.0)));
+							}
+	
+						}
+					}
+	
+				}
+	
+				if (currentgamestate == GameState.Play) {
+					
+					//TODO
+					if(input.isKeyDown(Input.KEY_R)){
+						ball.addDebugVelocity(0.25f, delta);
+					}
+					
+					if(currentmenustate == MenuState.CPU){
+						
+						if(DEBUG_AI) {
+							if(ball.getShape().getMinY() >= resY - pad2.getHEIGHT() / 2) {
+							}else if(ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
+							}else{
+								pad2.getShape().setCenterY(ball.getShape().getCenterY());
+							}
+						}else{
+							/* TODO: Fix AI bugs:
+							 * Glitching out of the map boundaries <- FIXED
+							 * Glitching/Hopping while standing on one position if ball is in AI's side of the field
+							 * Strange static position on the top of the mapboundary if ball flies on startup into the enemy side of the field
+							 */
+							if(ball.getShape().getCenterX() > resX/2 + 10 && collision == false){
+								ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
+								estimatedPoint.setLocation(resX -20, ball.getEtimatedY());
+								System.out.println(ball.getEtimatedY());
+								collision = true;
+							}
 								
-							} else if (ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
-								
-							} else {
-								if(ball.getEtimatedY() < pad2.getShape().getCenterY()){
-									pad2.getShape().setCenterY(pad2.getShape().getCenterY() - pad2.getVelocity());
-									
-								}else if(ball.getEtimatedY() > pad2.getShape().getCenterY()){
-									pad2.getShape().setCenterY(pad2.getShape().getCenterY() + pad2.getVelocity());
-								}else{
-									
+							}if(lastpadcollision == lastpadcollision.RIGHT ){
+								if(pad2.getShape().getCenterY() > resY/2){
+									pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 2.0f);
+								}else if(pad2.getShape().getCenterY() < resY/2){
+									pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 2.0f);
 								}
-							}
+							}else if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != lastpadcollision.RIGHT){
+								if(ball.getShape().getMaxY() > resY) {
+									
+								}else if(ball.getShape().getMinY() < 0) {
+									
+								}else{
+									if(pad2.intersects(estimatedPoint)){		
+										System.out.println("HIT");
+									}else{
+										if(ball.getEtimatedY() < pad2.getShape().getCenterY() && pad2.getShape().getMinY() >= 0.0){
+											pad2.getShape().setCenterY(pad2.getShape().getCenterY() - pad2.getVelocity());	
+										}else if(ball.getEtimatedY() > pad2.getShape().getCenterY() && pad2.getShape().getMaxY() <= resY){
+											pad2.getShape().setCenterY(pad2.getShape().getCenterY() + pad2.getVelocity());
+										}else{
+											
+										}
+									}
+								}
+						}
+					}
+	
+	
+					ball.getShape().setCenterX(ball.getShape().getCenterX() + ball.getVectorX());
+					ball.getShape().setCenterY(ball.getShape().getCenterY() + ball.getVectorY());
+					ball.addVelocity(0.03, delta, lastcollision);
+	
+					if (ball.getShape().getMinY() <= 0 && lastcollision != Border.TOP) {
+						ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
+						lastcollision = Border.TOP;
+					}
+	
+					if (ball.getShape().getMaxY() >= resY && lastcollision != Border.BOTTOM) {
+						ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
+						lastcollision = Border.BOTTOM;
+					}
+	
+					if (pad1.intersects(ball.getShape()) && lastcollision != Border.LEFT) {
+						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
+						lastpadcollision = Border.LEFT;
+						lastcollision = Border.LEFT;
+					}
+	
+					if (pad2.intersects(ball.getShape()) && lastcollision != Border.RIGHT) {
+						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
+						System.out.println(ball.getShape().getCenterY());
+						lastpadcollision = Border.RIGHT;
+						lastcollision = Border.RIGHT;
+	
+					}
+					
+					if(ball.getShape().getCenterX() < resX/2 && collision == true){
+						collision = false;
+					}
+					
+					if(ball.getShape().getCenterX() < resX/2){
+						estimatedPoint.setLocation(-10, -10);
+					}
+	
+					// DEVTEST
+					if(DEBUG == true) {
+						if(ball.getShape().getX() < 0 || ball.getShape().getX() > resX) {
+						}
+					}
+	
+					if(ball.getShape().getMaxX() < 0) {
+						pad2.addPoint();
+						currentgamestate = GameState.BallIsOut;
+						lastcollision = Border.NONE;
+						if(pad2.getPoints() >= goal) {
+							currentgamestate = GameState.Player2Wins;
+						}
+					}
+	
+					if(ball.getShape().getMinX() > resX) {
+						pad1.addPoint();
+						currentgamestate = GameState.BallIsOut;
+						lastcollision = Border.NONE;
+						if (pad1.getPoints() >= goal) {
+							currentgamestate = GameState.Player1Wins;
+						}
 					}
 				}
-
-
-				ball.getShape().setCenterX(ball.getShape().getCenterX() + ball.getVectorX());
-				ball.getShape().setCenterY(ball.getShape().getCenterY() + ball.getVectorY());
-				ball.addVelocity(0.03, delta, lastcollision);
-
-				if (ball.getShape().getMinY() <= 0 && lastcollision != Border.TOP) {
-					ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
-					lastcollision = Border.TOP;
+				
+				if(input.isKeyPressed(Input.KEY_ENTER)){
+					debugNewBall();
 				}
-
-				if (ball.getShape().getMaxY() >= resY && lastcollision != Border.BOTTOM) {
-					ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
-					lastcollision = Border.BOTTOM;
+	
 				}
-
-				if (pad1.intersects(ball.getShape()) && lastcollision != Border.LEFT) {
-					ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
-					collision = false;
-					lastpadcollision = Border.LEFT;
-					lastcollision = Border.LEFT;
-				}
-
-				if (pad2.intersects(ball.getShape()) && lastcollision != Border.RIGHT) {
-					ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
-					System.out.println(ball.getShape().getCenterY());
-					lastpadcollision = Border.RIGHT;
-					lastcollision = Border.RIGHT;
-
-				}
-
-				// DEVTEST
-				if (DEBUG == true) {
-					if (ball.getShape().getX() < 0 || ball.getShape().getX() > resX) {
+				if(currentgamestate == GameState.BallIsOut) {
+					if(input.isKeyDown(Input.KEY_ENTER)) {
+						ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
+						currentgamestate = GameState.Play;
 					}
 				}
-
-				if (ball.getShape().getMaxX() < 0) {
-					pad2.addPoint();
-					currentgamestate = GameState.BallIsOut;
-					lastcollision = Border.NONE;
-					if (pad2.getPoints() >= goal) {
-						currentgamestate = GameState.Player2Wins;
+				if(currentgamestate == GameState.Player1Wins || currentgamestate == GameState.Player2Wins){
+					if(input.isKeyDown(Input.KEY_ENTER)) {
+						currentgamestate = GameState.Start;
+						currentmenustate = MenuState.Main;
 					}
 				}
-
-				if (ball.getShape().getMinX() > resX) {
-					pad1.addPoint();
-					currentgamestate = GameState.BallIsOut;
-					lastcollision = Border.NONE;
-					if (pad1.getPoints() >= goal) {
-						currentgamestate = GameState.Player1Wins;
-					}
-				}
-			}
-
-			}
-			if (currentgamestate == GameState.BallIsOut) {
-				if (input.isKeyDown(Input.KEY_ENTER)) {
-					ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
-					currentgamestate = GameState.Play;
-				}
-			}
-			if(currentgamestate == GameState.Player1Wins || currentgamestate == GameState.Player2Wins){
-				if (input.isKeyDown(Input.KEY_ENTER)) {
-					currentgamestate = GameState.Start;
-					currentmenustate = MenuState.Main;
-				}
-			}
-
 		}
 	}
 	
 	public void newGame(float paddifficulty){
 		pad1 = new Pad(0 + 10, resY / 2, paddifficulty, 0);
+		pad1.getShape().setCenterY(resY/2);
 		pad2 = new Pad(resX - 20, resY / 2, paddifficulty, 0);
+		pad2.getShape().setCenterY(resY/2);
 		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
 	}
 	
 	public void newFont(int fontsize){
 		//TODO: Add font constructor
+	}
+	
+	public void abort(){
+		playerselection = 0;
+		difficultyselection = 1;
+		currentgamestate = GameState.Start;
+		lastcollision = Border.NONE;
+		lastpadcollision = Border.NONE;
+		currentmenustate = MenuState.Main;
+	}
+	
+	public void debugNewBall(){
+		lastcollision = Border.NONE;
+		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
+		currentgamestate = GameState.Play;
 	}
 
 }
