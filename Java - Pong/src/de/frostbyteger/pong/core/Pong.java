@@ -464,7 +464,7 @@ public class Pong extends BasicGame implements KeyListener {
 		}
 	}
 	
-	public void newGame(float paddifficulty){
+	private void newGame(float paddifficulty){
 		pad1 = new Pad(0 + 10, resY / 2, paddifficulty, 0);
 		pad1.getShape().setCenterY(resY/2);
 		pad2 = new Pad(resX - 20, resY / 2, paddifficulty, 0);
@@ -472,11 +472,11 @@ public class Pong extends BasicGame implements KeyListener {
 		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
 	}
 	
-	public void newFont(int fontsize){
+	private void newFont(int fontsize){
 		//TODO: Add font constructor
 	}
 	
-	public void abort(){
+	private void abort(){
 		playerselection = 0;
 		difficultyselection = 1;
 		currentgamestate = GameState.Start;
@@ -485,7 +485,7 @@ public class Pong extends BasicGame implements KeyListener {
 		currentmenustate = MenuState.Main;
 	}
 	
-	public void debugNewBall(){
+	private void debugNewBall(){
 		lastcollision = Border.NONE;
 		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
 		currentgamestate = GameState.Play;

@@ -9,7 +9,7 @@ public class StartPong {
 
 	public static void main(String[] args) throws SlickException {
 
-		AppGameContainer container = new AppGameContainer(new Pong("Pong BETA BUILD 0.9e"));
+		AppGameContainer container = new AppGameContainer(new Pong("Pong BETA BUILD 0.9f"));
 		container.setDisplayMode(Pong.resX, Pong.resY, false);
 		container.setTargetFrameRate(Pong.fps);
 		container.setShowFPS(false); //TODO: Delete this
