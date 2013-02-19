@@ -57,6 +57,9 @@ public class Pong extends BasicGame implements KeyListener {
 	
 	public static final int fps = 60;
 	
+	public static final String title = "Pong BETA BUILD";
+	public static final String version = "0.9i";
+	
 	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Achievements","Options","Help","Quit Game"};
 	private String[] options = {""}; //TODO: Fill with information
 	private String[] help = {"How to Play:","Player 1 Controls:","Player 2 Controls:","How to navigate:","Menu Controls:"};
@@ -119,7 +122,7 @@ public class Pong extends BasicGame implements KeyListener {
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[1])/2, resY/2 + 20, menu[1], pvpselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[2])/2, resY/2 + 40, menu[2], lanselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[7])/2, resY/2 + 60, menu[7], quitselection);
-			g.drawString("BETA 0.9f", resX - 85, resY - 15);
+			g.drawString("BETA " + version, resX - 85, resY - 15);
 		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
@@ -152,7 +155,6 @@ public class Pong extends BasicGame implements KeyListener {
 			}
 			
 			if(gc.isPaused() == true){
-				//TODO: Change P to a variable
 				g.drawString("GAME PAUSED, PRESS " + "P" + " TO RESUME", resX / 2 - 135, resY / 2 + 50);
 			}
 			
@@ -331,11 +333,6 @@ public class Pong extends BasicGame implements KeyListener {
 								pad2.getShape().setCenterY(ball.getShape().getCenterY());
 							}
 						}else{
-							/* TODO: Fix AI bugs:
-							 * Glitching out of the map boundaries <- FIXED
-							 * Glitching/Hopping while standing on one position if ball is in AI's side of the field <- FIXED
-							 * Strange static position on the top of the mapboundary if ball flies on startup into the enemy side of the field <- FIXED
-							 */
 							if(ball.getShape().getCenterX() > resX/2 + 10 && collision == false){
 								ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
 								estimatedPoint.setLocation(resX -20, ball.getRoundedEtimatedY());
@@ -402,7 +399,6 @@ public class Pong extends BasicGame implements KeyListener {
 	
 					if (pad2.intersects(ball.getShape()) && lastcollision != Border.RIGHT) {
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
-						//System.out.println(ball.getShape().getCenterY());
 						lastpadcollision = Border.RIGHT;
 						lastcollision = Border.RIGHT;
 	
