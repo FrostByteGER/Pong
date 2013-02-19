@@ -90,7 +90,6 @@ public class Pong extends BasicGame implements KeyListener {
 		super(title);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init(GameContainer arg0) throws SlickException {
 		
@@ -158,7 +157,7 @@ public class Pong extends BasicGame implements KeyListener {
 			
 			if(ball.getShape().getCenterX() > resX/2 + 20){
 				//TODO: Delete this or add it to the DEBUG Monitor
-				g.drawString(".", resX - 10, ball.getEtimatedY());
+				g.drawString(".", resX - 10, ball.getRoundedEtimatedY());
 			}
 
 			if (currentgamestate == GameState.BallIsOut) {
@@ -333,21 +332,25 @@ public class Pong extends BasicGame implements KeyListener {
 						}else{
 							/* TODO: Fix AI bugs:
 							 * Glitching out of the map boundaries <- FIXED
-							 * Glitching/Hopping while standing on one position if ball is in AI's side of the field
+							 * Glitching/Hopping while standing on one position if ball is in AI's side of the field <- FIXED
 							 * Strange static position on the top of the mapboundary if ball flies on startup into the enemy side of the field
 							 */
 							if(ball.getShape().getCenterX() > resX/2 + 10 && collision == false){
 								ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
-								estimatedPoint.setLocation(resX -20, ball.getEtimatedY());
-								System.out.println(ball.getEtimatedY());
+								estimatedPoint.setLocation(resX -20, ball.getRoundedEtimatedY());
+								System.out.println(ball.getRoundedEtimatedY());
 								collision = true;
 							}
 								
 							}if(pad2.getShape().getCenterY() != resY/2 && lastpadcollision == lastpadcollision.RIGHT){
 								if(pad2.getShape().getCenterY() > resY/2){
-									pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 2.0f);
+									for(int i = 0; i <= 2.0f;i++){
+										pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 1.0f);
+									}
 								}else if(pad2.getShape().getCenterY() < resY/2){
-									pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 2.0f);
+									for(int i = 0; i <= 2.0f;i++){
+										pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 1.0f);
+									}
 								}
 							}else if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != lastpadcollision.RIGHT){
 								if(ball.getShape().getMaxY() > resY) {
@@ -355,15 +358,14 @@ public class Pong extends BasicGame implements KeyListener {
 								}else if(ball.getShape().getMinY() < 0) {
 									
 								}else{
-									if(pad2.intersects(estimatedPoint)){		
-										System.out.println("HIT");
-									}else{
-										if(ball.getEtimatedY() < pad2.getShape().getCenterY() && pad2.getShape().getMinY() >= 0.0){
-											pad2.getShape().setCenterY(pad2.getShape().getCenterY() - pad2.getVelocity());	
-										}else if(ball.getEtimatedY() > pad2.getShape().getCenterY() && pad2.getShape().getMaxY() <= resY){
-											pad2.getShape().setCenterY(pad2.getShape().getCenterY() + pad2.getVelocity());
-										}else{
-											
+									if(ball.getRoundedEtimatedY() < pad2.getShape().getCenterY() && pad2.getShape().getMinY() >= 0.0){
+										for(int i = 0; i <= pad2.getVelocity();i++){
+											pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 1.0f);	
+										}
+									}
+									if(ball.getRoundedEtimatedY() > pad2.getShape().getCenterY() && pad2.getShape().getMaxY() <= resY){
+										for(int i = 0; i <= pad2.getVelocity();i++){
+											pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 1.0f);
 										}
 									}
 								}
@@ -393,7 +395,7 @@ public class Pong extends BasicGame implements KeyListener {
 	
 					if (pad2.intersects(ball.getShape()) && lastcollision != Border.RIGHT) {
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
-						System.out.println(ball.getShape().getCenterY());
+						//System.out.println(ball.getShape().getCenterY());
 						lastpadcollision = Border.RIGHT;
 						lastcollision = Border.RIGHT;
 	

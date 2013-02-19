@@ -117,8 +117,8 @@ public class Ball {
 		g.fill(ball);
 	}
 	
-	public float getEtimatedY(){
-		return this.estimatedY;
+	public float getRoundedEtimatedY(){
+		return Math.round(this.estimatedY);
 	}
 
 	public void calcDirection() {
