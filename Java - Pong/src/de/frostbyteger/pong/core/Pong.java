@@ -66,16 +66,16 @@ public class Pong extends BasicGame implements KeyListener {
 	private Color pvpselection = Color.gray;
 	private Color lanselection = Color.gray;
 	private Color quitselection = Color.gray;
+	private UnicodeFont smallfont;
+	private UnicodeFont normalfont;
+	private UnicodeFont mediumfont;
+	private UnicodeFont bigfont;
 	
 	private int playerselection = 0;
 	private int difficultyselection = 1;
 
 	private static boolean DEBUG = true;
 	private boolean collision = false;
-	private UnicodeFont smallfont;
-	private UnicodeFont normalfont;
-	private UnicodeFont mediumfont;
-	private UnicodeFont bigfont;
 	
 	private Image arrow_left;
 	private Image arrow_right;
@@ -93,25 +93,14 @@ public class Pong extends BasicGame implements KeyListener {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(GameContainer arg0) throws SlickException {
-		smallfont = new UnicodeFont("data/alexis.ttf", 25, false, false);
-		smallfont.addAsciiGlyphs();
-		smallfont.getEffects().add(new ColorEffect());
-		smallfont.loadGlyphs();
 		
-		normalfont = new UnicodeFont("data/alexis.ttf", 40, false, false);
-		normalfont.addAsciiGlyphs();
-		normalfont.getEffects().add(new ColorEffect());
-		normalfont.loadGlyphs();
+		smallfont = newFont("data/alexis.ttf", 25, false, false);
 		
-		mediumfont = new UnicodeFont("data/alexis.ttf", 50, false, false);
-		mediumfont.addAsciiGlyphs();
-		mediumfont.getEffects().add(new ColorEffect());
-		mediumfont.loadGlyphs();
+		normalfont = newFont("data/alexis.ttf", 40, false, false);
 		
-		bigfont = new UnicodeFont("data/alexis.ttf", 120, false, false);
-		bigfont.addAsciiGlyphs();
-		bigfont.getEffects().add(new ColorEffect());
-		bigfont.loadGlyphs();
+		mediumfont = newFont("data/alexis.ttf", 50, false, false);
+		
+		bigfont = newFont("data/alexis.ttf", 120, false, false);
 		
 		arrow_left = new Image("data/arrow_left.png");
 		arrow_right = new Image("data/arrow_right.png");
@@ -132,7 +121,6 @@ public class Pong extends BasicGame implements KeyListener {
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[2])/2, resY/2 + 40, menu[2], lanselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[7])/2, resY/2 + 60, menu[7], quitselection);
 			g.drawString("BETA 0.9f", resX - 85, resY - 15);
-
 		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
@@ -355,7 +343,7 @@ public class Pong extends BasicGame implements KeyListener {
 								collision = true;
 							}
 								
-							}if(lastpadcollision == lastpadcollision.RIGHT ){
+							}if(pad2.getShape().getCenterY() != resY/2 && lastpadcollision == lastpadcollision.RIGHT){
 								if(pad2.getShape().getCenterY() > resY/2){
 									pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 2.0f);
 								}else if(pad2.getShape().getCenterY() < resY/2){
@@ -472,8 +460,13 @@ public class Pong extends BasicGame implements KeyListener {
 		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
 	}
 	
-	private void newFont(int fontsize){
-		//TODO: Add font constructor
+	
+	private UnicodeFont newFont(String font,int fontsize, boolean bold, boolean italic) throws SlickException{
+		UnicodeFont unifont = new UnicodeFont(font,fontsize , bold, italic);
+		unifont.addAsciiGlyphs();
+		unifont.getEffects().add(new ColorEffect());
+		unifont.loadGlyphs();
+		return unifont;
 	}
 	
 	private void abort(){
