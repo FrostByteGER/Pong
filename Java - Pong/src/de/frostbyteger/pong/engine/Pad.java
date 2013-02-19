@@ -11,11 +11,15 @@ import org.newdawn.slick.geom.Shape;
 public class Pad{
 
 	protected float velocity;
+	
 	protected int points;
 	protected int keynr;
+	protected int spinspeed;
+	
+	protected Rectangle pad;
+	
 	private final int WIDTH = 10;
 	private final int HEIGHT = 100;
-	protected Rectangle pad;
 	
 	
 	public Pad(int x, int y, float velocity, int keynr){
@@ -34,6 +38,10 @@ public class Pad{
 	
 	public void addPoint(){
 		this.points += 1;
+	}
+	
+	public void addPoints(int points){
+		this.points += points;
 	}
 
 	public Rectangle getShape(){
@@ -74,6 +82,20 @@ public class Pad{
 	 */
 	public void setKeynr(int keynr) {
 		this.keynr = keynr;
+	}
+
+	/**
+	 * @return the spinspeed
+	 */
+	public int getSpinspeed() {
+		return spinspeed;
+	}
+
+	/**
+	 * @param spinspeed the spinspeed to set
+	 */
+	public void setSpinspeed(int spinspeed) {
+		this.spinspeed = spinspeed;
 	}
 
 	/**

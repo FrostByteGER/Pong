@@ -43,8 +43,7 @@ public class Ball {
 	}
 
 	/**
-	 * @param ball
-	 *            the ball to set
+	 * @param ball the ball to set
 	 */
 	public void setBall(Circle ball) {
 		this.ball = ball;
@@ -58,8 +57,7 @@ public class Ball {
 	}
 
 	/**
-	 * @param velocity
-	 *            the velocity to set
+	 * @param velocity the velocity to set
 	 */
 	public void setVelocity(double velocity) {
 		this.velocity = velocity;
@@ -105,8 +103,7 @@ public class Ball {
 	}
 
 	/**
-	 * @param radius
-	 *            the radius to set
+	 * @param radius the radius to set
 	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
@@ -169,7 +166,7 @@ public class Ball {
 	public void addVelocity(double acceleration, int delta, Border lastcollision) {
 		float hip = (float) (acceleration * delta + velocity) / 100;
 		if(velocity < 3.5){
-			if (vector.getX() <= 5 && lastcollision == Border.LEFT ||vector.getX() <= 5  && lastcollision == Border.RIGHT) { //TODO Static Declaration
+			if (vector.getX() <= 5 && lastcollision == Border.LEFT ||vector.getX() <= 5  && lastcollision == Border.RIGHT) {
 				velocity += 0.005;
 				if (vector.getX() < 0) {
 					vector.set(vector.getX() - hip, vector.getY());

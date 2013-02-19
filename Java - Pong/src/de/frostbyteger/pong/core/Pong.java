@@ -12,7 +12,7 @@ import org.newdawn.slick.KeyListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
-import org.newdawn.slick.geom.Circle;
+
 import de.frostbyteger.pong.engine.Ball;
 import de.frostbyteger.pong.engine.Border;
 import de.frostbyteger.pong.engine.Difficulty;
@@ -54,6 +54,7 @@ public class Pong extends BasicGame implements KeyListener {
 	public static int resY = 600;
 	//TODO: Add this variables
 	public static int volume = 100;
+	public static boolean music_on = true;
 	
 	public static final int fps = 60;
 	
@@ -61,13 +62,17 @@ public class Pong extends BasicGame implements KeyListener {
 	public static final String version = "0.9i";
 	
 	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Achievements","Options","Help","Quit Game"};
-	private String[] options = {""}; //TODO: Fill with information
+	private String[][] options = {{""},{""}}; //TODO: Fill with information
 	private String[] help = {"How to Play:","Player 1 Controls:","Player 2 Controls:","How to navigate:","Menu Controls:"};
 	private String[] difficultymenu = {"Easy","Medium","Hard","Unbeatable"};
 	private String[] difficultyexplanation = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
 	private Color cpuselection = Color.gray;
 	private Color pvpselection = Color.gray;
 	private Color lanselection = Color.gray;
+	private Color challengeselection = Color.gray;
+	private Color achievementselection = Color.gray;
+	private Color optionselection = Color.gray;
+	private Color helpselection = Color.gray;
 	private Color quitselection = Color.gray;
 	private UnicodeFont smallfont;
 	private UnicodeFont normalfont;
@@ -82,8 +87,6 @@ public class Pong extends BasicGame implements KeyListener {
 	
 	private Image arrow_left;
 	private Image arrow_right;
-	
-	private Circle estimatedPoint;
 	
 	protected double hip = 0;
 	protected Random rndm = new Random();
@@ -106,8 +109,6 @@ public class Pong extends BasicGame implements KeyListener {
 		
 		arrow_left = new Image("data/arrow_left.png");
 		arrow_right = new Image("data/arrow_right.png");
-		
-		estimatedPoint = new Circle(-10, -10, 1f);
 
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
@@ -121,7 +122,11 @@ public class Pong extends BasicGame implements KeyListener {
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[0])/2, resY/2, menu[0], cpuselection);		
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[1])/2, resY/2 + 20, menu[1], pvpselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[2])/2, resY/2 + 40, menu[2], lanselection);
-			normalfont.drawString(resX/2 - normalfont.getWidth(menu[7])/2, resY/2 + 60, menu[7], quitselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[3])/2, resY/2 + 60, menu[3], challengeselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[4])/2, resY/2 + 80, menu[4], achievementselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[5])/2, resY/2 + 100, menu[5], optionselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[6])/2, resY/2 + 120, menu[6], helpselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[7])/2, resY/2 + 140, menu[7], quitselection);
 			g.drawString("BETA " + version, resX - 85, resY - 15);
 		}
 		
@@ -138,7 +143,6 @@ public class Pong extends BasicGame implements KeyListener {
 			pad1.draw(g);
 			pad2.draw(g);
 			ball.draw(g);
-			g.fill(estimatedPoint);
 			//TODO: Change this or use another font
 			g.drawString(Integer.toString(pad1.getPoints()), resX / 2 - 20, resY / 2);
 			g.drawString(":", resX / 2, resY / 2);
@@ -179,13 +183,11 @@ public class Pong extends BasicGame implements KeyListener {
 
 	}
 
-	@SuppressWarnings("static-access")
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		
 		Input input = gc.getInput();
 		if(currentmenustate == MenuState.Main){
-			
 			if(playerselection == 0){
 				cpuselection = Color.white;
 				pvpselection = Color.gray;
@@ -196,16 +198,32 @@ public class Pong extends BasicGame implements KeyListener {
 			}else if(playerselection == 2){
 				pvpselection = Color.gray;
 				lanselection = Color.white;
-				quitselection = Color.gray;
+				challengeselection = Color.gray;
 			}else if(playerselection == 3){
 				lanselection = Color.gray;
+				challengeselection = Color.white;
+				achievementselection = Color.gray;
+			}else if(playerselection == 4){
+				challengeselection = Color.gray;
+				achievementselection = Color.white;
+				optionselection = Color.gray;
+			}else if(playerselection == 5){
+				achievementselection = Color.gray;
+				optionselection = Color.white;
+				helpselection = Color.gray;
+			}else if(playerselection == 6){
+				optionselection = Color.gray;
+				helpselection = Color.white;
+				quitselection = Color.gray;
+			}else if(playerselection == 7){
+				helpselection = Color.gray;
 				quitselection = Color.white;
 			}
 			
 			if(input.isKeyPressed(Input.KEY_UP) && playerselection > 0){
 				playerselection -= 1;
 			}
-			if(input.isKeyPressed(Input.KEY_DOWN) && playerselection < 3){
+			if(input.isKeyPressed(Input.KEY_DOWN) && playerselection < 7){
 				playerselection += 1;
 			}
 			if(input.isKeyPressed(Input.KEY_ENTER)){
@@ -225,6 +243,18 @@ public class Pong extends BasicGame implements KeyListener {
 					 */
 				}
 				if(playerselection == 3){
+					
+				}
+				if(playerselection == 4){
+					
+				}
+				if(playerselection == 5){
+					
+				}
+				if(playerselection == 6){
+					
+				}
+				if(playerselection == 7){
 					gc.exit();
 				}
 				//TODO: Add Challenge Mode, Achievements, Options and Help to the menu
@@ -335,7 +365,6 @@ public class Pong extends BasicGame implements KeyListener {
 						}else{
 							if(ball.getShape().getCenterX() > resX/2 + 10 && collision == false){
 								ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
-								estimatedPoint.setLocation(resX -20, ball.getRoundedEtimatedY());
 								collision = true;
 							}
 								
@@ -407,10 +436,6 @@ public class Pong extends BasicGame implements KeyListener {
 					if(ball.getShape().getCenterX() < resX/2 && collision == true){
 						collision = false;
 					}
-					
-					if(ball.getShape().getCenterX() < resX/2){
-						estimatedPoint.setLocation(-10, -10);
-					}
 	
 					// DEVTEST
 					if(DEBUG == true) {
@@ -438,7 +463,7 @@ public class Pong extends BasicGame implements KeyListener {
 				}
 				
 				if(input.isKeyPressed(Input.KEY_ENTER)){
-					debugNewBall();
+					newBall();
 				}
 	
 				}
@@ -474,6 +499,13 @@ public class Pong extends BasicGame implements KeyListener {
 		return unifont;
 	}
 	
+	private void newBall(){
+		lastcollision = Border.NONE;
+		lastpadcollision = Border.NONE;
+		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
+		currentgamestate = GameState.Play;
+	}
+	
 	private void abort(){
 		playerselection = 0;
 		difficultyselection = 1;
@@ -481,13 +513,6 @@ public class Pong extends BasicGame implements KeyListener {
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		currentmenustate = MenuState.Main;
-	}
-	
-	private void debugNewBall(){
-		lastcollision = Border.NONE;
-		lastpadcollision = Border.NONE;
-		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
-		currentgamestate = GameState.Play;
 	}
 
 }
