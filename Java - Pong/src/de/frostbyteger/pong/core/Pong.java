@@ -107,7 +107,7 @@ public class Pong extends BasicGame implements KeyListener {
 		estimatedPoint = new Circle(-10, -10, 1f);
 
 		lastcollision = Border.NONE;
-		lastpadcollision = Border.LEFT;
+		lastpadcollision = Border.NONE;
 		currentgamestate = GameState.Play;
 	}
 
@@ -144,8 +144,9 @@ public class Pong extends BasicGame implements KeyListener {
 				g.drawString("DEBUG Monitor", 75, 25);
 				g.drawString("Ballvelocity: " + Double.toString(ball.getVelocity()), 75,40);
 				g.drawString("LastCollision:" + lastcollision.toString(), 75, 55);
-				g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 70);
-				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 85);
+				g.drawString("LastPadCollision:" + lastpadcollision.toString(), 75, 70);
+				g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 85);
+				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 100);
 				gc.setShowFPS(true);
 				
 			}
@@ -316,13 +317,13 @@ public class Pong extends BasicGame implements KeyListener {
 	
 				if (currentgamestate == GameState.Play) {
 					
-					//TODO
-					if(input.isKeyDown(Input.KEY_R)){
-						ball.addDebugVelocity(0.25f, delta);
+					if(DEBUG){
+						if(input.isKeyDown(Input.KEY_R)){
+							ball.addDebugVelocity(0.25f, delta);
+						}
 					}
 					
 					if(currentmenustate == MenuState.CPU){
-						
 						if(DEBUG_AI) {
 							if(ball.getShape().getMinY() >= resY - pad2.getHEIGHT() / 2) {
 							}else if(ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
@@ -333,26 +334,32 @@ public class Pong extends BasicGame implements KeyListener {
 							/* TODO: Fix AI bugs:
 							 * Glitching out of the map boundaries <- FIXED
 							 * Glitching/Hopping while standing on one position if ball is in AI's side of the field <- FIXED
-							 * Strange static position on the top of the mapboundary if ball flies on startup into the enemy side of the field
+							 * Strange static position on the top of the mapboundary if ball flies on startup into the enemy side of the field <- FIXED
 							 */
 							if(ball.getShape().getCenterX() > resX/2 + 10 && collision == false){
 								ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
 								estimatedPoint.setLocation(resX -20, ball.getRoundedEtimatedY());
-								System.out.println(ball.getRoundedEtimatedY());
 								collision = true;
 							}
 								
 							}if(pad2.getShape().getCenterY() != resY/2 && lastpadcollision == lastpadcollision.RIGHT){
-								if(pad2.getShape().getCenterY() > resY/2){
-									for(int i = 0; i <= 2.0f;i++){
-										pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 1.0f);
-									}
-								}else if(pad2.getShape().getCenterY() < resY/2){
-									for(int i = 0; i <= 2.0f;i++){
-										pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 1.0f);
+								
+								//Prevents that the AI pad is glitching while floating back to middle
+								if(pad2.getShape().getCenterY() == resY/2 -1 ||pad2.getShape().getCenterY() == resY/2 +1 ){
+									pad2.getShape().setCenterY(resY/2);
+								}else{
+									if(pad2.getShape().getCenterY() > resY/2){
+										for(int i = 0; i <= 2.0f;i++){
+											pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 1.0f);
+										}
+									}else if(pad2.getShape().getCenterY() < resY/2){
+										for(int i = 0; i <= 2.0f;i++){
+											pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 1.0f);
+										}
 									}
 								}
-							}else if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != lastpadcollision.RIGHT){
+							}
+							if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != lastpadcollision.RIGHT){
 								if(ball.getShape().getMaxY() > resY) {
 									
 								}else if(ball.getShape().getMinY() < 0) {
@@ -482,6 +489,7 @@ public class Pong extends BasicGame implements KeyListener {
 	
 	private void debugNewBall(){
 		lastcollision = Border.NONE;
+		lastpadcollision = Border.NONE;
 		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
 		currentgamestate = GameState.Play;
 	}
