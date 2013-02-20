@@ -156,15 +156,13 @@ public class Pong extends BasicGame implements KeyListener {
 				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 100);
 				gc.setShowFPS(true);
 				
+				if(ball.getShape().getCenterX() > resX/2 + 20){
+					g.drawString(".", resX - 10, ball.getRoundedEtimatedY());
+				}
 			}
 			
 			if(gc.isPaused() == true){
 				g.drawString("GAME PAUSED, PRESS " + "P" + " TO RESUME", resX / 2 - 135, resY / 2 + 50);
-			}
-			
-			if(ball.getShape().getCenterX() > resX/2 + 20){
-				//TODO: Delete this or add it to the DEBUG Monitor
-				g.drawString(".", resX - 10, ball.getRoundedEtimatedY());
 			}
 
 			if (currentgamestate == GameState.BallIsOut) {
@@ -368,7 +366,7 @@ public class Pong extends BasicGame implements KeyListener {
 								collision = true;
 							}
 								
-							}if(pad2.getShape().getCenterY() != resY/2 && lastpadcollision == lastpadcollision.RIGHT){
+							}if(pad2.getShape().getCenterY() != resY/2 && lastpadcollision == Border.RIGHT){
 								
 								//Prevents that the AI pad is glitching while floating back to middle
 								if(pad2.getShape().getCenterY() == resY/2 -1 ||pad2.getShape().getCenterY() == resY/2 +1 ){
@@ -385,7 +383,7 @@ public class Pong extends BasicGame implements KeyListener {
 									}
 								}
 							}
-							if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != lastpadcollision.RIGHT){
+							if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != Border.RIGHT){
 								if(ball.getShape().getMaxY() > resY) {
 									
 								}else if(ball.getShape().getMinY() < 0) {
@@ -489,7 +487,6 @@ public class Pong extends BasicGame implements KeyListener {
 		pad2.getShape().setCenterY(resY/2);
 		ball = new Ball(resX / 2 - ballradius / 2, resY / 2 - ballradius / 2, ballradius);
 	}
-	
 	
 	private UnicodeFont newFont(String font,int fontsize, boolean bold, boolean italic) throws SlickException{
 		UnicodeFont unifont = new UnicodeFont(font,fontsize , bold, italic);
