@@ -19,6 +19,7 @@ import de.frostbyteger.pong.engine.Difficulty;
 import de.frostbyteger.pong.engine.GameState;
 import de.frostbyteger.pong.engine.MenuState;
 import de.frostbyteger.pong.engine.Pad;
+import de.frostbyteger.pong.engine.PropertyHelper;
 
 
 /**
@@ -88,6 +89,8 @@ public class Pong extends BasicGame implements KeyListener {
 	private Image arrow_left;
 	private Image arrow_right;
 	
+	private PropertyHelper prophelper;
+	
 	protected double hip = 0;
 	protected Random rndm = new Random();
 
@@ -113,6 +116,20 @@ public class Pong extends BasicGame implements KeyListener {
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		currentgamestate = GameState.Play;
+		
+		//TODO: Warning, not safe
+		prophelper = new PropertyHelper();
+		prophelper.loadPropertiesFile();
+		
+		try{
+			resX = Integer.parseInt(prophelper.loadProperty("resX"));
+			resY = Integer.parseInt(prophelper.loadProperty("resY"));
+			volume = Integer.parseInt(prophelper.loadProperty("volume"));
+			music_on = Boolean.parseBoolean(prophelper.loadProperty("vol_on"));
+			DEBUG = Boolean.parseBoolean(prophelper.loadProperty("debug"));
+		}catch(NumberFormatException nfe){
+			nfe.printStackTrace();
+		}
 	}
 
 	@Override
