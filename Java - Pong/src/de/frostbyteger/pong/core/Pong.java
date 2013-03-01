@@ -28,7 +28,7 @@ import de.frostbyteger.pong.engine.PropertyHelper;
  * TODO: Actual resolution won't be displayed on option menu
  * TODO: Volume wont get really changed
  */
-public class Pong extends BasicGame implements KeyListener {
+public class Pong extends BasicGame {
 
 	protected Pad pad1, pad2;
 	protected Ball ball;
