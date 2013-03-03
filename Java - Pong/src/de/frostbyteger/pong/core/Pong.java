@@ -41,7 +41,7 @@ public class Pong extends BasicGame {
 	private static final int ballradius = 5;
 	private static final int goal = 10;
 	@SuppressWarnings("unused") //TODO: Delete this
-	private static final double gravity = 9.81; // TODO: Add gravity to challenge mode
+	private static final double gravity = 0.0981; // TODO: Add gravity to challenge mode
 	
 	private static final float easy = 2.5f;
 	private static final float medium = 5.0f;
@@ -49,7 +49,8 @@ public class Pong extends BasicGame {
 	private static final float unbeatable = 15.0f;
 	
 	//TODO: 1600x1200 Title disappears
-	private static final int[][] resArray = {{640,480},{800,600},{1024,768},{1280,960},{1600,1200}};
+	//TODO: Replace 1280x1024 with 1600x1200
+	private static final int[][] resArray = {{640,480},{800,600},{1024,768},{1280,960},{1280,1024}};
 	
 	private final String ai = "AI-Difficulty";
 	
@@ -59,8 +60,8 @@ public class Pong extends BasicGame {
 	
 	public static final int fps = 60;
 	
-	public static final String title = "Pong BETA BUILD";
-	public static final String version = "0.9j";
+	public static final String title = "Pong";
+	public static final String version = "v1.0";
 	
 	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Options","Help","Quit Game"};
 	private String[] options = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
@@ -156,7 +157,7 @@ public class Pong extends BasicGame {
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[4])/2, resY/2 + 80, menu[4], optionselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[5])/2, resY/2 + 100, menu[5], helpselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[6])/2, resY/2 + 120, menu[6], quitselection);
-			g.drawString("BETA " + version, resX - 85, resY - 15);
+			g.drawString("RELEASE " + version, resX - 115, resY - 15);
 		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
@@ -209,10 +210,6 @@ public class Pong extends BasicGame {
 				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 100);
 				g.drawString("Pad1 Spinspeed: " + Float.toString(pad1.getSpinspeed()), 75, 115);
 				gc.setShowFPS(true);
-				
-				if(ball.getShape().getCenterX() > resX/2 + 20){
-					//g.drawString(".", resX - 10, ball.getRoundedEtimatedY());
-				}
 			}
 			
 			if(gc.isPaused() == true){
@@ -291,7 +288,7 @@ public class Pong extends BasicGame {
 					 */
 				}
 				if(playerselection == 3){
-					
+					currentmenustate = MenuState.Challenge;
 				}
 				if(playerselection == 4){
 					currentmenustate = MenuState.Options;
@@ -506,7 +503,7 @@ public class Pong extends BasicGame {
 					}
 					
 					if(currentmenustate == MenuState.CPU){
-						if(DEBUG_AI) {
+						if(DEBUG_AI || currentmenustate == MenuState.Challenge) {
 							if(ball.getShape().getMinY() >= resY - pad2.getHEIGHT() / 2) {
 							}else if(ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
 							}else{
