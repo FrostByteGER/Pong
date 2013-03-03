@@ -207,6 +207,7 @@ public class Pong extends BasicGame {
 				g.drawString("LastPadCollision:" + lastpadcollision.toString(), 75, 70);
 				g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 85);
 				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 100);
+				g.drawString("Pad1 Spinspeed: " + Float.toString(pad1.getSpinspeed()), 75, 115);
 				gc.setShowFPS(true);
 				
 				if(ball.getShape().getCenterX() > resX/2 + 20){
@@ -432,7 +433,7 @@ public class Pong extends BasicGame {
 			}
 		}
 		
-		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.LAN || currentmenustate == MenuState.PvP ){
+		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.LAN || currentmenustate == MenuState.PvP || currentmenustate == MenuState.Challenge){
 			// Pause Game
 			if (gc.hasFocus() == false || gc.isPaused() == false && input.isKeyPressed(Input.KEY_P) ) {
 				gc.setPaused(true);
@@ -441,6 +442,7 @@ public class Pong extends BasicGame {
 				gc.setPaused(false);
 			}
 			
+			// Abort Game
 			if(input.isKeyPressed(Input.KEY_ESCAPE)){
 				abort();
 			}
@@ -448,8 +450,14 @@ public class Pong extends BasicGame {
 			if (gc.isPaused() == false) {
 	
 				if (currentgamestate == GameState.Play || currentgamestate == GameState.BallIsOut) {
-	
 					// For player 1
+					if (input.isKeyDown(Input.KEY_UP) ^ input.isKeyDown(Input.KEY_DOWN)) {
+						if (pad1.getShape().getMinY() > 0.0 && pad1.getShape().getMaxY() < resY) {
+							pad1.addSpinSpeed(0.005f * delta);
+						}
+					}else{
+						pad1.resetSpinSpeed();
+					}
 					if (input.isKeyDown(Input.KEY_UP)) {
 						if (pad1.getShape().getMinY() > 0.0) {
 							pad1.getShape().setY((float) ((pad1.getShape().getY() - 10.0)));
@@ -465,6 +473,14 @@ public class Pong extends BasicGame {
 					
 					if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
 						// For player 2
+						if (input.isKeyDown(Input.KEY_W) ^ input.isKeyDown(Input.KEY_S)) {
+							if (pad2.getShape().getMinY() > 0.0 && pad2.getShape().getMaxY() < resY) {
+								pad2.addSpinSpeed(0.005f * delta);
+							}
+						}else{
+							pad2.resetSpinSpeed();
+						}
+						
 						if (input.isKeyDown(Input.KEY_W)) {
 							if (pad2.getShape().getMinY() > 0.0) {
 								pad2.getShape().setY((float) ((pad2.getShape().getY() - 10.0)));
@@ -555,12 +571,22 @@ public class Pong extends BasicGame {
 					}
 	
 					if (pad1.intersects(ball.getShape()) && lastcollision != Border.LEFT) {
+						if(pad1.getSpinspeed() > 0.0f){
+							ball.addSpin(pad1.getSpinspeed());
+						}
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
 						lastpadcollision = Border.LEFT;
 						lastcollision = Border.LEFT;
 					}
 	
 					if (pad2.intersects(ball.getShape()) && lastcollision != Border.RIGHT) {
+						if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
+							if(pad2.getSpinspeed() > 0.0f){
+								System.out.println(ball.getVectorX() + "|" + ball.getVectorY());
+								ball.addSpin(-pad2.getSpinspeed());
+								System.out.println(ball.getVectorX() + "|" + ball.getVectorY());
+							}
+						}
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
 						lastpadcollision = Border.RIGHT;
 						lastcollision = Border.RIGHT;
@@ -569,12 +595,6 @@ public class Pong extends BasicGame {
 					
 					if(ball.getShape().getCenterX() < resX/2 && collision == true){
 						collision = false;
-					}
-	
-					// DEVTEST
-					if(DEBUG == true) {
-						if(ball.getShape().getX() < 0 || ball.getShape().getX() > resX) {
-						}
 					}
 	
 					if(ball.getShape().getMaxX() < 0) {

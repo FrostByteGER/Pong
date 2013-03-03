@@ -25,7 +25,12 @@ public class Ball {
 	protected Random rndm;
 	protected float estimatedY;
 	
-
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param radius
+	 */
 	public Ball(int x, int y, int radius) {
 		rndm = new Random();
 		this.ball = new Circle(x, y, radius);
@@ -118,6 +123,9 @@ public class Ball {
 		return Math.round(this.estimatedY);
 	}
 
+	/**
+	 * 
+	 */
 	public void calcDirection() {
 		float speedX = 1.5f;
 		float speedY = (float) rndm.nextDouble();
@@ -143,6 +151,12 @@ public class Ball {
 
 	}
 	
+	/**
+	 * 
+	 * @param vector2f
+	 * @param x
+	 * @param y
+	 */
 	public void calcTrajectory(Vector2f vector2f, float x, float y){
 			x += vector2f.getX();
 			y += vector2f.getY();
@@ -163,6 +177,12 @@ public class Ball {
 
 	}
 
+	/**
+	 * 
+	 * @param acceleration
+	 * @param delta
+	 * @param lastcollision
+	 */
 	public void addVelocity(double acceleration, int delta, Border lastcollision) {
 		float hip = (float) (acceleration * delta + velocity) / 100;
 		if(velocity < 3.5){
@@ -183,6 +203,11 @@ public class Ball {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param acceleration
+	 * @param delta
+	 */
 	public void addDebugVelocity(float acceleration, int delta){
 		float hip = (float) (acceleration * delta + velocity) / 100;
 		if (vector.getX() < 0) {
@@ -194,6 +219,40 @@ public class Ball {
 			vector.set(vector.getX(), vector.getY() - hip);
 		} else {
 			vector.set(vector.getX(), vector.getY() + hip);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param acceleration
+	 */
+	public void addSpin(float acceleration){
+		if (vector.getX() < 0) {
+			if(rndm.nextBoolean()){
+				vector.set(vector.getX() - acceleration, vector.getY());
+			}else{
+				vector.set(vector.getX() + acceleration, vector.getY() * 0.05f);
+			}
+		} else {
+			if(rndm.nextBoolean()){
+				vector.set(vector.getX() + acceleration, vector.getY());
+			}else{
+				vector.set(vector.getX() - acceleration, vector.getY() * 0.05f);
+			}
+		}
+		
+		if (vector.getY() < 0) {
+			if(rndm.nextBoolean()){
+				vector.set(vector.getX(), vector.getY() - acceleration);
+			}else{
+				vector.set(vector.getX(), vector.getY() + acceleration * 0.05f);
+			}
+		} else {
+			if(rndm.nextBoolean()){
+				vector.set(vector.getX(), vector.getY() + acceleration);
+			}else{
+				vector.set(vector.getX(), vector.getY() - acceleration * 0.05f);
+			}
 		}
 	}
 }
