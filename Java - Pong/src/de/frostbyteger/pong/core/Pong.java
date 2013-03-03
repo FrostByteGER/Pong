@@ -63,7 +63,7 @@ public class Pong extends BasicGame {
 	public static final String title = "Pong";
 	public static final String version = "v1.0";
 	
-	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Options","Help","Quit Game"};
+	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode - Coming soon","Options","Help","Quit Game"};
 	private String[] options = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
 	//private String[] help = {"How to Play:","Player 1 Controls:","Player 2 Controls:","How to navigate:","Menu Controls:"};
 	private String[] difficultymenu = {"Easy","Medium","Hard","Unbeatable"};
@@ -288,7 +288,7 @@ public class Pong extends BasicGame {
 					 */
 				}
 				if(playerselection == 3){
-					currentmenustate = MenuState.Challenge;
+					//currentmenustate = MenuState.Challenge;
 				}
 				if(playerselection == 4){
 					currentmenustate = MenuState.Options;
