@@ -9,7 +9,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.KeyListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
@@ -28,7 +27,7 @@ import de.frostbyteger.pong.engine.PropertyHelper;
  * TODO: Actual resolution won't be displayed on option menu
  * TODO: Volume wont get really changed
  */
-public class Pong extends BasicGame implements KeyListener {
+public class Pong extends BasicGame {
 
 	protected Pad pad1, pad2;
 	protected Ball ball;
