@@ -63,7 +63,7 @@ public class Pong extends BasicGame implements KeyListener {
 	public static final String title = "Pong BETA BUILD";
 	public static final String version = "0.9j";
 	
-	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Achievements","Options","Help","Quit Game"};
+	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Options","Help","Quit Game"};
 	private String[] options = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
 	//private String[] help = {"How to Play:","Player 1 Controls:","Player 2 Controls:","How to navigate:","Menu Controls:"};
 	private String[] difficultymenu = {"Easy","Medium","Hard","Unbeatable"};
@@ -72,7 +72,6 @@ public class Pong extends BasicGame implements KeyListener {
 	private Color pvpselection = Color.gray;
 	private Color lanselection = Color.gray;
 	private Color challengeselection = Color.gray;
-	private Color achievementselection = Color.gray;
 	private Color optionselection = Color.gray;
 	private Color resselection = Color.gray;
 	private Color volselection = Color.gray;
@@ -155,10 +154,9 @@ public class Pong extends BasicGame implements KeyListener {
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[1])/2, resY/2 + 20, menu[1], pvpselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[2])/2, resY/2 + 40, menu[2], lanselection);
 			normalfont.drawString(resX/2 - normalfont.getWidth(menu[3])/2, resY/2 + 60, menu[3], challengeselection);
-			normalfont.drawString(resX/2 - normalfont.getWidth(menu[4])/2, resY/2 + 80, menu[4], achievementselection);
-			normalfont.drawString(resX/2 - normalfont.getWidth(menu[5])/2, resY/2 + 100, menu[5], optionselection);
-			normalfont.drawString(resX/2 - normalfont.getWidth(menu[6])/2, resY/2 + 120, menu[6], helpselection);
-			normalfont.drawString(resX/2 - normalfont.getWidth(menu[7])/2, resY/2 + 140, menu[7], quitselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[4])/2, resY/2 + 80, menu[4], optionselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[5])/2, resY/2 + 100, menu[5], helpselection);
+			normalfont.drawString(resX/2 - normalfont.getWidth(menu[6])/2, resY/2 + 120, menu[6], quitselection);
 			g.drawString("BETA " + version, resX - 85, resY - 15);
 		}
 		
@@ -256,20 +254,16 @@ public class Pong extends BasicGame implements KeyListener {
 			}else if(playerselection == 3){
 				lanselection = Color.gray;
 				challengeselection = Color.white;
-				achievementselection = Color.gray;
+				optionselection = Color.gray;
 			}else if(playerselection == 4){
 				challengeselection = Color.gray;
-				achievementselection = Color.white;
-				optionselection = Color.gray;
-			}else if(playerselection == 5){
-				achievementselection = Color.gray;
 				optionselection = Color.white;
 				helpselection = Color.gray;
-			}else if(playerselection == 6){
+			}else if(playerselection == 5){
 				optionselection = Color.gray;
 				helpselection = Color.white;
 				quitselection = Color.gray;
-			}else if(playerselection == 7){
+			}else if(playerselection == 6){
 				helpselection = Color.gray;
 				quitselection = Color.white;
 			}
@@ -277,7 +271,7 @@ public class Pong extends BasicGame implements KeyListener {
 			if(input.isKeyPressed(Input.KEY_UP) && playerselection > 0){
 				playerselection -= 1;
 			}
-			if(input.isKeyPressed(Input.KEY_DOWN) && playerselection < 7){
+			if(input.isKeyPressed(Input.KEY_DOWN) && playerselection < 6){
 				playerselection += 1;
 			}
 			if(input.isKeyPressed(Input.KEY_ENTER)){
@@ -300,18 +294,16 @@ public class Pong extends BasicGame implements KeyListener {
 					
 				}
 				if(playerselection == 4){
-					
-				}
-				if(playerselection == 5){
 					currentmenustate = MenuState.Options;
 				}
-				if(playerselection == 6){
+				if(playerselection == 5){
 					
 				}
-				if(playerselection == 7){
+				if(playerselection == 6){
 					gc.exit();
 				}
-				//TODO: Add Challenge Mode, Achievements, Options and Help to the menu
+
+				//TODO: Add Challenge Mode, Options and Help to the menu
 				
 			}
 		}
