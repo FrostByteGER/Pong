@@ -9,11 +9,11 @@ public class StartPong {
 
 	public static void main(String[] args) throws SlickException {
 
-		Pong.container = new AppGameContainer(new Pong(Pong.title + " " + Pong.version));
-		Pong.container.setDisplayMode(Pong.resX, Pong.resY, false);
-		Pong.container.setTargetFrameRate(Pong.fps);
-		Pong.container.setShowFPS(false); //TODO: Delete this
-		Pong.container.start();
+		Pong.S_Container = new AppGameContainer(new Pong(Pong.TITLE + " " + Pong.VERSION));
+		Pong.S_Container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
+		Pong.S_Container.setTargetFrameRate(Pong.FPS);
+		Pong.S_Container.setShowFPS(false); //TODO: Delete this
+		Pong.S_Container.start();
 
 	}
 	

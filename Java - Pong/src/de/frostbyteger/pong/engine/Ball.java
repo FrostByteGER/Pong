@@ -57,7 +57,7 @@ public class Ball {
 	/**
 	 * @return the velocity
 	 */
-	public double getVelocity() {
+	public float getVelocity() {
 		return velocity;
 	}
 
@@ -132,8 +132,7 @@ public class Ball {
 		if(speedY < 0.5){
 			speedY += 5.0;
 		}
-		this.vector.set(-speedX, speedY = 0.0f);
-/*
+
 		if (rndm.nextBoolean()) {
 			if (rndm.nextBoolean()) {
 				this.vector.set(-speedX, -speedY);
@@ -149,7 +148,7 @@ public class Ball {
 				this.vector.set(speedX, speedY);
 			}
 		} 
-*/
+
 	}
 	
 	/**
@@ -165,11 +164,11 @@ public class Ball {
 				vector2f.set(vector2f.getX(), -vector2f.getY());
 			}
 
-			if (y >= Pong.resY) { 
+			if (y >= Pong.S_resY) { 
 				vector2f.set(vector2f.getX(), -vector2f.getY());
 			}
 			
-			if(x >= Pong.resX - 20){
+			if(x >= Pong.S_resX - 20){
 				estimatedY = y;
 				return;
 			}else{
@@ -185,10 +184,10 @@ public class Ball {
 	 * @param lastcollision
 	 */
 	public void addVelocity(double acceleration, int delta, Border lastcollision) {
-		float hip = (float) (acceleration * delta + velocity) / 100;
+		float hip = (float) (acceleration * delta + velocity) / 100.0f;
 		if(velocity < 3.5){
 			if (vector.getX() <= 5 && lastcollision == Border.LEFT || vector.getX() <= 5  && lastcollision == Border.RIGHT) {
-				velocity += 0.005;
+				velocity += 0.005f;
 				if (vector.getX() < 0) {
 					vector.set(vector.getX() - hip, vector.getY());
 				} else {
@@ -208,25 +207,20 @@ public class Ball {
 	 * 
 	 * @param acceleration
 	 * @param delta
-	 * @param lastcollision
 	 */
-	public void addVelocityGravity(double acceleration, int delta, Border lastcollision) {
-		velocity += (float) (acceleration * (delta/100));
-		if(velocity < 3.5){
-			if (vector.getX() <= 5) {
-				if (vector.getX() < 0) {
-					vector.set(vector.getX() - (velocity * (delta/100)), vector.getY());
-				} else {
-					vector.set(vector.getX() + (velocity * (delta/100)), vector.getY());
-				}
-				if (vector.getY() < 0) {
-					vector.set(vector.getX(), vector.getY() + (velocity * (delta/10)));
-				} else {
-					vector.set(vector.getX(), vector.getY() + (velocity * (delta/10)));
-				}
-	
-			}
+	public void addVelocityGravity(double acceleration, int delta) {
+		//velocity += (float) (acceleration * (delta/100));
+		if (vector.getX() < 0) {
+			vector.set(vector.getX() - (velocity * (delta/100.0f)), vector.getY());
+		} else {
+			vector.set(vector.getX() + (velocity * (delta/100.0f)), vector.getY());
 		}
+		if (vector.getY() < 0) {
+			vector.set(vector.getX(), vector.getY() + (velocity * (delta/10.0f)));
+		} else {
+			vector.set(vector.getX(), vector.getY() + (velocity * (delta/10.0f)));
+		}
+	
 	}
 	
 	/**
