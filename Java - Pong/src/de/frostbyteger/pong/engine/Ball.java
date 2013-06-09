@@ -18,7 +18,7 @@ import de.frostbyteger.pong.core.Pong;
 public class Ball {
 
 	protected Circle ball;
-	protected double velocity;
+	protected float velocity;
 	protected Vector2f vector;
 	protected int radius;
 	protected int spin; // TODO
@@ -35,7 +35,7 @@ public class Ball {
 		rndm = new Random();
 		this.ball = new Circle(x, y, radius);
 		this.vector = new Vector2f();
-		this.velocity = 0.02;
+		this.velocity = 0.02f;
 		this.radius = radius;
 		calcDirection();
 	}
@@ -64,7 +64,7 @@ public class Ball {
 	/**
 	 * @param velocity the velocity to set
 	 */
-	public void setVelocity(double velocity) {
+	public void setVelocity(float velocity) {
 		this.velocity = velocity;
 	}
 
@@ -132,7 +132,8 @@ public class Ball {
 		if(speedY < 0.5){
 			speedY += 5.0;
 		}
-
+		this.vector.set(-speedX, speedY = 0.0f);
+/*
 		if (rndm.nextBoolean()) {
 			if (rndm.nextBoolean()) {
 				this.vector.set(-speedX, -speedY);
@@ -148,7 +149,7 @@ public class Ball {
 				this.vector.set(speedX, speedY);
 			}
 		} 
-
+*/
 	}
 	
 	/**
@@ -186,7 +187,7 @@ public class Ball {
 	public void addVelocity(double acceleration, int delta, Border lastcollision) {
 		float hip = (float) (acceleration * delta + velocity) / 100;
 		if(velocity < 3.5){
-			if (vector.getX() <= 5 && lastcollision == Border.LEFT ||vector.getX() <= 5  && lastcollision == Border.RIGHT) {
+			if (vector.getX() <= 5 && lastcollision == Border.LEFT || vector.getX() <= 5  && lastcollision == Border.RIGHT) {
 				velocity += 0.005;
 				if (vector.getX() < 0) {
 					vector.set(vector.getX() - hip, vector.getY());
@@ -205,6 +206,31 @@ public class Ball {
 	
 	/**
 	 * 
+	 * @param acceleration
+	 * @param delta
+	 * @param lastcollision
+	 */
+	public void addVelocityGravity(double acceleration, int delta, Border lastcollision) {
+		velocity += (float) (acceleration * (delta/100));
+		if(velocity < 3.5){
+			if (vector.getX() <= 5) {
+				if (vector.getX() < 0) {
+					vector.set(vector.getX() - (velocity * (delta/100)), vector.getY());
+				} else {
+					vector.set(vector.getX() + (velocity * (delta/100)), vector.getY());
+				}
+				if (vector.getY() < 0) {
+					vector.set(vector.getX(), vector.getY() + (velocity * (delta/10)));
+				} else {
+					vector.set(vector.getX(), vector.getY() + (velocity * (delta/10)));
+				}
+	
+			}
+		}
+	}
+	
+	/**
+	 * Adds the given acceleration to the balls speed. Negative values decrease the speed.
 	 * @param acceleration
 	 * @param delta
 	 */

@@ -41,7 +41,7 @@ public class Pong extends BasicGame {
 	private static final int ballradius = 5;
 	private static final int goal = 10;
 	@SuppressWarnings("unused") //TODO: Delete this
-	private static final double gravity = 0.0981; // TODO: Add gravity to challenge mode
+	private static final float gravity = 0.000000000000981f; // TODO: Add gravity to challenge mode
 	
 	private static final float easy = 2.5f;
 	private static final float medium = 5.0f;
@@ -65,7 +65,6 @@ public class Pong extends BasicGame {
 	
 	private String[] menu = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode - Coming soon","Options","Help","Quit Game"};
 	private String[] options = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
-	//private String[] help = {"How to Play:","Player 1 Controls:","Player 2 Controls:","How to navigate:","Menu Controls:"};
 	private String[] difficultymenu = {"Easy","Medium","Hard","Unbeatable"};
 	private String[] difficultyexplanation = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
 	private Color cpuselection = Color.gray;
@@ -193,7 +192,7 @@ public class Pong extends BasicGame {
 			}
 		}
 		
-		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN){
+		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN || currentmenustate == MenuState.Challenge){
 			pad1.draw(g);
 			pad2.draw(g);
 			ball.draw(g);
@@ -209,6 +208,7 @@ public class Pong extends BasicGame {
 				g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 85);
 				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 100);
 				g.drawString("Pad1 Spinspeed: " + Float.toString(pad1.getSpinspeed()), 75, 115);
+				g.drawString("Ball Position: " + Float.toString(ball.getBall().getCenterY()), 75, 130);
 				gc.setShowFPS(true);
 			}
 			
@@ -288,7 +288,9 @@ public class Pong extends BasicGame {
 					 */
 				}
 				if(playerselection == 3){
-					//currentmenustate = MenuState.Challenge;
+					currentmenustate = MenuState.Challenge;
+					newGame(hard);
+					currentgamestate = GameState.Play;
 				}
 				if(playerselection == 4){
 					currentmenustate = MenuState.Options;
@@ -441,6 +443,12 @@ public class Pong extends BasicGame {
 			
 			// Abort Game
 			if(input.isKeyPressed(Input.KEY_ESCAPE)){
+				if(currentmenustate == MenuState.Challenge){
+					challengeselection = Color.gray;
+				}
+				if(currentmenustate == MenuState.LAN){
+					lanselection = Color.gray;
+				}
 				abort();
 			}
 			
@@ -496,13 +504,17 @@ public class Pong extends BasicGame {
 	
 				if (currentgamestate == GameState.Play) {
 					
+					//Controls for ballspeed manipulation
 					if(DEBUG){
 						if(input.isKeyDown(Input.KEY_R)){
 							ball.addDebugVelocity(0.25f, delta);
 						}
+						if(input.isKeyDown(Input.KEY_T)){
+							ball.addDebugVelocity(-0.25f, delta);
+						}
 					}
 					
-					if(currentmenustate == MenuState.CPU){
+					if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.Challenge){
 						if(DEBUG_AI || currentmenustate == MenuState.Challenge) {
 							if(ball.getShape().getMinY() >= resY - pad2.getHEIGHT() / 2) {
 							}else if(ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
@@ -513,8 +525,6 @@ public class Pong extends BasicGame {
 							if(ball.getShape().getCenterX() > resX/2 + 10 && collision == false){
 								ball.calcTrajectory(ball.getVector().copy(), ball.getShape().getCenterX(), ball.getShape().getCenterY());
 								collision = true;
-							}
-								
 							}if(pad2.getShape().getCenterY() != resY/2 && lastpadcollision == Border.RIGHT){
 								
 								//Prevents that the AI pad is glitching while floating back to middle
@@ -531,8 +541,7 @@ public class Pong extends BasicGame {
 										}
 									}
 								}
-							}
-							if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != Border.RIGHT){
+							}if(ball.getShape().getCenterX() > resX/2 + 10 && lastpadcollision != Border.RIGHT){
 								if(ball.getShape().getMaxY() > resY) {
 									
 								}else if(ball.getShape().getMinY() < 0) {
@@ -549,13 +558,19 @@ public class Pong extends BasicGame {
 										}
 									}
 								}
+							}
 						}
 					}
 	
 	
 					ball.getShape().setCenterX(ball.getShape().getCenterX() + ball.getVectorX());
 					ball.getShape().setCenterY(ball.getShape().getCenterY() + ball.getVectorY());
-					ball.addVelocity(0.03, delta, lastcollision);
+					if(currentmenustate == MenuState.Challenge){
+						ball.addVelocityGravity(gravity, delta, lastcollision);
+					}else{
+						ball.addVelocity(0.03, delta, lastcollision);
+					}
+
 	
 					if (ball.getShape().getMinY() <= 0 && lastcollision != Border.TOP) {
 						ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
