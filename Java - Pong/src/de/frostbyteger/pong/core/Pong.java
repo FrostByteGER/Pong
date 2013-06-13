@@ -61,7 +61,7 @@ public class Pong extends BasicGame {
 	
 	// Version info
 	public static final String TITLE = "Pong";
-	public static final String VERSION = "v1.0";
+	public static final String VERSION = "v1.12";
 	
 	private final String[] MENU_ARRAY = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Options","Help","Quit Game"};
 	private final String[] MENU_OPTIONS_ARRAY = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
@@ -165,7 +165,7 @@ public class Pong extends BasicGame {
 			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[4])/2, S_resY/2 + 80, MENU_ARRAY[4], selectionArray.get(4));
 			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[5])/2, S_resY/2 + 100, MENU_ARRAY[5], selectionArray.get(5));
 			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[6])/2, S_resY/2 + 120, MENU_ARRAY[6], selectionArray.get(6));
-			g.drawString("RELEASE " + VERSION, S_resX - 115, S_resY - 15);
+			g.drawString("BETA " + VERSION, S_resX - 115, S_resY - 15);
 		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
