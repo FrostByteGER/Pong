@@ -24,6 +24,7 @@ public class Ball {
 	protected int spin; // TODO
 	protected Random rndm;
 	protected float estimatedY;
+	protected Border lastcollision;
 	
 	/**
 	 * 
@@ -37,6 +38,24 @@ public class Ball {
 		this.vector = new Vector2f();
 		this.velocity = 0.02f;
 		this.radius = radius;
+		this.lastcollision = Border.NONE;
+		calcDirection();
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param radius
+	 * @param lastcollision
+	 */
+	public Ball(int x, int y, int radius, Border lastcollision) {
+		rndm = new Random();
+		this.ball = new Circle(x, y, radius);
+		this.vector = new Vector2f();
+		this.velocity = 0.02f;
+		this.radius = radius;
+		this.lastcollision = lastcollision;
 		calcDirection();
 	}
 
@@ -112,6 +131,20 @@ public class Ball {
 	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
+	}
+
+	/**
+	 * @return the lastcollision
+	 */
+	public Border getLastcollision() {
+		return lastcollision;
+	}
+
+	/**
+	 * @param lastcollision the lastcollision to set
+	 */
+	public void setLastcollision(Border lastcollision) {
+		this.lastcollision = lastcollision;
 	}
 
 	public void draw(Graphics g) {
@@ -273,6 +306,55 @@ public class Ball {
 			}else{
 				vector.set(vector.getX(), vector.getY() - acceleration * 0.05f);
 			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void moveBall(){
+		ball.setCenterX(ball.getCenterX() + vector.getX());
+		ball.setCenterY(ball.getCenterY() + vector.getY());
+	}
+	
+	/**
+	 * TODO: Change parameters to arraylist!
+	 */
+	public Border collideBallListener(Pad pad1, Pad pad2){
+		if (ball.getMinY() <= 0) {
+			setVectorXY(vector.getX(), -vector.getY());
+			lastcollision = Border.TOP;
+			return lastcollision;
+		}
+
+		if (ball.getMaxY() >= Pong.S_resY) {
+			setVectorXY(vector.getX(), -vector.getY());
+			lastcollision = Border.BOTTOM;
+			return lastcollision;
+		}
+
+		if (pad1.intersects(ball)) {
+			if(pad1.getSpinspeed() > 0.0f){
+				addSpin(pad1.getSpinspeed());
+			}
+			setVectorXY(-vector.getX(), vector.getY());
+			//lastpadcollision = Border.LEFT;
+			lastcollision = Border.LEFT;
+			return lastcollision;
+		}
+
+		if (pad2.intersects(ball)) {
+			//if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
+			//	if(pad2.getSpinspeed() > 0.0f){
+			//		addSpin(-pad2.getSpinspeed());
+			//	}
+			//}
+			setVectorXY(-vector.getX(), vector.getY());
+			//lastpadcollision = Border.RIGHT;
+			lastcollision = Border.RIGHT;
+			return lastcollision;
+		}else{
+			return Border.NONE;
 		}
 	}
 }

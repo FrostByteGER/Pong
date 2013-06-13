@@ -1,5 +1,6 @@
 package de.frostbyteger.pong.core;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.newdawn.slick.AppGameContainer;
@@ -19,12 +20,12 @@ import de.frostbyteger.pong.engine.Difficulty;
 import de.frostbyteger.pong.engine.GameState;
 import de.frostbyteger.pong.engine.MenuState;
 import de.frostbyteger.pong.engine.Pad;
-import de.frostbyteger.pong.engine.PropertyHelper;
+import de.frostbyteger.pong.engine.io.PropertyHelper;
 
 
 /**
  * @author Kevin
- * TODO: Volume wont get really changed
+ * TODO: Music on/off Switch wont work
  * TODO: Scale Ballspeed with increasing resolution
  */
 public class Pong extends BasicGame {
@@ -66,19 +67,8 @@ public class Pong extends BasicGame {
 	private final String[] MENU_OPTIONS_ARRAY = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
 	private final String[] MENU_DIFFICULTY_ARRAY = {"Easy","Medium","Hard","Unbeatable"};
 	private final String[] MENU_DIFFICULTY_EXPL_ARRAY = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
-	private Color cpuselection = Color.gray;
-	private Color pvpselection = Color.gray;
-	private Color lanselection = Color.gray;
-	private Color challengeselection = Color.gray;
-	private Color optionselection = Color.gray;
-	private Color resselection = Color.gray;
-	private Color volselection = Color.gray;
-	private Color volstatselection = Color.gray;
-	private Color debugselection = Color.red;
-	private Color saveselection = Color.gray;
-	private Color exitselection = Color.gray;
-	private Color helpselection = Color.gray;
-	private Color quitselection = Color.gray;
+
+	private ArrayList<Color> selectionArray = new ArrayList<Color>();
 	private UnicodeFont smallfont;
 	private UnicodeFont normalfont;
 	private UnicodeFont mediumfont;
@@ -90,7 +80,10 @@ public class Pong extends BasicGame {
 	private int resolutionselection = 0;
 	
 	private int challengecounter = 0;
+	private int presstimer = 0;
 	private float time = 0.0f;
+	private int press = 0;
+
 	
 	private static boolean S_Debug = true;
 	private static boolean S_Debug_AI = false;
@@ -114,6 +107,11 @@ public class Pong extends BasicGame {
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
+		
+		for(int e = 0;e <= 13;e++){
+			selectionArray.add(Color.gray);
+		}
+		
 		
 		smallfont = newFont("data/alexis.ttf", 25, false, false);
 		
@@ -143,7 +141,9 @@ public class Pong extends BasicGame {
 		}catch(NumberFormatException nfe){
 			nfe.printStackTrace();
 		}
+		
 		S_Container.setDisplayMode(S_resX, S_resY, false);
+		
 		//Ensures that the displayed resolution in the optionsmenu equals the actual gamewindow resolution when
 		//starting the game
 		for(int i = 0; i < RES_ARRAY.length;i++){
@@ -158,13 +158,13 @@ public class Pong extends BasicGame {
 	public void render(GameContainer gc, Graphics g) throws SlickException {
 		if(currentmenustate == MenuState.Main){
 			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[0])/2, S_resY/2, MENU_ARRAY[0], cpuselection);		
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[1])/2, S_resY/2 + 20, MENU_ARRAY[1], pvpselection);
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[2])/2, S_resY/2 + 40, MENU_ARRAY[2], lanselection);
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[3])/2, S_resY/2 + 60, MENU_ARRAY[3], challengeselection);
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[4])/2, S_resY/2 + 80, MENU_ARRAY[4], optionselection);
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[5])/2, S_resY/2 + 100, MENU_ARRAY[5], helpselection);
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[6])/2, S_resY/2 + 120, MENU_ARRAY[6], quitselection);
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[0])/2, S_resY/2, MENU_ARRAY[0], selectionArray.get(0));		
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[1])/2, S_resY/2 + 20, MENU_ARRAY[1], selectionArray.get(1));
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[2])/2, S_resY/2 + 40, MENU_ARRAY[2], selectionArray.get(2));
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[3])/2, S_resY/2 + 60, MENU_ARRAY[3], selectionArray.get(3));
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[4])/2, S_resY/2 + 80, MENU_ARRAY[4], selectionArray.get(4));
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[5])/2, S_resY/2 + 100, MENU_ARRAY[5], selectionArray.get(5));
+			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[6])/2, S_resY/2 + 120, MENU_ARRAY[6], selectionArray.get(6));
 			g.drawString("RELEASE " + VERSION, S_resX - 115, S_resY - 15);
 		}
 		
@@ -179,21 +179,21 @@ public class Pong extends BasicGame {
 		
 		if(currentmenustate == MenuState.Options){
 			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
-			normalfont.drawString(100, S_resY/2, MENU_OPTIONS_ARRAY[0],resselection);
-			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[0]), S_resY/2, RES_ARRAY[resolutionselection][0] + "x" + RES_ARRAY[resolutionselection][1], resselection);
-			normalfont.drawString(100, S_resY/2 + 20, MENU_OPTIONS_ARRAY[1],volselection);
-			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[1]), S_resY/2 + 20, Integer.toString((int)gc.getMusicVolume()*100), volselection);
-			normalfont.drawString(100, S_resY/2 + 40, MENU_OPTIONS_ARRAY[2],volstatselection);
+			normalfont.drawString(100, S_resY/2, MENU_OPTIONS_ARRAY[0],selectionArray.get(7));
+			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[0]), S_resY/2, RES_ARRAY[resolutionselection][0] + "x" + RES_ARRAY[resolutionselection][1], selectionArray.get(7));
+			normalfont.drawString(100, S_resY/2 + 20, MENU_OPTIONS_ARRAY[1],selectionArray.get(8));
+			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[1]), S_resY/2 + 20, (Integer.toString((int)(gc.getMusicVolume()*100.0f))), selectionArray.get(8));
+			normalfont.drawString(100, S_resY/2 + 40, MENU_OPTIONS_ARRAY[2],selectionArray.get(9));
 			if(gc.isMusicOn() == true){
-				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[2]) + 20, S_resY/2 + 40, "on", volstatselection);
+				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[2]) + 20, S_resY/2 + 40, "on", selectionArray.get(9));
 			}else{
-				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[2]) + 20, S_resY/2 + 40, "off", volstatselection);	
+				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[2]) + 20, S_resY/2 + 40, "off", selectionArray.get(9));	
 			}
-			normalfont.drawString(100, S_resY/2 + 90, MENU_OPTIONS_ARRAY[4],saveselection);
-			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[4]) + 40, S_resY/2 + 90, MENU_OPTIONS_ARRAY[5],exitselection);
+			normalfont.drawString(100, S_resY/2 + 90, MENU_OPTIONS_ARRAY[4],selectionArray.get(10));
+			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[4]) + 40, S_resY/2 + 90, MENU_OPTIONS_ARRAY[5],selectionArray.get(11));
 			if(S_Debug == true){
-				normalfont.drawString(100, S_resY/2 + 60, MENU_OPTIONS_ARRAY[3],debugselection);
-				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[3]) + 20, S_resY/2 + 60, Boolean.toString(S_Debug_AI),Color.white);
+				normalfont.drawString(100, S_resY/2 + 60, MENU_OPTIONS_ARRAY[3],selectionArray.get(12));
+				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[3]) + 20, S_resY/2 + 60, Boolean.toString(S_Debug_AI),selectionArray.get(12));
 			}
 		}
 		
@@ -201,10 +201,11 @@ public class Pong extends BasicGame {
 			pad1.draw(g);
 			pad2.draw(g);
 			ball.draw(g);
-			//TODO: Change this or use another font
-			g.drawString(Integer.toString(pad1.getPoints()), S_resX / 2 - 20, S_resY / 2);
-			g.drawString(":", S_resX / 2, S_resY / 2);
-			g.drawString(Integer.toString(pad2.getPoints()), S_resX / 2 + 20, S_resY / 2);
+			if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN){
+				g.drawString(Integer.toString(pad1.getPoints()), S_resX / 2 - 20, S_resY / 2);
+				g.drawString(":", S_resX / 2, S_resY / 2);
+				g.drawString(Integer.toString(pad2.getPoints()), S_resX / 2 + 20, S_resY / 2);
+			}
 			if (S_Debug == true) {
 				g.drawString("DEBUG Monitor", 75, 25);
 				g.drawString("Ballvelocity: " + Double.toString(ball.getVelocity()), 75,40);
@@ -212,7 +213,7 @@ public class Pong extends BasicGame {
 				g.drawString("LastPadCollision:" + lastpadcollision.toString(), 75, 70);
 				g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 85);
 				g.drawString("Pad1 Position: " + Float.toString(pad1.getShape().getCenterY()) + " Pad2 Position: " + Float.toString(pad2.getShape().getCenterY()), 75, 100);
-				g.drawString("Pad1 Spinspeed: " + Float.toString(pad1.getSpinspeed()), 75, 115);
+				g.drawString("Pad1 Spinspeed: " + Float.toString(pad1.getSpinspeed()) + "|" + "Pad2 Spinspeed: " + Float.toString(pad2.getSpinspeed()), 75, 115);
 				g.drawString("Ball Position: " + Float.toString(ball.getBall().getCenterX()) + "|" + Float.toString(ball.getBall().getCenterY()), 75, 130);
 				g.drawString("Delta: " + Float.toString(1.0f/FPS), 75, 145);
 				gc.setShowFPS(true);
@@ -247,31 +248,40 @@ public class Pong extends BasicGame {
 		Input input = gc.getInput();
 		if(currentmenustate == MenuState.Main){
 			if(playerselection == 0){
-				cpuselection = Color.white;
-				pvpselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(0, Color.white);
 			}else if(playerselection == 1){
-				cpuselection = Color.gray;
-				pvpselection = Color.white;
-				lanselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(1, Color.white);
 			}else if(playerselection == 2){
-				pvpselection = Color.gray;
-				lanselection = Color.white;
-				challengeselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(2, Color.white);
 			}else if(playerselection == 3){
-				lanselection = Color.gray;
-				challengeselection = Color.white;
-				optionselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(3, Color.white);
 			}else if(playerselection == 4){
-				challengeselection = Color.gray;
-				optionselection = Color.white;
-				helpselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(4, Color.white);
 			}else if(playerselection == 5){
-				optionselection = Color.gray;
-				helpselection = Color.white;
-				quitselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(5, Color.white);
 			}else if(playerselection == 6){
-				helpselection = Color.gray;
-				quitselection = Color.white;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(6, Color.white);
 			}
 			
 			if(input.isKeyPressed(Input.KEY_UP) && playerselection > 0){
@@ -280,6 +290,7 @@ public class Pong extends BasicGame {
 			if(input.isKeyPressed(Input.KEY_DOWN) && playerselection < 6){
 				playerselection += 1;
 			}
+			
 			if(input.isKeyPressed(Input.KEY_ENTER)){
 				if(playerselection == 0){
 					currentmenustate = MenuState.CPUSelection;
@@ -369,8 +380,10 @@ public class Pong extends BasicGame {
 			}
 			
 			if(configselection == 0){
-				resselection = Color.white;
-				volselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(7, Color.white);
 				if(input.isKeyPressed(Input.KEY_LEFT) && resolutionselection > 0){
 					resolutionselection -= 1;
 				}
@@ -378,28 +391,51 @@ public class Pong extends BasicGame {
 					resolutionselection += 1;
 				}
 			}else if(configselection == 1){
-				if(input.isKeyPressed(Input.KEY_LEFT) && gc.getMusicVolume() > 0){
-					gc.setMusicVolume(gc.getMusicVolume()-0.01f);
+					if(input.isKeyDown(Input.KEY_LEFT) && gc.getMusicVolume() > 0){
+						if(press <= 4 && presstimer == 35){
+							gc.setMusicVolume(gc.getMusicVolume()-0.01f);
+							presstimer = 0;
+							press += 1;
+						}else if(press > 4 && presstimer == 10){
+							gc.setMusicVolume(gc.getMusicVolume()-0.01f);
+							presstimer = 0;
+						}else{
+							presstimer += 5;
+						}
+						
+					}else if(input.isKeyDown(Input.KEY_RIGHT) && gc.getMusicVolume() < 100){
+					
+						if(press <= 4 && presstimer == 35){
+							gc.setMusicVolume(gc.getMusicVolume()+0.01f);
+							presstimer = 0;
+							press += 1;
+						}else if(press > 4 && presstimer == 10){
+							System.out.println("TEST");
+							gc.setMusicVolume(gc.getMusicVolume()+0.01f);
+							presstimer = 0;
+						}else{
+							presstimer += 5;
+						}
+						
+					}else{
+						press = 0;
+					}
+					
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
 				}
-				if(input.isKeyPressed(Input.KEY_RIGHT) && gc.getMusicVolume() < 100){
-					gc.setMusicVolume(gc.getMusicVolume()+0.01f);
-				}
-				resselection = Color.gray;
-				volselection = Color.white;
-				volstatselection = Color.gray;
+				selectionArray.set(8, Color.white);
 			}else if(configselection == 2){
-				if(input.isKeyPressed(Input.KEY_RIGHT) && gc.isMusicOn() == true ||  gc.isMusicOn() == true &&  input.isKeyPressed(Input.KEY_ENTER)){
+				if(input.isKeyPressed(Input.KEY_RIGHT) && gc.isMusicOn() == true || gc.isMusicOn() == true &&  input.isKeyPressed(Input.KEY_ENTER)){
 					gc.setMusicOn(false);
 				}
-				if(input.isKeyPressed(Input.KEY_LEFT) && gc.isMusicOn() == false ||  gc.isMusicOn() == false && input.isKeyPressed(Input.KEY_ENTER)){
+				if(input.isKeyPressed(Input.KEY_LEFT) && gc.isMusicOn() == false || gc.isMusicOn() == false && input.isKeyPressed(Input.KEY_ENTER)){
 					gc.setMusicOn(true);
 				}
-				if(S_Debug == true){
-					debugselection = Color.red;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
 				}
-				volselection = Color.gray;
-				volstatselection = Color.white;
-				saveselection = Color.gray;
+				selectionArray.set(9, Color.white);
 			}else if(configselection == 3){
 				if(input.isKeyPressed(Input.KEY_RIGHT) && S_Debug_AI == true ||  S_Debug_AI == true &&  input.isKeyPressed(Input.KEY_ENTER)){
 					S_Debug_AI = false;
@@ -407,14 +443,21 @@ public class Pong extends BasicGame {
 				if(input.isKeyPressed(Input.KEY_LEFT) && S_Debug_AI == false ||  S_Debug_AI == false && input.isKeyPressed(Input.KEY_ENTER)){
 					S_Debug_AI = true;
 				}
-				volstatselection = Color.gray;
-				debugselection = Color.pink;
-				saveselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(12, Color.white);
 			}else if(configselection == 4){
 				if(S_Debug == false){
-					volstatselection = Color.gray;
+					for(int e = 0;e < selectionArray.size();e++){
+						selectionArray.set(e, Color.gray);
+					}
+					selectionArray.set(9, Color.white);
 				}else{
-					debugselection = Color.red;
+					for(int e = 0;e < selectionArray.size();e++){
+						selectionArray.set(e, Color.gray);
+					}
+					selectionArray.set(12, Color.white);
 				}
 				if(input.isKeyPressed(Input.KEY_ENTER)){
 					try{
@@ -422,7 +465,7 @@ public class Pong extends BasicGame {
 						S_resY = RES_ARRAY[resolutionselection][1];
 						prophelper.saveProperty("resX", Integer.toString(S_resX));
 						prophelper.saveProperty("resY", Integer.toString(S_resY));
-						prophelper.saveProperty("volume", Integer.toString((int)gc.getMusicVolume()));
+						prophelper.saveProperty("volume", Float.toString((int)(gc.getMusicVolume()*100)/100.0f));
 						prophelper.saveProperty("vol_on", Boolean.toString(gc.isMusicOn()));
 						prophelper.savePropertiesFile();
 					}catch(NumberFormatException nfe){
@@ -430,14 +473,18 @@ public class Pong extends BasicGame {
 					}
 					S_Container.setDisplayMode(S_resX, S_resY, false);
 				}
-				saveselection = Color.white;
-				exitselection = Color.gray;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(10, Color.white);
 			}else if(configselection == 5){
 				if(input.isKeyPressed(Input.KEY_ENTER)){
 					currentmenustate = MenuState.Main;	
 				}
-				saveselection = Color.gray;
-				exitselection = Color.white;
+				for(int e = 0;e < selectionArray.size();e++){
+					selectionArray.set(e, Color.gray);
+				}
+				selectionArray.set(11, Color.white);
 			}
 		}
 		
@@ -452,12 +499,7 @@ public class Pong extends BasicGame {
 			
 			// Abort Game
 			if(input.isKeyPressed(Input.KEY_ESCAPE)){
-				if(currentmenustate == MenuState.Challenge){
-					challengeselection = Color.gray;
-				}
-				if(currentmenustate == MenuState.LAN){
-					lanselection = Color.gray;
-				}
+
 				abort();
 			}
 			
@@ -526,9 +568,12 @@ public class Pong extends BasicGame {
 					if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.Challenge){
 						if(S_Debug_AI || currentmenustate == MenuState.Challenge) {
 							if(ball.getShape().getMinY() >= S_resY - pad2.getHEIGHT() / 2) {
+								pad2.resetSpinSpeed();
 							}else if(ball.getShape().getMaxY() <= 0 + pad2.getHEIGHT() / 2) {
+								pad2.resetSpinSpeed();
 							}else{
 								pad2.getShape().setCenterY(ball.getShape().getCenterY());
+								pad2.addSpinSpeed(0.005f * delta);
 							}
 						}else{
 							if(ball.getShape().getCenterX() > S_resX/2 + 10 && collision == false){
@@ -571,7 +616,8 @@ public class Pong extends BasicGame {
 						}
 					}
 	
-	
+					//TODO: outsource the collision detection and everything else that belongs to the ball
+					//to the ball class
 					ball.getShape().setCenterX(ball.getShape().getCenterX() + ball.getVectorX());
 					ball.getShape().setCenterY(ball.getShape().getCenterY() + ball.getVectorY());
 					
@@ -587,17 +633,17 @@ public class Pong extends BasicGame {
 					}
 
 	
-					if (ball.getShape().getMinY() <= 0 && lastcollision != Border.TOP) {
+					if (ball.getShape().getMinY() <= 0) {
 						ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
 						lastcollision = Border.TOP;
 					}
 	
-					if (ball.getShape().getMaxY() >= S_resY && lastcollision != Border.BOTTOM) {
+					if (ball.getShape().getMaxY() >= S_resY) {
 						ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
 						lastcollision = Border.BOTTOM;
 					}
 	
-					if (pad1.intersects(ball.getShape()) && lastcollision != Border.LEFT) {
+					if (pad1.intersects(ball.getShape())) {
 						if(pad1.getSpinspeed() > 0.0f){
 							ball.addSpin(pad1.getSpinspeed());
 						}
@@ -606,12 +652,10 @@ public class Pong extends BasicGame {
 						lastcollision = Border.LEFT;
 					}
 	
-					if (pad2.intersects(ball.getShape()) && lastcollision != Border.RIGHT) {
+					if (pad2.intersects(ball.getShape())) {
 						if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
 							if(pad2.getSpinspeed() > 0.0f){
-								System.out.println(ball.getVectorX() + "|" + ball.getVectorY());
 								ball.addSpin(-pad2.getSpinspeed());
-								System.out.println(ball.getVectorX() + "|" + ball.getVectorY());
 							}
 						}
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());

@@ -1,23 +1,23 @@
-package de.frostbyteger.pong.engine;
+package de.frostbyteger.pong.engine.io;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 public class PropertyHelper {
 
-	protected Properties properties;
+	protected SortedProperties properties;
 	protected String configpath = "data/config.properties";
 	protected FileInputStream fis;
 	protected FileOutputStream fos;
 	
 	public PropertyHelper(){
-		properties = new Properties();
+		properties = new SortedProperties();
 	}
 	
 	public PropertyHelper(String path){
-		properties = new Properties();
+		properties = new SortedProperties();
+		//properties.put
 		configpath = path;
 	}
 	
