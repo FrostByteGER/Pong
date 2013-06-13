@@ -30,24 +30,19 @@ import de.frostbyteger.pong.engine.io.PropertyHelper;
  */
 public class Pong extends BasicGame {
 
-	protected Pad pad1, pad2;
+	protected Pad pad1;
+	protected Pad pad2;
 	protected Ball ball;
 
 	protected Border lastcollision;
 	protected Border lastpadcollision;
 	protected GameState currentgamestate = GameState.Start;
 	protected MenuState currentmenustate = MenuState.Main;
-	protected Difficulty cpudifficulty;
 	
 	private static final int BALLRADIUS = 5;
 	private static final int GOAL = 10;
 	
 	private static float S_gravity = 0.00981f;
-	
-	private static final float EASY = 2.5f;
-	private static final float MEDIUM = 5.0f;
-	private static final float HARD = 10.0f;
-	private static final float UNBEATABLE = 15.0f;
 	
 	private static final int[][] RES_ARRAY = {{640,480},{800,600},{1024,768},{1280,960},{1280,1024}};
 	
@@ -81,10 +76,10 @@ public class Pong extends BasicGame {
 	
 	private int challengecounter = 0;
 	private int presstimer = 0;
-	private float time = 0.0f;
 	private int press = 0;
-
 	
+	private float time = 0.0f;
+
 	private static boolean S_Debug = true;
 	private static boolean S_Debug_AI = false;
 	
@@ -297,7 +292,7 @@ public class Pong extends BasicGame {
 				}
 				if(playerselection == 1){
 					currentmenustate = MenuState.PvP;
-					newGame(HARD);
+					newGame(Difficulty.HARD.getDifficulty());
 					currentgamestate = GameState.Play;
 				}
 				if(playerselection == 2){
@@ -309,7 +304,7 @@ public class Pong extends BasicGame {
 				}
 				if(playerselection == 3){
 					currentmenustate = MenuState.Challenge;
-					newGame(HARD);
+					newGame(Difficulty.HARD.getDifficulty());
 					currentgamestate = GameState.Play;
 				}
 				if(playerselection == 4){
@@ -341,22 +336,22 @@ public class Pong extends BasicGame {
 			if(input.isKeyPressed(Input.KEY_ENTER)){
 				if(difficultyselection == 0){
 					currentmenustate = MenuState.CPU;
-					newGame(EASY);
+					newGame(Difficulty.EASY.getDifficulty());
 					currentgamestate = GameState.Play;
 				}
 				if(difficultyselection == 1){
 					currentmenustate = MenuState.CPU;
-					newGame(MEDIUM);
+					newGame(Difficulty.MEDIUM.getDifficulty());
 					currentgamestate = GameState.Play;
 				}
 				if(difficultyselection == 2){
 					currentmenustate = MenuState.CPU;
-					newGame(HARD);
+					newGame(Difficulty.HARD.getDifficulty());
 					currentgamestate = GameState.Play;
 				}
 				if(difficultyselection == 3){
 					currentmenustate = MenuState.CPU;
-					newGame(UNBEATABLE);
+					newGame(Difficulty.UNBEATABLE.getDifficulty());
 					currentgamestate = GameState.Play;
 				}
 			}
@@ -687,7 +682,7 @@ public class Pong extends BasicGame {
 					}
 				}
 				
-				if(input.isKeyPressed(Input.KEY_ENTER)){
+				if(input.isKeyPressed(Input.KEY_ENTER) && S_Debug == true){
 					newBall();
 				}
 	
