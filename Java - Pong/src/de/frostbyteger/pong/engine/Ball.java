@@ -310,7 +310,7 @@ public class Ball {
 	}
 	
 	/**
-	 * 
+	 * TODO: Use this method
 	 */
 	public void moveBall(){
 		ball.setCenterX(ball.getCenterX() + vector.getX());
