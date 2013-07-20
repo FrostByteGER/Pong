@@ -15,6 +15,8 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Options extends BasicGameState {
 
+	private final int ID = 002;
+	
 	/**
 	 * 
 	 */
@@ -57,8 +59,7 @@ public class Options extends BasicGameState {
 	 */
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ID;
 	}
 
 }

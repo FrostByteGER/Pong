@@ -6,17 +6,17 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import de.frostbyteger.pong.core.CorePong;
+import de.frostbyteger.pong.core.MainMenu;
 
 public class Pong extends StateBasedGame{
 
 	public Pong(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		// TODO Auto-generated method stub
+		addState(new MainMenu());
 		
 	}
 
