@@ -13,6 +13,10 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
+
+import com.sun.org.apache.xerces.internal.impl.dv.xs.BaseDVFactory;
 
 import de.frostbyteger.pong.engine.Ball;
 import de.frostbyteger.pong.engine.Border;
@@ -28,7 +32,7 @@ import de.frostbyteger.pong.engine.io.PropertyHelper;
  * TODO: Music on/off Switch wont work
  * TODO: Scale Ballspeed with increasing resolution
  */
-public class Pong extends BasicGame {
+public class CorePong extends BasicGameState {
 
 	protected Pad pad1;
 	protected Pad pad2;
@@ -96,11 +100,10 @@ public class Pong extends BasicGame {
 	protected Random rndm = new Random();
 
 	//TODO: Add description
-	public Pong(String title) {
-		super(title);
+	public CorePong(String title) {
+		//super(title);
 	}
 
-	@Override
 	public void init(GameContainer gc) throws SlickException {
 		
 		for(int e = 0;e <= 13;e++){
@@ -149,7 +152,6 @@ public class Pong extends BasicGame {
 
 	}
 
-	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException {
 		if(currentmenustate == MenuState.Main){
 			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
@@ -237,7 +239,6 @@ public class Pong extends BasicGame {
 
 	}
 
-	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		
 		Input input = gc.getInput();
@@ -736,6 +737,33 @@ public class Pong extends BasicGame {
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		currentmenustate = MenuState.Main;
+	}
+
+	@Override
+	public void init(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render(GameContainer container, StateBasedGame game, Graphics g)
+			throws SlickException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(GameContainer container, StateBasedGame game, int delta)
+			throws SlickException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getID() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
