@@ -7,6 +7,6 @@ package de.frostbyteger.pong.engine;
  * @author Kevin
  *
  */
-public enum GameState {
-	PvCPU, PvP, Challenge
+public enum OptionState {
+	Controls, Graphics, Sound, Network
 }

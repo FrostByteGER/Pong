@@ -15,7 +15,10 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Options extends BasicGameState {
 
-	private final int ID = 002;
+	protected final static int ID = 002;
+	
+	private final String[] MENU_OPTIONS_ARRAY = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
+
 	
 	/**
 	 * 
@@ -40,6 +43,7 @@ public class Options extends BasicGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
+		g.drawString("TEST", 100, 100);
 		// TODO Auto-generated method stub
 
 	}

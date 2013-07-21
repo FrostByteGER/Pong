@@ -15,7 +15,7 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Lan extends BasicGameState {
 	
-	private final int ID = 005;
+	protected static final int ID = 005;
 
 	/**
 	 * 

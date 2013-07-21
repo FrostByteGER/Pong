@@ -5,9 +5,14 @@ package de.frostbyteger.pong.core;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
+import de.frostbyteger.pong.engine.Ball;
+import de.frostbyteger.pong.engine.Border;
+import de.frostbyteger.pong.engine.Pad;
 
 /**
  * @author Kevin
@@ -15,7 +20,21 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Game extends BasicGameState {
 
-	private final int ID = 003;
+	protected static final int ID = 003;
+	
+	private final String[] MENU_DIFFICULTY_ARRAY = {"Easy","Medium","Hard","Unbeatable"};
+	private final String[] MENU_DIFFICULTY_EXPL_ARRAY = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
+
+	
+	protected Pad pad1;
+	protected Pad pad2;
+	protected Ball ball;
+
+	protected Border lastcollision;
+	protected Border lastpadcollision;
+	
+	public Image arrow_left;
+	public Image arrow_right;
 	
 	/**
 	 * 
@@ -24,19 +43,12 @@ public class Game extends BasicGameState {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.GameState#init(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame)
-	 */
 	@Override
-	public void init(GameContainer container, StateBasedGame game)
-			throws SlickException {
-		// TODO Auto-generated method stub
-
+	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		arrow_left = new Image("data/arrow_left.png");
+		arrow_right = new Image("data/arrow_right.png");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.GameState#render(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame, org.newdawn.slick.Graphics)
-	 */
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
@@ -44,9 +56,6 @@ public class Game extends BasicGameState {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.GameState#update(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame, int)
-	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
@@ -54,9 +63,6 @@ public class Game extends BasicGameState {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.BasicGameState#getID()
-	 */
 	@Override
 	public int getID() {
 		return ID;

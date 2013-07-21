@@ -15,7 +15,7 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Profile extends BasicGameState {
 	
-	private final int ID = 004;
+	protected static final int ID = 004;
 
 	/**
 	 * 

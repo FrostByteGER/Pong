@@ -31,10 +31,6 @@ import de.frostbyteger.pong.engine.io.PropertyHelper;
  */
 public class CorePong extends BasicGameState {
 
-	protected Pad pad1;
-	protected Pad pad2;
-	protected Ball ball;
-
 	protected Border lastcollision;
 	protected Border lastpadcollision;
 	protected GameState currentgamestate = GameState.Start;
@@ -49,28 +45,9 @@ public class CorePong extends BasicGameState {
 	
 	private final String AI = "AI-Difficulty";
 	
-	// Options
-	public static int S_resX = 800;
-	public static int S_resY = 600;
-	
-	public static final int FPS = 60;
-	
-	// Version info
-	public static final String TITLE = "Pong";
-	public static final String VERSION = "v1.12";
-	
-	private final String[] MENU_ARRAY = {"Player vs. CPU","Player vs. Player","LAN-Mode - Coming soon","Challenge Mode","Options","Help","Quit Game"};
-	private final String[] MENU_OPTIONS_ARRAY = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Exit"};
-	private final String[] MENU_DIFFICULTY_ARRAY = {"Easy","Medium","Hard","Unbeatable"};
-	private final String[] MENU_DIFFICULTY_EXPL_ARRAY = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
 
-	private ArrayList<Color> selectionArray = new ArrayList<Color>();
-	private UnicodeFont smallfont;
-	private UnicodeFont normalfont;
-	private UnicodeFont mediumfont;
-	private UnicodeFont bigfont;
 	
-	private int playerselection = 0;
+
 	private int difficultyselection = 1;
 	private int configselection = 0;
 	private int resolutionselection = 0;
@@ -81,17 +58,13 @@ public class CorePong extends BasicGameState {
 	
 	private float time = 0.0f;
 
-	private static boolean S_Debug = true;
+
 	private static boolean S_Debug_AI = false;
 	
 	private boolean collision = false;
 	
-	private Image arrow_left;
-	private Image arrow_right;
+
 	
-	private PropertyHelper prophelper;
-	
-	public static AppGameContainer S_Container;
 	
 	protected double hip = 0;
 	protected Random rndm = new Random();
@@ -103,41 +76,15 @@ public class CorePong extends BasicGameState {
 
 	public void init(GameContainer gc) throws SlickException {
 		
-		for(int e = 0;e <= 13;e++){
-			selectionArray.add(Color.gray);
-		}
-		
-		
-		smallfont = newFont("data/alexis.ttf", 25, false, false);
-		
-		normalfont = newFont("data/alexis.ttf", 40, false, false);
-		
-		mediumfont = newFont("data/alexis.ttf", 50, false, false);
-		
-		bigfont = newFont("data/alexis.ttf", 120, false, false);
-		
-		arrow_left = new Image("data/arrow_left.png");
-		arrow_right = new Image("data/arrow_right.png");
+
+
 
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		currentgamestate = GameState.Play;
 		
-		//TODO: Warning, not safe
-		prophelper = new PropertyHelper();
-		prophelper.loadPropertiesFile();
 		
-		try{
-			S_resX = Integer.parseInt(prophelper.loadProperty("resX"));
-			S_resY = Integer.parseInt(prophelper.loadProperty("resY"));
-			gc.setMusicVolume(Float.parseFloat(prophelper.loadProperty("volume")));
-			gc.setMusicOn(Boolean.parseBoolean(prophelper.loadProperty("vol_on")));
-			S_Debug = Boolean.parseBoolean(prophelper.loadProperty("debug"));
-		}catch(NumberFormatException nfe){
-			nfe.printStackTrace();
-		}
 		
-		S_Container.setDisplayMode(S_resX, S_resY, false);
 		
 		//Ensures that the displayed resolution in the optionsmenu equals the actual gamewindow resolution when
 		//starting the game
@@ -150,17 +97,6 @@ public class CorePong extends BasicGameState {
 	}
 
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		if(currentmenustate == MenuState.Main){
-			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[0])/2, S_resY/2, MENU_ARRAY[0], selectionArray.get(0));		
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[1])/2, S_resY/2 + 20, MENU_ARRAY[1], selectionArray.get(1));
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[2])/2, S_resY/2 + 40, MENU_ARRAY[2], selectionArray.get(2));
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[3])/2, S_resY/2 + 60, MENU_ARRAY[3], selectionArray.get(3));
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[4])/2, S_resY/2 + 80, MENU_ARRAY[4], selectionArray.get(4));
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[5])/2, S_resY/2 + 100, MENU_ARRAY[5], selectionArray.get(5));
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_ARRAY[6])/2, S_resY/2 + 120, MENU_ARRAY[6], selectionArray.get(6));
-			g.drawString("BETA " + VERSION, S_resX - 115, S_resY - 15);
-		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
 			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
@@ -238,87 +174,6 @@ public class CorePong extends BasicGameState {
 
 	public void update(GameContainer gc, int delta) throws SlickException {
 		
-		Input input = gc.getInput();
-		if(currentmenustate == MenuState.Main){
-			if(playerselection == 0){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(0, Color.white);
-			}else if(playerselection == 1){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(1, Color.white);
-			}else if(playerselection == 2){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(2, Color.white);
-			}else if(playerselection == 3){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(3, Color.white);
-			}else if(playerselection == 4){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(4, Color.white);
-			}else if(playerselection == 5){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(5, Color.white);
-			}else if(playerselection == 6){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(6, Color.white);
-			}
-			
-			if(input.isKeyPressed(Input.KEY_UP) && playerselection > 0){
-				playerselection -= 1;
-			}
-			if(input.isKeyPressed(Input.KEY_DOWN) && playerselection < 6){
-				playerselection += 1;
-			}
-			
-			if(input.isKeyPressed(Input.KEY_ENTER)){
-				if(playerselection == 0){
-					currentmenustate = MenuState.CPUSelection;
-				}
-				if(playerselection == 1){
-					currentmenustate = MenuState.PvP;
-					newGame(Difficulty.HARD.getDifficulty());
-					currentgamestate = GameState.Play;
-				}
-				if(playerselection == 2){
-					/*TODO
-					 *Add Lanmode to game
-					 *currentmenustate = MenuState.LAN;
-					 *newGame();
-					 */
-				}
-				if(playerselection == 3){
-					currentmenustate = MenuState.Challenge;
-					newGame(Difficulty.HARD.getDifficulty());
-					currentgamestate = GameState.Play;
-				}
-				if(playerselection == 4){
-					currentmenustate = MenuState.Options;
-				}
-				if(playerselection == 5){
-					
-				}
-				if(playerselection == 6){
-					gc.exit();
-				}
-
-				//TODO: Add Help to the menu
-				
-			}
-		}
 		
 		if(currentmenustate == MenuState.CPUSelection){
 			if(input.isKeyPressed(Input.KEY_ESCAPE)){
@@ -707,14 +562,7 @@ public class CorePong extends BasicGameState {
 		pad2.getShape().setCenterY(S_resY/2);
 		ball = new Ball(S_resX / 2 - BALLRADIUS / 2, S_resY / 2 - BALLRADIUS / 2, BALLRADIUS);
 	}
-	
-	private UnicodeFont newFont(String font,int fontsize, boolean bold, boolean italic) throws SlickException{
-		UnicodeFont unifont = new UnicodeFont(font,fontsize , bold, italic);
-		unifont.addAsciiGlyphs();
-		unifont.getEffects().add(new ColorEffect());
-		unifont.loadGlyphs();
-		return unifont;
-	}
+
 	
 	private void newBall(){
 		lastcollision = Border.NONE;
@@ -734,33 +582,6 @@ public class CorePong extends BasicGameState {
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		currentmenustate = MenuState.Main;
-	}
-
-	@Override
-	public void init(GameContainer container, StateBasedGame game)
-			throws SlickException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void render(GameContainer container, StateBasedGame game, Graphics g)
-			throws SlickException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void update(GameContainer container, StateBasedGame game, int delta)
-			throws SlickException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int getID() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }
