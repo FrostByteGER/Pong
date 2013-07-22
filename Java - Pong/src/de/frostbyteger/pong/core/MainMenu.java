@@ -9,6 +9,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -29,13 +30,13 @@ public class MainMenu extends BasicGameState {
 	//"Player vs. CPU","Player vs. Player","Challenge Mode"
 	private final String[] MENU_ARRAY = {"New Game", "LAN-Mode", "Options", "Profile", "Quit Game"};
 
-	private ArrayList<Color> selectionArray = new ArrayList<Color>();
-	
-	private PropertyHelper prophelper;
+	private ArrayList<Color> mainArray = new ArrayList<Color>();
 	
 	private int selection = 0;
 	
 	private Input input;
+	
+	private Music msc;
 
 	/**
 	 * 
@@ -49,22 +50,22 @@ public class MainMenu extends BasicGameState {
 		FontHelper.normalfont = FontHelper.newFont(FontHelper.FONT, 40, false, false);
 		FontHelper.mediumfont = FontHelper.newFont(FontHelper.FONT, 50, false, false);
 		FontHelper.bigfont = FontHelper.newFont(FontHelper.FONT, 120, false, false);
-	
+		msc = new Music("data/snd/asdf.wav");
 		
 		for(int e = 0;e <= 13;e++){
-			selectionArray.add(Color.gray);
+			mainArray.add(Color.gray);
 		}
 		
 		//TODO: Warning, not safe
-		prophelper = new PropertyHelper();
-		prophelper.loadPropertiesFile();
+		
+		Pong.S_Prophelper.loadPropertiesFile();
 		
 		try{
-			Pong.S_resX = Integer.parseInt(prophelper.loadProperty("resX"));
-			Pong.S_resY = Integer.parseInt(prophelper.loadProperty("resY"));
-			container.setMusicVolume(Float.parseFloat(prophelper.loadProperty("volume")));
-			container.setMusicOn(Boolean.parseBoolean(prophelper.loadProperty("vol_on")));
-			Pong.S_Debug = Boolean.parseBoolean(prophelper.loadProperty("debug"));
+			Pong.S_resX = Integer.parseInt(Pong.S_Prophelper.loadProperty("resX"));
+			Pong.S_resY = Integer.parseInt(Pong.S_Prophelper.loadProperty("resY"));
+			container.setMusicVolume(Float.parseFloat(Pong.S_Prophelper.loadProperty("volume")));
+			container.setMusicOn(Boolean.parseBoolean(Pong.S_Prophelper.loadProperty("vol_on")));
+			Pong.S_Debug = Boolean.parseBoolean(Pong.S_Prophelper.loadProperty("debug"));
 		}catch(NumberFormatException nfe){
 			nfe.printStackTrace();
 		}
@@ -72,6 +73,7 @@ public class MainMenu extends BasicGameState {
 		Pong.S_Container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
 		
 		input = container.getInput();
+		//msc.loop();
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class MainMenu extends BasicGameState {
 		FontHelper.bigfont.drawString(Pong.S_resX/2 - FontHelper.bigfont.getWidth("Pong")/2, 20 + FontHelper.bigfont.getHeight("Pong"), "Pong", Color.white);	
 		
 		for(int i = 0, y_offset = 0;i < 5;i++){
-			FontHelper.normalfont.drawString(Pong.S_resX/2 - FontHelper.normalfont.getWidth(MENU_ARRAY[i])/2, Pong.S_resY/2 + y_offset, MENU_ARRAY[i], selectionArray.get(i));		
+			FontHelper.normalfont.drawString(Pong.S_resX/2 - FontHelper.normalfont.getWidth(MENU_ARRAY[i])/2, Pong.S_resY/2 + y_offset, MENU_ARRAY[i], mainArray.get(i));		
 			y_offset += 20;
 		}
 		g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 125, Pong.S_resY - 15);
@@ -88,32 +90,33 @@ public class MainMenu extends BasicGameState {
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+
 		//Coloration for menu
 		if(selection == 0){
-			for(int e = 0;e < selectionArray.size();e++){
-				selectionArray.set(e, Color.gray);
+			for(int e = 0;e < mainArray.size();e++){
+				mainArray.set(e, Color.gray);
 			}
-			selectionArray.set(0, Color.white);
+			mainArray.set(0, Color.white);
 		}else if(selection == 1){
-			for(int e = 0;e < selectionArray.size();e++){
-				selectionArray.set(e, Color.gray);
+			for(int e = 0;e < mainArray.size();e++){
+				mainArray.set(e, Color.gray);
 			}
-			selectionArray.set(1, Color.white);
+			mainArray.set(1, Color.white);
 		}else if(selection == 2){
-			for(int e = 0;e < selectionArray.size();e++){
-				selectionArray.set(e, Color.gray);
+			for(int e = 0;e < mainArray.size();e++){
+				mainArray.set(e, Color.gray);
 			}
-			selectionArray.set(2, Color.white);
+			mainArray.set(2, Color.white);
 		}else if(selection == 3){
-			for(int e = 0;e < selectionArray.size();e++){
-				selectionArray.set(e, Color.gray);
+			for(int e = 0;e < mainArray.size();e++){
+				mainArray.set(e, Color.gray);
 			}
-			selectionArray.set(3, Color.white);
+			mainArray.set(3, Color.white);
 		}else if(selection == 4){
-			for(int e = 0;e < selectionArray.size();e++){
-				selectionArray.set(e, Color.gray);
+			for(int e = 0;e < mainArray.size();e++){
+				mainArray.set(e, Color.gray);
 			}
-			selectionArray.set(4, Color.white);
+			mainArray.set(4, Color.white);
 		}
 		
 		//Menu-navigation

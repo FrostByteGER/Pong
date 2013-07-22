@@ -13,6 +13,7 @@ import de.frostbyteger.pong.core.MainMenu;
 import de.frostbyteger.pong.core.Options;
 import de.frostbyteger.pong.core.Profile;
 import de.frostbyteger.pong.engine.FontHelper;
+import de.frostbyteger.pong.engine.io.PropertyHelper;
 
 public class Pong extends StateBasedGame{
 	
@@ -27,11 +28,13 @@ public class Pong extends StateBasedGame{
 	public static final String VERSION_STATUS = "BETA";
 	
 	public static AppGameContainer S_Container;
+	public static PropertyHelper S_Prophelper;
 	
 	public static boolean S_Debug = true;
 
 	public Pong(String name) {
 		super(name);
+		S_Prophelper = new PropertyHelper();
 	}
 	
 	@Override
@@ -50,6 +53,7 @@ public class Pong extends StateBasedGame{
 		S_Container.setTargetFrameRate(FPS);
 		S_Container.setShowFPS(false); //TODO: Delete this
 		S_Container.start();
+
 
 	}
 }

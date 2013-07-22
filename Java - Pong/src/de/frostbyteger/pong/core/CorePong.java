@@ -26,22 +26,18 @@ import de.frostbyteger.pong.engine.io.PropertyHelper;
 
 /**
  * @author Kevin
- * TODO: Music on/off Switch wont work
  * TODO: Scale Ballspeed with increasing resolution
  */
 public class CorePong extends BasicGameState {
 
 	protected Border lastcollision;
 	protected Border lastpadcollision;
-	protected GameState currentgamestate = GameState.Start;
-	protected MenuState currentmenustate = MenuState.Main;
 	
 	private static final int BALLRADIUS = 5;
 	private static final int GOAL = 10;
 	
 	private static float S_gravity = 0.00981f;
 	
-	private static final int[][] RES_ARRAY = {{640,480},{800,600},{1024,768},{1280,960},{1280,1024}};
 	
 	private final String AI = "AI-Difficulty";
 	
@@ -49,17 +45,12 @@ public class CorePong extends BasicGameState {
 	
 
 	private int difficultyselection = 1;
-	private int configselection = 0;
-	private int resolutionselection = 0;
+
 	
 	private int challengecounter = 0;
-	private int presstimer = 0;
-	private int press = 0;
+
 	
 	private float time = 0.0f;
-
-
-	private static boolean S_Debug_AI = false;
 	
 	private boolean collision = false;
 	
@@ -86,13 +77,7 @@ public class CorePong extends BasicGameState {
 		
 		
 		
-		//Ensures that the displayed resolution in the optionsmenu equals the actual gamewindow resolution when
-		//starting the game
-		for(int i = 0; i < RES_ARRAY.length;i++){
-			if(S_resX == RES_ARRAY[i][0]){
-				resolutionselection = i;
-			}
-		}
+
 
 	}
 
@@ -105,26 +90,6 @@ public class CorePong extends BasicGameState {
 			smallfont.drawString(S_resX/2 - smallfont.getWidth(MENU_DIFFICULTY_EXPL_ARRAY[difficultyselection])/2, S_resY/2 + 20, MENU_DIFFICULTY_EXPL_ARRAY[difficultyselection],Color.lightGray);
 			arrow_left.draw(S_resX/2 - normalfont.getWidth(MENU_DIFFICULTY_ARRAY[difficultyselection])/2 - 45, S_resY/2 + 2, 0.4f);
 			arrow_right.draw(S_resX/2 + normalfont.getWidth(MENU_DIFFICULTY_ARRAY[difficultyselection])/2 + 13, S_resY/2 + 2, 0.4f);
-		}
-		
-		if(currentmenustate == MenuState.Options){
-			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
-			normalfont.drawString(100, S_resY/2, MENU_OPTIONS_ARRAY[0],selectionArray.get(7));
-			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[0]), S_resY/2, RES_ARRAY[resolutionselection][0] + "x" + RES_ARRAY[resolutionselection][1], selectionArray.get(7));
-			normalfont.drawString(100, S_resY/2 + 20, MENU_OPTIONS_ARRAY[1],selectionArray.get(8));
-			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[1]), S_resY/2 + 20, (Integer.toString((int)(gc.getMusicVolume()*100.0f))), selectionArray.get(8));
-			normalfont.drawString(100, S_resY/2 + 40, MENU_OPTIONS_ARRAY[2],selectionArray.get(9));
-			if(gc.isMusicOn() == true){
-				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[2]) + 20, S_resY/2 + 40, "on", selectionArray.get(9));
-			}else{
-				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[2]) + 20, S_resY/2 + 40, "off", selectionArray.get(9));	
-			}
-			normalfont.drawString(100, S_resY/2 + 90, MENU_OPTIONS_ARRAY[4],selectionArray.get(10));
-			normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[4]) + 40, S_resY/2 + 90, MENU_OPTIONS_ARRAY[5],selectionArray.get(11));
-			if(S_Debug == true){
-				normalfont.drawString(100, S_resY/2 + 60, MENU_OPTIONS_ARRAY[3],selectionArray.get(12));
-				normalfont.drawString(100 + normalfont.getWidth(MENU_OPTIONS_ARRAY[3]) + 20, S_resY/2 + 60, Boolean.toString(S_Debug_AI),selectionArray.get(12));
-			}
 		}
 		
 		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN || currentmenustate == MenuState.Challenge){
@@ -211,131 +176,7 @@ public class CorePong extends BasicGameState {
 			
 		}
 		
-		if(currentmenustate == MenuState.Options){
-			if(input.isKeyPressed(Input.KEY_UP) && configselection > 0){
-				if(configselection == 4 && S_Debug == false){
-					configselection -= 2;
-				}else{
-					configselection -= 1;
-				}
-			}
-			if(input.isKeyPressed(Input.KEY_DOWN) && configselection < 5){
-				if(configselection == 2 && S_Debug == false){
-					configselection += 2;
-				}else{
-					configselection += 1;
-				}
-			}
 			
-			if(configselection == 0){
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(7, Color.white);
-				if(input.isKeyPressed(Input.KEY_LEFT) && resolutionselection > 0){
-					resolutionselection -= 1;
-				}
-				if(input.isKeyPressed(Input.KEY_RIGHT) && resolutionselection < RES_ARRAY.length-1){
-					resolutionselection += 1;
-				}
-			}else if(configselection == 1){
-					if(input.isKeyDown(Input.KEY_LEFT) && gc.getMusicVolume() > 0){
-						if(press <= 4 && presstimer == 35){
-							gc.setMusicVolume(gc.getMusicVolume()-0.01f);
-							presstimer = 0;
-							press += 1;
-						}else if(press > 4 && presstimer == 10){
-							gc.setMusicVolume(gc.getMusicVolume()-0.01f);
-							presstimer = 0;
-						}else{
-							presstimer += 5;
-						}
-						
-					}else if(input.isKeyDown(Input.KEY_RIGHT) && gc.getMusicVolume() < 100){
-					
-						if(press <= 4 && presstimer == 35){
-							gc.setMusicVolume(gc.getMusicVolume()+0.01f);
-							presstimer = 0;
-							press += 1;
-						}else if(press > 4 && presstimer == 10){
-							System.out.println("TEST");
-							gc.setMusicVolume(gc.getMusicVolume()+0.01f);
-							presstimer = 0;
-						}else{
-							presstimer += 5;
-						}
-						
-					}else{
-						press = 0;
-					}
-					
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(8, Color.white);
-			}else if(configselection == 2){
-				if(input.isKeyPressed(Input.KEY_RIGHT) && gc.isMusicOn() == true || gc.isMusicOn() == true &&  input.isKeyPressed(Input.KEY_ENTER)){
-					gc.setMusicOn(false);
-				}
-				if(input.isKeyPressed(Input.KEY_LEFT) && gc.isMusicOn() == false || gc.isMusicOn() == false && input.isKeyPressed(Input.KEY_ENTER)){
-					gc.setMusicOn(true);
-				}
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(9, Color.white);
-			}else if(configselection == 3){
-				if(input.isKeyPressed(Input.KEY_RIGHT) && S_Debug_AI == true ||  S_Debug_AI == true &&  input.isKeyPressed(Input.KEY_ENTER)){
-					S_Debug_AI = false;
-				}
-				if(input.isKeyPressed(Input.KEY_LEFT) && S_Debug_AI == false ||  S_Debug_AI == false && input.isKeyPressed(Input.KEY_ENTER)){
-					S_Debug_AI = true;
-				}
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(12, Color.white);
-			}else if(configselection == 4){
-				if(S_Debug == false){
-					for(int e = 0;e < selectionArray.size();e++){
-						selectionArray.set(e, Color.gray);
-					}
-					selectionArray.set(9, Color.white);
-				}else{
-					for(int e = 0;e < selectionArray.size();e++){
-						selectionArray.set(e, Color.gray);
-					}
-					selectionArray.set(12, Color.white);
-				}
-				if(input.isKeyPressed(Input.KEY_ENTER)){
-					try{
-						S_resX = RES_ARRAY[resolutionselection][0];
-						S_resY = RES_ARRAY[resolutionselection][1];
-						prophelper.saveProperty("resX", Integer.toString(S_resX));
-						prophelper.saveProperty("resY", Integer.toString(S_resY));
-						prophelper.saveProperty("volume", Float.toString((int)(gc.getMusicVolume()*100)/100.0f));
-						prophelper.saveProperty("vol_on", Boolean.toString(gc.isMusicOn()));
-						prophelper.savePropertiesFile();
-					}catch(NumberFormatException nfe){
-						nfe.printStackTrace();
-					}
-					S_Container.setDisplayMode(S_resX, S_resY, false);
-				}
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(10, Color.white);
-			}else if(configselection == 5){
-				if(input.isKeyPressed(Input.KEY_ENTER)){
-					currentmenustate = MenuState.Main;	
-				}
-				for(int e = 0;e < selectionArray.size();e++){
-					selectionArray.set(e, Color.gray);
-				}
-				selectionArray.set(11, Color.white);
-			}
-		}
-		
 		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.LAN || currentmenustate == MenuState.PvP || currentmenustate == MenuState.Challenge){
 			// Pause Game
 			if (gc.hasFocus() == false || gc.isPaused() == false && input.isKeyPressed(Input.KEY_P) ) {

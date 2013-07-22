@@ -25,6 +25,7 @@ public class Game extends BasicGameState {
 	private final String[] MENU_DIFFICULTY_ARRAY = {"Easy","Medium","Hard","Unbeatable"};
 	private final String[] MENU_DIFFICULTY_EXPL_ARRAY = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
 
+	protected static boolean S_Debug_AI = false;
 	
 	protected Pad pad1;
 	protected Pad pad2;
