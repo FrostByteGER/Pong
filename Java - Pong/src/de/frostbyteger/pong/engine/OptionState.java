@@ -8,5 +8,5 @@ package de.frostbyteger.pong.engine;
  *
  */
 public enum OptionState {
-	Controls, Graphics, Network
+	Controls, Graphics, Network, Main
 }

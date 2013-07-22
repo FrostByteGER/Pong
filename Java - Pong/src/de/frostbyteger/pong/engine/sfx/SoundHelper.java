@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.frostbyteger.pong.engine.snd;
+package de.frostbyteger.pong.engine.sfx;
 
 /**
  * @author Kevin

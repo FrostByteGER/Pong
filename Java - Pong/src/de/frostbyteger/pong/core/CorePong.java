@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -19,7 +20,6 @@ import de.frostbyteger.pong.engine.Ball;
 import de.frostbyteger.pong.engine.Border;
 import de.frostbyteger.pong.engine.Difficulty;
 import de.frostbyteger.pong.engine.GameState;
-import de.frostbyteger.pong.engine.MenuState;
 import de.frostbyteger.pong.engine.Pad;
 import de.frostbyteger.pong.engine.io.PropertyHelper;
 
@@ -28,7 +28,7 @@ import de.frostbyteger.pong.engine.io.PropertyHelper;
  * @author Kevin
  * TODO: Scale Ballspeed with increasing resolution
  */
-public class CorePong extends BasicGameState {
+public class CorePong extends BasicGame {
 
 	protected Border lastcollision;
 	protected Border lastpadcollision;

@@ -10,6 +10,7 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 
 import de.frostbyteger.pong.core.CorePong;
+import de.frostbyteger.pong.start.Pong;
 
 /**
  * @author Kevin
@@ -198,11 +199,11 @@ public class Ball {
 				vector2f.set(vector2f.getX(), -vector2f.getY());
 			}
 
-			if (y >= CorePong.S_resY) { 
+			if (y >= Pong.S_resY) { 
 				vector2f.set(vector2f.getX(), -vector2f.getY());
 			}
 			
-			if(x >= CorePong.S_resX - 20){
+			if(x >= Pong.S_resX - 20){
 				estimatedY = y;
 				return;
 			}else{
@@ -328,7 +329,7 @@ public class Ball {
 			return lastcollision;
 		}
 
-		if (ball.getMaxY() >= CorePong.S_resY) {
+		if (ball.getMaxY() >= Pong.S_resY) {
 			setVectorXY(vector.getX(), -vector.getY());
 			lastcollision = Border.BOTTOM;
 			return lastcollision;
