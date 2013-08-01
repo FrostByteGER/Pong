@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Config>
+    <configname>config</configname>
+    <configpath>data//config.xml</configpath>
+    <options>
+        <entry>
+            <key>resX</key>
+            <value>800</value>
+        </entry>
+        <entry>
+            <key>resY</key>
+            <value>600</value>
+        </entry>
+        <entry>
+            <key>volume</key>
+            <value>0.72</value>
+        </entry>
+        <entry>
+            <key>vol_on</key>
+            <value>true</value>
+        </entry>
+    </options>
+</Config>

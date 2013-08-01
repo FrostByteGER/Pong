@@ -13,28 +13,27 @@ import de.frostbyteger.pong.core.MainMenu;
 import de.frostbyteger.pong.core.Options;
 import de.frostbyteger.pong.core.Profile;
 import de.frostbyteger.pong.engine.FontHelper;
-import de.frostbyteger.pong.engine.io.PropertyHelper;
+import de.frostbyteger.pong.engine.io.ConfigHelper;
 
 public class Pong extends StateBasedGame{
 	
 	// Options
 	public static int S_resX = 800;
 	public static int S_resY = 600;
+	public static boolean S_showFPS = false;
 	public static final int FPS = 60;
 	
 	// Version info
 	public static final String TITLE = "Pong";
 	public static final String VERSION = "v1.12";
-	public static final String VERSION_STATUS = "BETA";
+	public static final String VERSION_STATUS = "INTERNAL";
 	
 	public static AppGameContainer S_Container;
-	public static PropertyHelper S_Prophelper;
 	
 	public static boolean S_Debug = true;
 
 	public Pong(String name) {
 		super(name);
-		S_Prophelper = new PropertyHelper();
 	}
 	
 	@Override
@@ -51,7 +50,7 @@ public class Pong extends StateBasedGame{
 		S_Container = new AppGameContainer(new Pong(TITLE + " " + VERSION));
 		S_Container.setDisplayMode(S_resX, S_resY, false);
 		S_Container.setTargetFrameRate(FPS);
-		S_Container.setShowFPS(false); //TODO: Delete this
+		S_Container.setShowFPS(S_showFPS);
 		S_Container.start();
 
 

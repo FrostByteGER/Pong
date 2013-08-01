@@ -21,13 +21,8 @@ import de.frostbyteger.pong.engine.Border;
 import de.frostbyteger.pong.engine.Difficulty;
 import de.frostbyteger.pong.engine.GameState;
 import de.frostbyteger.pong.engine.Pad;
-import de.frostbyteger.pong.engine.io.PropertyHelper;
+import de.frostbyteger.pong.engine.io.ConfigHelper;
 
-
-/**
- * @author Kevin
- * TODO: Scale Ballspeed with increasing resolution
- */
 public class CorePong extends BasicGame {
 
 	protected Border lastcollision;
@@ -59,11 +54,6 @@ public class CorePong extends BasicGame {
 	
 	protected double hip = 0;
 	protected Random rndm = new Random();
-
-	//TODO: Add description
-	public CorePong(String title) {
-		//super(title);
-	}
 
 	public void init(GameContainer gc) throws SlickException {
 		

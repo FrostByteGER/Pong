@@ -4,6 +4,7 @@
 package de.frostbyteger.pong.core;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -438,11 +439,13 @@ public class Options extends BasicGameState {
 				try{
 					Pong.S_resX = RES_ARRAY[resolutionselection][0];
 					Pong.S_resY = RES_ARRAY[resolutionselection][1];
-					Pong.S_Prophelper.saveProperty("resX", Integer.toString(Pong.S_resX));
-					Pong.S_Prophelper.saveProperty("resY", Integer.toString(Pong.S_resY));
-					Pong.S_Prophelper.saveProperty("volume", Float.toString((int)(container.getMusicVolume()*100)/100.0f));
-					Pong.S_Prophelper.saveProperty("vol_on", Boolean.toString(container.isMusicOn()));
-					Pong.S_Prophelper.savePropertiesFile();
+					LinkedHashMap<String, String> options = new LinkedHashMap<>();
+					options.put("resX", Integer.toString(Pong.S_resX));
+					options.put("resY", Integer.toString(Pong.S_resY));
+					options.put("volume", Float.toString((int)(container.getMusicVolume()*100)/100.0f));
+					options.put("vol_on", Boolean.toString(container.isMusicOn()));
+					MainMenu.ch.setOptions(options);
+					MainMenu.ch.createConfigFile();
 					savebool = true;
 				}catch(NumberFormatException nfe){
 					nfe.printStackTrace();

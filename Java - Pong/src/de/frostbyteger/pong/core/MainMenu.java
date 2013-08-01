@@ -3,7 +3,9 @@
  */
 package de.frostbyteger.pong.core;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -17,7 +19,7 @@ import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import de.frostbyteger.pong.engine.FontHelper;
-import de.frostbyteger.pong.engine.io.PropertyHelper;
+import de.frostbyteger.pong.engine.io.ConfigHelper;
 import de.frostbyteger.pong.start.Pong;
 
 /**
@@ -37,6 +39,8 @@ public class MainMenu extends BasicGameState {
 	private Input input;
 	
 	private Music msc;
+	
+	public static ConfigHelper ch = new ConfigHelper("data//", "config",".xml");
 
 	/**
 	 * 
@@ -50,24 +54,28 @@ public class MainMenu extends BasicGameState {
 		FontHelper.normalfont = FontHelper.newFont(FontHelper.FONT, 40, false, false);
 		FontHelper.mediumfont = FontHelper.newFont(FontHelper.FONT, 50, false, false);
 		FontHelper.bigfont = FontHelper.newFont(FontHelper.FONT, 120, false, false);
-		msc = new Music("data/snd/asdf.wav");
+		msc = new Music("data/snd/sample.wav");
 		
 		for(int e = 0;e <= 13;e++){
 			mainArray.add(Color.gray);
 		}
 		
-		//TODO: Warning, not safe
-		
-		Pong.S_Prophelper.loadPropertiesFile();
-		
 		try{
-			Pong.S_resX = Integer.parseInt(Pong.S_Prophelper.loadProperty("resX"));
-			Pong.S_resY = Integer.parseInt(Pong.S_Prophelper.loadProperty("resY"));
-			container.setMusicVolume(Float.parseFloat(Pong.S_Prophelper.loadProperty("volume")));
-			container.setMusicOn(Boolean.parseBoolean(Pong.S_Prophelper.loadProperty("vol_on")));
-			Pong.S_Debug = Boolean.parseBoolean(Pong.S_Prophelper.loadProperty("debug"));
-		}catch(NumberFormatException nfe){
-			nfe.printStackTrace();
+			ConfigHelper ch2 = ch.loadConfigFile();
+			Pong.S_resX = Integer.parseInt(ch2.getOptions().get("resX"));
+			Pong.S_resY = Integer.parseInt(ch2.getOptions().get("resY"));
+			container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
+			container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
+			Pong.S_Debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
+		}catch(FileNotFoundException fnfe){
+			//Creating a config-file with standard values
+			LinkedHashMap<String, String> options = new LinkedHashMap<>();
+			options.put("resX", Integer.toString(Pong.S_resX));
+			options.put("resY", Integer.toString(Pong.S_resY));
+			options.put("volume", Float.toString(1.0f));
+			options.put("vol_on", Boolean.toString(true));
+			ch.setOptions(options);
+			ch.createConfigFile();
 		}
 		
 		Pong.S_Container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
@@ -84,7 +92,7 @@ public class MainMenu extends BasicGameState {
 			FontHelper.normalfont.drawString(Pong.S_resX/2 - FontHelper.normalfont.getWidth(MENU_ARRAY[i])/2, Pong.S_resY/2 + y_offset, MENU_ARRAY[i], mainArray.get(i));		
 			y_offset += 20;
 		}
-		g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 125, Pong.S_resY - 15);
+		g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 128, Pong.S_resY - 15);
 		
 	}
 
@@ -128,7 +136,6 @@ public class MainMenu extends BasicGameState {
 		if(input.isKeyPressed(Input.KEY_ENTER)){
 			if(selection == 0){
 				game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-
 			}else if(selection == 1){
 				game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 				//currentmenustate = MenuState.PvP;
