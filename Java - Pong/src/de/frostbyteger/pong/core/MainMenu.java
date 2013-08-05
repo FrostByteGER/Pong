@@ -3,9 +3,7 @@
  */
 package de.frostbyteger.pong.core;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -18,7 +16,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-import de.frostbyteger.pong.engine.FontHelper;
+import de.frostbyteger.pong.engine.graphics.FontHelper;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
 import de.frostbyteger.pong.start.Pong;
 
@@ -29,15 +27,15 @@ import de.frostbyteger.pong.start.Pong;
 public class MainMenu extends BasicGameState {
 	
 	protected static final int ID = 001;
-	//"Player vs. CPU","Player vs. Player","Challenge Mode"
+	
+	private StateBasedGame game;
+
 	private final String[] MENU_ARRAY = {"New Game", "LAN-Mode", "Options", "Profile", "Quit Game"};
 
 	private ArrayList<Color> mainArray = new ArrayList<Color>();
 	
 	private int selection = 0;
-	
-	private Input input;
-	
+		
 	private Music msc;
 	
 	public static ConfigHelper ch = new ConfigHelper("data//", "config",".xml");
@@ -50,6 +48,8 @@ public class MainMenu extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		this.game = game;
+		
 		FontHelper.smallfont = FontHelper.newFont(FontHelper.FONT, 25, false, false);
 		FontHelper.normalfont = FontHelper.newFont(FontHelper.FONT, 40, false, false);
 		FontHelper.mediumfont = FontHelper.newFont(FontHelper.FONT, 50, false, false);
@@ -60,9 +60,6 @@ public class MainMenu extends BasicGameState {
 			mainArray.add(Color.gray);
 		}
 		
-		Pong.S_Container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
-		
-		input = container.getInput();
 		//msc.loop();
 	}
 
@@ -109,43 +106,49 @@ public class MainMenu extends BasicGameState {
 			mainArray.set(4, Color.white);
 		}
 		
-		//Menu-navigation
-		if(input.isKeyPressed(Input.KEY_UP) && selection > 0){
-			selection -= 1;
-		}else if(input.isKeyPressed(Input.KEY_DOWN) && selection < MENU_ARRAY.length - 1){
-			selection += 1;
-		}
-		if(input.isKeyPressed(Input.KEY_ENTER)){
-			if(selection == 0){
-				game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-			}else if(selection == 1){
-				game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-				//currentmenustate = MenuState.PvP;
-				//newGame(Difficulty.HARD.getDifficulty());
-				//currentgamestate = GameState.Play;
-			}else if(selection == 2){
-				game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-			}else if(selection == 3){
-				game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-				//currentmenustate = MenuState.Challenge;
-				//newGame(Difficulty.HARD.getDifficulty());
-				//currentgamestate = GameState.Play;
-			}else if(selection == 4){
-				container.exit();
-			}
 
-		}else if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			container.exit();
-		}
+
 	}
+	
+	   public void keyReleased(int key, char c) {
+			if(key == Input.KEY_ENTER){
+				if(selection == 0){
+					game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+				}else if(selection == 1){
+					//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+					//currentmenustate = MenuState.PvP;
+					//newGame(Difficulty.HARD.getDifficulty());
+					//currentgamestate = GameState.Play;
+				}else if(selection == 2){
+					//container.pause();
+					game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+					
+					
+				}else if(selection == 3){
+					//container.pause();
+					game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+					
+					//currentmenustate = MenuState.Challenge;
+					//newGame(Difficulty.HARD.getDifficulty());
+					//currentgamestate = GameState.Play;
+				}else if(selection == 4){
+					Pong.S_container.exit();
+				}
+
+			}else if(key == Input.KEY_ESCAPE){
+				Pong.S_container.exit();
+			}
+			
+		      if (key == Input.KEY_UP && selection > 0) {
+		    	  selection -= 1;
+		      }else if (key == Input.KEY_DOWN && selection < MENU_ARRAY.length - 1) {
+		    	  selection += 1;
+		      }
+	   }
 
 	@Override
 	public int getID() {
 		return ID;
-	}
-	
-	public void loadConfig(){
-		
 	}
 
 }

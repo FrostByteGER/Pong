@@ -21,23 +21,23 @@ import de.frostbyteger.pong.engine.io.MD5Loader;
 public class Pong extends StateBasedGame{
 	
 	// Options
-	public static int S_resX = 800;
-	public static int S_resY = 600;
-	public static boolean S_debug = true;
+	public static int S_resX        = 800;
+	public static int S_resY        = 600;
+	public static boolean S_debug   = true;
 	public static boolean S_showFPS = false;
-	public static final int FPS = 60;
+	public static final int FPS     = 60;
 	
 	// Version info
-	public static final String TITLE = "Pong";
-	public static final String VERSION = "v1.12";
+	public static final String TITLE          = "Pong";
+	public static final String VERSION        = "v1.20";
 	public static final String VERSION_STATUS = "INTERNAL";
 	
-	// MD5 checksumes
+	// MD5 checksums
 	public static final String MD5_FONT  = "d060b8b0afa1753bf21d5fa3d3b14493";
 	public static final String MD5_LEFT  = "42a88f1b4fa5de64c17bb8f8ca300234";
 	public static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
 	
-	public static AppGameContainer S_Container;
+	public static AppGameContainer S_container;
 	public static ConfigHelper ch = new ConfigHelper("data//", "config",".xml");
 
 	public Pong(String name) {
@@ -91,9 +91,10 @@ public class Pong extends StateBasedGame{
 			ConfigHelper ch2 = ch.loadConfigFile();
 			Pong.S_resX = Integer.parseInt(ch2.getOptions().get("resX"));
 			Pong.S_resY = Integer.parseInt(ch2.getOptions().get("resY"));
-			S_Container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
-			S_Container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
+			S_container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
+			S_container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
 			Pong.S_debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
+			System.out.println(Pong.S_debug);
 		}catch(FileNotFoundException fnfe){
 			//Creating a config-file with standard values
 			LinkedHashMap<String, String> options = new LinkedHashMap<>();
@@ -109,15 +110,15 @@ public class Pong extends StateBasedGame{
 
 	public static void main(String[] args) throws SlickException {
 		Pong pong = new Pong(TITLE + " " + VERSION);
-		S_Container = new AppGameContainer(pong);
+		S_container = new AppGameContainer(pong);
 		int errorcode = pong.initGameSubRoutines();
 		if(errorcode == 1){
-			S_Container.setDisplayMode(S_resX, S_resY, false);
-			S_Container.setTargetFrameRate(FPS);
-			S_Container.setShowFPS(S_showFPS);
-			S_Container.start();
+			S_container.setDisplayMode(S_resX, S_resY, false);
+			S_container.setTargetFrameRate(FPS);
+			S_container.setShowFPS(S_showFPS);
+			S_container.start();
 		}else{
-			S_Container.exit();
+			S_container.exit();
 		}
 
 

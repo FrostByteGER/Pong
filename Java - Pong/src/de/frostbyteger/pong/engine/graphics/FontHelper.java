@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.frostbyteger.pong.engine;
+package de.frostbyteger.pong.engine.graphics;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;

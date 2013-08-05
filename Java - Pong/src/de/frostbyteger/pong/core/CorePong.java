@@ -24,14 +24,6 @@ import de.frostbyteger.pong.engine.Pad;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
 
 public class CorePong extends BasicGame {
-
-	protected Border lastcollision;
-	protected Border lastpadcollision;
-	
-	private static final int BALLRADIUS = 5;
-	private static final int GOAL = 10;
-	
-	private static float S_gravity = 0.00981f;
 	
 	
 	private final String AI = "AI-Difficulty";
@@ -56,18 +48,6 @@ public class CorePong extends BasicGame {
 	protected Random rndm = new Random();
 
 	public void init(GameContainer gc) throws SlickException {
-		
-
-
-
-		lastcollision = Border.NONE;
-		lastpadcollision = Border.NONE;
-		currentgamestate = GameState.Play;
-		
-		
-		
-		
-
 
 	}
 

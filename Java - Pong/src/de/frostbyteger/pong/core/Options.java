@@ -16,8 +16,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-import de.frostbyteger.pong.engine.FontHelper;
 import de.frostbyteger.pong.engine.OptionState;
+import de.frostbyteger.pong.engine.graphics.FontHelper;
 import de.frostbyteger.pong.start.Pong;
 
 /**
@@ -27,6 +27,8 @@ import de.frostbyteger.pong.start.Pong;
 public class Options extends BasicGameState {
 
 	protected final static int ID = 002;
+	
+	private StateBasedGame game;
 
 	private final String[] MENU_OPTIONS_MAIN_ARRAY     = {"Graphics/Sound","Controls","Network","Back"};	
 	private final String[] MENU_OPTIONS_GRAPHICS_ARRAY = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Back"};
@@ -55,8 +57,6 @@ public class Options extends BasicGameState {
 	
 	private ArrayList<Color> optionArray = new ArrayList<Color>();
 	
-	private Input input;
-
 	/**
 	 * 
 	 */
@@ -65,6 +65,7 @@ public class Options extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		this.game = game;
 		//Ensures that the displayed resolution in the optionsmenu equals the actual gamewindow resolution when
 		//starting the game
 		for(int i = 0; i < RES_ARRAY.length;i++){
@@ -76,7 +77,6 @@ public class Options extends BasicGameState {
 			optionArray.add(Color.gray);
 		}
 		
-		input = container.getInput();
 	}
 
 	@Override
@@ -152,15 +152,17 @@ public class Options extends BasicGameState {
 			savetimer = 0;
 			
 		}
-		
+	}
+	
+	public void keyPressed(int key, char c) {
 		if(ostate == OptionState.Main){
-			mainHelper(game);
+			mainHelper(this.game, key);
 		}else if(ostate == OptionState.Graphics){
-			graphicsHelper(container);
+			graphicsHelper(key);
 		}else if(ostate == OptionState.Controls){
-			controlHelper();
+			controlHelper(key);
 		}else if(ostate == OptionState.Network){
-			networkHelper();
+			networkHelper(key);
 		}
 	}
 	
@@ -168,13 +170,18 @@ public class Options extends BasicGameState {
 	 * 
 	 * @param game
 	 */
-	private void mainHelper(StateBasedGame game){
+	private void mainHelper(StateBasedGame game, int key){
+		if(key == Input.KEY_UP && mainconfigselection > 0){
+			mainconfigselection -= 1;
+		}else if(key == Input.KEY_DOWN && mainconfigselection < MENU_OPTIONS_MAIN_ARRAY.length - 1){
+			mainconfigselection += 1;
+		}
 		if(mainconfigselection == 0){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(0, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Graphics;
 				mainconfigselection = 0;
 				return;
@@ -184,7 +191,7 @@ public class Options extends BasicGameState {
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(1, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Controls;
 				mainconfigselection = 0;
 				return;
@@ -194,7 +201,7 @@ public class Options extends BasicGameState {
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(2, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Network;
 				mainconfigselection = 0;
 				return;
@@ -204,18 +211,12 @@ public class Options extends BasicGameState {
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(3, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Main;
 				mainconfigselection = 0;
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 				return;
 			}
-		}
-			
-		if(input.isKeyPressed(Input.KEY_UP) && mainconfigselection > 0){
-			mainconfigselection -= 1;
-		}else if(input.isKeyPressed(Input.KEY_DOWN) && mainconfigselection < MENU_OPTIONS_MAIN_ARRAY.length - 1){
-			mainconfigselection += 1;
 		}
 
 	}
@@ -223,109 +224,107 @@ public class Options extends BasicGameState {
 	/**
 	 * 
 	 */
-	private void controlHelper(){
+	private void controlHelper(int key){
+		if(key == Input.KEY_UP && controlconfigselection > 0){
+			controlconfigselection -= 1;
+		}else if(key == Input.KEY_DOWN && controlconfigselection < MENU_OPTIONS_CONTROLS_ARRAY.length - 1){
+			controlconfigselection += 1;
+		}
 		if(controlconfigselection == 0){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(0, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(controlconfigselection == 1){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(1, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(controlconfigselection == 2){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(2, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(controlconfigselection == 3){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(3, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(controlconfigselection == 4){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(4, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(controlconfigselection == 5){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(5, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Main;	
 				controlconfigselection = 0;
 				return;
 			}
-		}
-			
-		if(input.isKeyPressed(Input.KEY_UP) && controlconfigselection > 0){
-			controlconfigselection -= 1;
-		}else if(input.isKeyPressed(Input.KEY_DOWN) && controlconfigselection < MENU_OPTIONS_CONTROLS_ARRAY.length - 1){
-			controlconfigselection += 1;
 		}
 	}
 	
 	/**
 	 * 
 	 */
-	private void networkHelper(){
+	private void networkHelper(int key){
+		if(key == Input.KEY_UP && networkconfigselection > 0){
+			networkconfigselection -= 1;
+		}else if(key == Input.KEY_DOWN && networkconfigselection < MENU_OPTIONS_NETWORK_ARRAY.length - 1){
+			networkconfigselection += 1;
+		}
 		if(networkconfigselection == 0){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(0, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(networkconfigselection == 1){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(1, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(networkconfigselection == 2){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(2, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(networkconfigselection == 3){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(3, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 			}
 		}else if(networkconfigselection == 4){
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(4, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Main;	
 				networkconfigselection = 0;
 				return;
 			}
-		}
-			
-		if(input.isKeyPressed(Input.KEY_UP) && networkconfigselection > 0){
-			networkconfigselection -= 1;
-		}else if(input.isKeyPressed(Input.KEY_DOWN) && networkconfigselection < MENU_OPTIONS_NETWORK_ARRAY.length - 1){
-			networkconfigselection += 1;
 		}
 	}
 	
@@ -334,14 +333,15 @@ public class Options extends BasicGameState {
 	 * @param container
 	 * @throws SlickException
 	 */
-	private void graphicsHelper(GameContainer container) throws SlickException{
-		if(input.isKeyPressed(Input.KEY_UP) && graphicsconfigselection > 0){
+	private void graphicsHelper(int key){
+		System.out.println(graphicsconfigselection);
+		if(key == Input.KEY_UP && graphicsconfigselection > 0){
 			if(graphicsconfigselection == 4 && Pong.S_debug == false){
 				graphicsconfigselection -= 2;
 			}else{
 				graphicsconfigselection -= 1;
 			}
-		}else if(input.isKeyPressed(Input.KEY_DOWN) && graphicsconfigselection < MENU_OPTIONS_GRAPHICS_ARRAY.length){
+		}else if(key == Input.KEY_DOWN && graphicsconfigselection < MENU_OPTIONS_GRAPHICS_ARRAY.length - 1){
 			if(graphicsconfigselection == 2 && Pong.S_debug == false){
 				graphicsconfigselection += 2;
 			}else{
@@ -355,35 +355,34 @@ public class Options extends BasicGameState {
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(0, Color.white);
-			if(input.isKeyPressed(Input.KEY_LEFT) && resolutionselection > 0){
+			if(key == Input.KEY_LEFT && resolutionselection > 0){
 				resolutionselection -= 1;
 			}
-			if(input.isKeyPressed(Input.KEY_RIGHT) && resolutionselection < RES_ARRAY.length-1){
+			if(key == Input.KEY_RIGHT && resolutionselection < RES_ARRAY.length - 1){
 				resolutionselection += 1;
 			}
 		
 		}else if(graphicsconfigselection == 1){
-				if(input.isKeyDown(Input.KEY_LEFT) && container.getMusicVolume() > 0){
+				if(key == Input.KEY_LEFT && Pong.S_container.getMusicVolume() > 0){
 					if(press <= 4 && presstimer == 35){
-						container.setMusicVolume(container.getMusicVolume()-0.01f);
+						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()-0.01f);
 						presstimer = 0;
 						press += 1;
 					}else if(press > 4 && presstimer == 10){
-						container.setMusicVolume(container.getMusicVolume()-0.01f);
+						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()-0.01f);
 						presstimer = 0;
 					}else{
 						presstimer += 5;
 					}
 					
-				}else if(input.isKeyDown(Input.KEY_RIGHT) && container.getMusicVolume() < 100){
+				}else if(key == Input.KEY_RIGHT && Pong.S_container.getMusicVolume() < 100){
 				
 					if(press <= 4 && presstimer == 35){
-						container.setMusicVolume(container.getMusicVolume()+0.01f);
+						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()+0.01f);
 						presstimer = 0;
 						press += 1;
 					}else if(press > 4 && presstimer == 10){
-						System.out.println("TEST");
-						container.setMusicVolume(container.getMusicVolume()+0.01f);
+						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()+0.01f);
 						presstimer = 0;
 					}else{
 						presstimer += 5;
@@ -399,11 +398,11 @@ public class Options extends BasicGameState {
 			optionArray.set(1, Color.white);
 		
 		}else if(graphicsconfigselection == 2){
-			if(input.isKeyPressed(Input.KEY_RIGHT) && container.isMusicOn() == true || container.isMusicOn() == true &&  input.isKeyPressed(Input.KEY_ENTER)){
-				container.setMusicOn(false);
+			if(key == Input.KEY_RIGHT && Pong.S_container.isMusicOn() == true){
+				Pong.S_container.setMusicOn(false);
 			}
-			if(input.isKeyPressed(Input.KEY_LEFT) && container.isMusicOn() == false || container.isMusicOn() == false && input.isKeyPressed(Input.KEY_ENTER)){
-				container.setMusicOn(true);
+			if(key == Input.KEY_LEFT && Pong.S_container.isMusicOn() == false){
+				Pong.S_container.setMusicOn(true);
 			}
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
@@ -411,10 +410,10 @@ public class Options extends BasicGameState {
 			optionArray.set(2, Color.white);
 		
 		}else if(graphicsconfigselection == 3){
-			if(input.isKeyPressed(Input.KEY_RIGHT) && Game.S_Debug_AI == true ||  Game.S_Debug_AI == true &&  input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_RIGHT && Game.S_Debug_AI == true ||  Game.S_Debug_AI == true &&  key == Input.KEY_ENTER){
 				Game.S_Debug_AI = false;
 			}
-			if(input.isKeyPressed(Input.KEY_LEFT) && Game.S_Debug_AI == false ||  Game.S_Debug_AI == false && input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_LEFT && Game.S_Debug_AI == false ||  Game.S_Debug_AI == false && key == Input.KEY_ENTER){
 				Game.S_Debug_AI = true;
 			}
 			for(int e = 0;e < optionArray.size();e++){
@@ -435,22 +434,27 @@ public class Options extends BasicGameState {
 				optionArray.set(5, Color.white);
 			}
 			
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				try{
 					Pong.S_resX = RES_ARRAY[resolutionselection][0];
 					Pong.S_resY = RES_ARRAY[resolutionselection][1];
 					LinkedHashMap<String, String> options = new LinkedHashMap<>();
 					options.put("resX", Integer.toString(Pong.S_resX));
 					options.put("resY", Integer.toString(Pong.S_resY));
-					options.put("volume", Float.toString((int)(container.getMusicVolume()*100)/100.0f));
-					options.put("vol_on", Boolean.toString(container.isMusicOn()));
+					options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
+					options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
+					options.put("debug", Boolean.toString(Pong.S_debug));
 					MainMenu.ch.setOptions(options);
 					MainMenu.ch.createConfigFile();
 					savebool = true;
 				}catch(NumberFormatException nfe){
 					nfe.printStackTrace();
 				}
-				Pong.S_Container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
+				try {
+					Pong.S_container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
 			}
 			for(int e = 0;e < optionArray.size();e++){
 				optionArray.set(e, Color.gray);
@@ -462,7 +466,7 @@ public class Options extends BasicGameState {
 				optionArray.set(e, Color.gray);
 			}
 			optionArray.set(4, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				ostate = OptionState.Main;	
 				graphicsconfigselection = 0;
 				return;

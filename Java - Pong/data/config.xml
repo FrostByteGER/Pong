@@ -5,18 +5,22 @@
     <options>
         <entry>
             <key>resX</key>
-            <value>800</value>
+            <value>1024</value>
         </entry>
         <entry>
             <key>resY</key>
-            <value>600</value>
+            <value>768</value>
         </entry>
         <entry>
             <key>volume</key>
-            <value>0.72</value>
+            <value>1.0</value>
         </entry>
         <entry>
             <key>vol_on</key>
+            <value>true</value>
+        </entry>
+        <entry>
+            <key>debug</key>
             <value>true</value>
         </entry>
     </options>
