@@ -60,24 +60,6 @@ public class MainMenu extends BasicGameState {
 			mainArray.add(Color.gray);
 		}
 		
-		try{
-			ConfigHelper ch2 = ch.loadConfigFile();
-			Pong.S_resX = Integer.parseInt(ch2.getOptions().get("resX"));
-			Pong.S_resY = Integer.parseInt(ch2.getOptions().get("resY"));
-			container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
-			container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
-			Pong.S_Debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
-		}catch(FileNotFoundException fnfe){
-			//Creating a config-file with standard values
-			LinkedHashMap<String, String> options = new LinkedHashMap<>();
-			options.put("resX", Integer.toString(Pong.S_resX));
-			options.put("resY", Integer.toString(Pong.S_resY));
-			options.put("volume", Float.toString(1.0f));
-			options.put("vol_on", Boolean.toString(true));
-			ch.setOptions(options);
-			ch.createConfigFile();
-		}
-		
 		Pong.S_Container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
 		
 		input = container.getInput();
@@ -160,6 +142,10 @@ public class MainMenu extends BasicGameState {
 	@Override
 	public int getID() {
 		return ID;
+	}
+	
+	public void loadConfig(){
+		
 	}
 
 }

@@ -107,7 +107,7 @@ public class Options extends BasicGameState {
 			}else{
 				FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS_ARRAY[2]) + OFFSET_SPACE, Pong.S_resY/2 + 40, "off", optionArray.get(2));	
 			}
-			if(Pong.S_Debug == true){
+			if(Pong.S_debug == true){
 				FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + 60, MENU_OPTIONS_GRAPHICS_ARRAY[3],optionArray.get(5));
 				FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS_ARRAY[3]) + OFFSET_SPACE, Pong.S_resY/2 + 60, Boolean.toString(Game.S_Debug_AI),optionArray.get(5));
 			}
@@ -336,13 +336,13 @@ public class Options extends BasicGameState {
 	 */
 	private void graphicsHelper(GameContainer container) throws SlickException{
 		if(input.isKeyPressed(Input.KEY_UP) && graphicsconfigselection > 0){
-			if(graphicsconfigselection == 4 && Pong.S_Debug == false){
+			if(graphicsconfigselection == 4 && Pong.S_debug == false){
 				graphicsconfigselection -= 2;
 			}else{
 				graphicsconfigselection -= 1;
 			}
 		}else if(input.isKeyPressed(Input.KEY_DOWN) && graphicsconfigselection < MENU_OPTIONS_GRAPHICS_ARRAY.length){
-			if(graphicsconfigselection == 2 && Pong.S_Debug == false){
+			if(graphicsconfigselection == 2 && Pong.S_debug == false){
 				graphicsconfigselection += 2;
 			}else{
 				graphicsconfigselection += 1;
@@ -423,7 +423,7 @@ public class Options extends BasicGameState {
 			optionArray.set(5, Color.white);
 		
 		}else if(graphicsconfigselection == 4){
-			if(Pong.S_Debug == false){
+			if(Pong.S_debug == false){
 				for(int e = 0;e < optionArray.size();e++){
 					optionArray.set(e, Color.gray);
 				}
