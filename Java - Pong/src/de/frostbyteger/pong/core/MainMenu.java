@@ -110,41 +110,44 @@ public class MainMenu extends BasicGameState {
 
 	}
 	
-	   public void keyReleased(int key, char c) {
-			if(key == Input.KEY_ENTER){
-				if(selection == 0){
-					game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-				}else if(selection == 1){
-					//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-					//currentmenustate = MenuState.PvP;
-					//newGame(Difficulty.HARD.getDifficulty());
-					//currentgamestate = GameState.Play;
-				}else if(selection == 2){
-					//container.pause();
-					game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-					
-					
-				}else if(selection == 3){
-					//container.pause();
-					game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-					
-					//currentmenustate = MenuState.Challenge;
-					//newGame(Difficulty.HARD.getDifficulty());
-					//currentgamestate = GameState.Play;
-				}else if(selection == 4){
-					Pong.S_container.exit();
-				}
+	public void keyPressed(int key, char c) {
+		MainMenuHelper(key);
+	}
+	
+	private void MainMenuHelper(int key){
+		if (key == Input.KEY_UP && selection > 0) {
+			selection -= 1;
+		}else if (key == Input.KEY_DOWN && selection < MENU_ARRAY.length - 1) {
+			selection += 1;
+		}
+		if(key == Input.KEY_ENTER){
+			if(selection == 0){
+				game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+			}else if(selection == 1){
+				//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+				//currentmenustate = MenuState.PvP;
+				//newGame(Difficulty.HARD.getDifficulty());
+				//currentgamestate = GameState.Play;
+			}else if(selection == 2){
+				//container.pause();
+				game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 
-			}else if(key == Input.KEY_ESCAPE){
+
+			}else if(selection == 3){
+				//container.pause();
+				game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+
+				//currentmenustate = MenuState.Challenge;
+				//newGame(Difficulty.HARD.getDifficulty());
+				//currentgamestate = GameState.Play;
+			}else if(selection == 4){
 				Pong.S_container.exit();
 			}
-			
-		      if (key == Input.KEY_UP && selection > 0) {
-		    	  selection -= 1;
-		      }else if (key == Input.KEY_DOWN && selection < MENU_ARRAY.length - 1) {
-		    	  selection += 1;
-		      }
-	   }
+
+		}else if(key == Input.KEY_ESCAPE){
+			Pong.S_container.exit();
+		}
+	}
 
 	@Override
 	public int getID() {

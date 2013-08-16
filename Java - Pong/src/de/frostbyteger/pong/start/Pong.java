@@ -24,7 +24,7 @@ public class Pong extends StateBasedGame{
 	public static int S_resX        = 800;
 	public static int S_resY        = 600;
 	public static boolean S_debug   = true;
-	public static boolean S_showFPS = false;
+	public static boolean S_showFPS = true;
 	public static final int FPS     = 60;
 	
 	// Version info
@@ -38,7 +38,7 @@ public class Pong extends StateBasedGame{
 	public static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
 	
 	public static AppGameContainer S_container;
-	public static ConfigHelper ch = new ConfigHelper("data//", "config",".xml");
+	public static ConfigHelper ch = new ConfigHelper("data/", "config",".xml");
 
 	public Pong(String name) {
 		super(name);
@@ -61,7 +61,6 @@ public class Pong extends StateBasedGame{
 
 			md5.createChecksum();
 			if(md5.getChecksum().equals("d060b8b0afa1753bf21d5fa3d3b14493")){
-				System.out.println("CHECK 1");
 			}else{
 				JOptionPane.showMessageDialog(null,"File" + " data/Alexis.ttf" + " is corrupt. \n\nGame exits!");
 				return -1;
@@ -69,7 +68,6 @@ public class Pong extends StateBasedGame{
 			md5.setFilename("data/arrow_left.png");
 			md5.createChecksum();
 			if(md5.getChecksum().equals("42a88f1b4fa5de64c17bb8f8ca300234")){
-				System.out.println("CHECK 2");
 			}else{
 				JOptionPane.showMessageDialog(null,"File" + " data/arrow_left.png" + " is corrupt. \n\nGame exits!");
 				return -1;
@@ -77,7 +75,6 @@ public class Pong extends StateBasedGame{
 			md5.setFilename("data/arrow_right.png");
 			md5.createChecksum();
 			if(md5.getChecksum().equals("1c5d1ecec440191de3b71f080f93eb51")){
-				System.out.println("CHECK 3");
 			}else{
 				JOptionPane.showMessageDialog(null,"File" + " data/arrow_right.png" + " is corrupt. \n\nGame exits!");
 				return -1;
@@ -94,7 +91,7 @@ public class Pong extends StateBasedGame{
 			S_container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
 			S_container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
 			Pong.S_debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
-			System.out.println(Pong.S_debug);
+			Pong.S_showFPS = Boolean.parseBoolean(ch2.getOptions().get("show_fps"));
 		}catch(FileNotFoundException fnfe){
 			//Creating a config-file with standard values
 			LinkedHashMap<String, String> options = new LinkedHashMap<>();
@@ -102,17 +99,18 @@ public class Pong extends StateBasedGame{
 			options.put("resY", Integer.toString(Pong.S_resY));
 			options.put("volume", Float.toString(1.0f));
 			options.put("vol_on", Boolean.toString(true));
+			options.put("show_fps", Boolean.toString(false));
 			ch.setOptions(options);
 			ch.createConfigFile();
 		}
-		return 1;
+		return 0;
 	}
 
 	public static void main(String[] args) throws SlickException {
 		Pong pong = new Pong(TITLE + " " + VERSION);
 		S_container = new AppGameContainer(pong);
 		int errorcode = pong.initGameSubRoutines();
-		if(errorcode == 1){
+		if(errorcode == 0){
 			S_container.setDisplayMode(S_resX, S_resY, false);
 			S_container.setTargetFrameRate(FPS);
 			S_container.setShowFPS(S_showFPS);

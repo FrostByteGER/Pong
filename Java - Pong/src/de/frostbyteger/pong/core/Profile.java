@@ -24,9 +24,7 @@ public class Profile extends BasicGameState {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.GameState#init(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame)
-	 */
+
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
@@ -34,9 +32,7 @@ public class Profile extends BasicGameState {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.GameState#render(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame, org.newdawn.slick.Graphics)
-	 */
+
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
@@ -44,9 +40,7 @@ public class Profile extends BasicGameState {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.GameState#update(org.newdawn.slick.GameContainer, org.newdawn.slick.state.StateBasedGame, int)
-	 */
+
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
@@ -54,9 +48,7 @@ public class Profile extends BasicGameState {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.newdawn.slick.state.BasicGameState#getID()
-	 */
+
 	@Override
 	public int getID() {
 		return ID;

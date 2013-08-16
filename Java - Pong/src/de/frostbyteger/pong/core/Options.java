@@ -156,7 +156,7 @@ public class Options extends BasicGameState {
 	
 	public void keyPressed(int key, char c) {
 		if(ostate == OptionState.Main){
-			mainHelper(this.game, key);
+			mainHelper(key);
 		}else if(ostate == OptionState.Graphics){
 			graphicsHelper(key);
 		}else if(ostate == OptionState.Controls){
@@ -170,7 +170,7 @@ public class Options extends BasicGameState {
 	 * 
 	 * @param game
 	 */
-	private void mainHelper(StateBasedGame game, int key){
+	private void mainHelper(int key){
 		if(key == Input.KEY_UP && mainconfigselection > 0){
 			mainconfigselection -= 1;
 		}else if(key == Input.KEY_DOWN && mainconfigselection < MENU_OPTIONS_MAIN_ARRAY.length - 1){
@@ -444,6 +444,7 @@ public class Options extends BasicGameState {
 					options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
 					options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
 					options.put("debug", Boolean.toString(Pong.S_debug));
+					options.put("show_fps", Boolean.toString(Pong.S_showFPS));
 					MainMenu.ch.setOptions(options);
 					MainMenu.ch.createConfigFile();
 					savebool = true;
