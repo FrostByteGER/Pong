@@ -29,6 +29,8 @@ public class Game extends BasicGameState {
 
 	protected static final int ID = 003;
 	
+	private StateBasedGame game;
+	
 	private final String[] MENU_GAME_CHOICE_ARRAY     = {"Player vs. CPU","Player vs. Player","Challenge Mode","Back"};
 	private final String[] MENU_DIFFICULTY_ARRAY      = {"Easy","Medium","Hard","Unbeatable"};
 	private final String[] MENU_DIFFICULTY_EXPL_ARRAY = {"1/4 Speed of Player - For N00bs","1/2 Speed of Player- For average players","Same Speed as Player - For Pr0 Gamers","Alot faster than Player - Hacks are for pussies!"};
@@ -53,9 +55,7 @@ public class Game extends BasicGameState {
 	
 	private Image arrow_left;
 	private Image arrow_right;
-	
-	private Input input;
-	
+		
 	private GameState gstate = GameState.Main;
 	
 	/**
@@ -69,12 +69,13 @@ public class Game extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		this.game = game;
+
 		arrow_left = new Image("data/arrow_left.png");
 		arrow_right = new Image("data/arrow_right.png");
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		//currentgamestate = GameState.Play;
-		input = container.getInput();
 	}
 
 	@Override
@@ -93,19 +94,36 @@ public class Game extends BasicGameState {
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		
+
+
+	}
+	
+	public void keyPressed(int key, char c) {
 		if(gstate == GameState.Main){
-			gameHelper(game);
+			gameHelper(key);
+		}else if(gstate == GameState.PvCPU){
+		}else if(gstate == GameState.PvP){
+		}else if(gstate == GameState.Challenge){
 		}
 	}
 	
-	private void gameHelper(StateBasedGame game){
+	private void gameHelper(int key){
+		// Menu-navigation
+		if(key == Input.KEY_UP && gameselection > 0){
+			gameselection -= 1;
+		}else if(key == Input.KEY_DOWN && gameselection < MENU_GAME_CHOICE_ARRAY.length - 1){
+			gameselection += 1;
+		}
+		if(key == Input.KEY_ESCAPE){
+			game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+		}
+		
 		if(gameselection == 0){
 			for(int e = 0;e < gameArray.size();e++){
 				gameArray.set(e, Color.gray);
 			}
 			gameArray.set(0, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				gstate = GameState.PvCPU;
 				return;
 			}
@@ -114,7 +132,7 @@ public class Game extends BasicGameState {
 				gameArray.set(e, Color.gray);
 			}
 			gameArray.set(1, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				gstate = GameState.PvP;
 				return;
 			}
@@ -123,7 +141,7 @@ public class Game extends BasicGameState {
 				gameArray.set(e, Color.gray);
 			}
 			gameArray.set(2, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				gstate = GameState.Challenge;
 				return;
 			}
@@ -132,22 +150,16 @@ public class Game extends BasicGameState {
 				gameArray.set(e, Color.gray);
 			}
 			gameArray.set(3, Color.white);
-			if(input.isKeyPressed(Input.KEY_ENTER)){
+			if(key == Input.KEY_ENTER){
 				gstate = GameState.Main;
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 				return;
 			}
 		}
+	}
+	
+	private void challengeHelper(int key){
 		
-		// Menu-navigation
-		if(input.isKeyPressed(Input.KEY_UP) && gameselection > 0){
-			gameselection -= 1;
-		}else if(input.isKeyPressed(Input.KEY_DOWN) && gameselection < MENU_GAME_CHOICE_ARRAY.length - 1){
-			gameselection += 1;
-		}
-		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-		}
 	}
 
 	@Override

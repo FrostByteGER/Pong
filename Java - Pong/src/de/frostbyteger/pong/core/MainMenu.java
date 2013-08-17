@@ -111,10 +111,10 @@ public class MainMenu extends BasicGameState {
 	}
 	
 	public void keyPressed(int key, char c) {
-		MainMenuHelper(key);
+		mainMenuHelper(key);
 	}
 	
-	private void MainMenuHelper(int key){
+	private void mainMenuHelper(int key){
 		if (key == Input.KEY_UP && selection > 0) {
 			selection -= 1;
 		}else if (key == Input.KEY_DOWN && selection < MENU_ARRAY.length - 1) {
@@ -125,21 +125,10 @@ public class MainMenu extends BasicGameState {
 				game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 			}else if(selection == 1){
 				//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-				//currentmenustate = MenuState.PvP;
-				//newGame(Difficulty.HARD.getDifficulty());
-				//currentgamestate = GameState.Play;
 			}else if(selection == 2){
-				//container.pause();
 				game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-
-
 			}else if(selection == 3){
-				//container.pause();
 				game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-
-				//currentmenustate = MenuState.Challenge;
-				//newGame(Difficulty.HARD.getDifficulty());
-				//currentgamestate = GameState.Play;
 			}else if(selection == 4){
 				Pong.S_container.exit();
 			}

@@ -145,6 +145,8 @@ public class Options extends BasicGameState {
 	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		System.out.println(networkconfigselection);
+
 		//Timer for savemessage
 		if(savebool == true){
 			savetimer += delta;
@@ -182,6 +184,9 @@ public class Options extends BasicGameState {
 			}
 			optionArray.set(0, Color.white);
 			if(key == Input.KEY_ENTER){
+				for(int e = 0;e < optionArray.size();e++){
+					optionArray.set(e, Color.gray);
+				}
 				ostate = OptionState.Graphics;
 				mainconfigselection = 0;
 				return;
@@ -192,6 +197,9 @@ public class Options extends BasicGameState {
 			}
 			optionArray.set(1, Color.white);
 			if(key == Input.KEY_ENTER){
+				for(int e = 0;e < optionArray.size();e++){
+					optionArray.set(e, Color.gray);
+				}
 				ostate = OptionState.Controls;
 				mainconfigselection = 0;
 				return;
@@ -202,6 +210,9 @@ public class Options extends BasicGameState {
 			}
 			optionArray.set(2, Color.white);
 			if(key == Input.KEY_ENTER){
+				for(int e = 0;e < optionArray.size();e++){
+					optionArray.set(e, Color.gray);
+				}
 				ostate = OptionState.Network;
 				mainconfigselection = 0;
 				return;
@@ -328,13 +339,7 @@ public class Options extends BasicGameState {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param container
-	 * @throws SlickException
-	 */
 	private void graphicsHelper(int key){
-		System.out.println(graphicsconfigselection);
 		if(key == Input.KEY_UP && graphicsconfigselection > 0){
 			if(graphicsconfigselection == 4 && Pong.S_debug == false){
 				graphicsconfigselection -= 2;
