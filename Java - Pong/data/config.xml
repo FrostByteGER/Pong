@@ -5,11 +5,11 @@
     <options>
         <entry>
             <key>resX</key>
-            <value>1024</value>
+            <value>800</value>
         </entry>
         <entry>
             <key>resY</key>
-            <value>768</value>
+            <value>600</value>
         </entry>
         <entry>
             <key>volume</key>
@@ -21,6 +21,10 @@
         </entry>
         <entry>
             <key>debug</key>
+            <value>true</value>
+        </entry>
+        <entry>
+            <key>show_fps</key>
             <value>true</value>
         </entry>
     </options>
