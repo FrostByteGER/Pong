@@ -1,19 +1,25 @@
 package de.frostbyteger.pong.engine.graphics.ui;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.geom.Rectangle;
+
+import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 public class Cell{
 	
 	// Objects and Paths
+	private Rectangle cell         = null;
+	private Rectangle cellBorder   = null;
 	private UnicodeFont cellFont   = null;
 	private Image cellImage        = null;
 	private Object parentComponent = null;
+	private String cellText        = "";
 	private String fontPath;
 	private String imagePath;
-
 	
 	// Font options
 	private boolean centered = true;
@@ -24,228 +30,169 @@ public class Cell{
 	private int size;
 	
 	// Cell options
-	private boolean autoAdjust = false;
-	private boolean active = true;
-	private boolean selected = false;
+	private boolean active      = true;
+	private boolean autoAdjust  = true;
+	private boolean selected    = false;
 	private boolean highlighted = false;
-	private Color backgroundColor = Color.black;
+	private boolean edging      = false;
+	private Color backgroundColor = Color.green;
+	private Color borderColor     = Color.white;
 	private int width;
 	private int height;
-	private int cellX;
-	private int cellY;
+	private int cellX = 0;
+	private int cellY = 0;
 	
-	public Cell() {
-	}
-
 	/**
+	 * Default constructor.
+	 */
+	public Cell(){
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
 	 * @param width
 	 * @param height
 	 */
-	public Cell(int width, int height) {
+	public Cell(int x, int y, int width, int height) {
+		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
+		this.cellBorder = new Rectangle(x, y, width, height);
+		this.cellX = x;
+		this.cellY = y;
 		this.width = width;
 		this.height = height;
 	}
 
 	/**
+	 * 
 	 * @param parentComponent
+	 * @param x
+	 * @param y
 	 * @param width
 	 * @param height
 	 */
-	public Cell(Object parentComponent, int width, int height) {
+	public Cell(Object parentComponent, int x, int y, int width, int height) {
+		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
+		this.cellBorder = new Rectangle(x, y, width, height);
 		this.parentComponent = parentComponent;
+		this.cellX = x;
+		this.cellY = y;
 		this.width = width;
 		this.height = height;
-	}
-	/**
-	 * 
-	 * @param parentComponent
-	 * @param width
-	 * @param height
-	 * @param cellX
-	 * @param cellY
-	 */
-	public Cell(Object parentComponent, int width, 
-			int height, int cellX, int cellY) {
-		this.parentComponent = parentComponent;
-		this.width = width;
-		this.height = height;
-		this.cellX = cellX;
-		this.cellY = cellY;
-	}
-
-	/**
-	 * 
-	 * @param imagePath
-	 * @param parentComponent
-	 * @param width
-	 * @param height
-	 * @param cellX
-	 * @param cellY
-	 * @throws SlickException
-	 */
-	public Cell(String imagePath, Object parentComponent, 
-			int width, int height, int cellX,
-			int cellY) throws SlickException {
-		this.cellImage = new Image(imagePath, false);
-		this.imagePath = imagePath;
-		this.parentComponent = parentComponent;
-		this.width = width;
-		this.height = height;
-		this.cellX = cellX;
-		this.cellY = cellY;
-	}
-
-	/**
-	 * 
-	 * @param fontPath
-	 * @param imagePath
-	 * @param size
-	 * @param autoAdjust
-	 * @param width
-	 * @param height
-	 * @throws SlickException
-	 */
-	public Cell(String fontPath, String imagePath, int size,
-			boolean autoAdjust, int width, int height) throws SlickException {
-		this.cellFont = new UnicodeFont(fontPath, size, bold, italic);
-		this.fontPath = fontPath;
-		this.cellImage = new Image(imagePath, false);
-		this.imagePath = imagePath;
-		this.size = size;
-		this.autoAdjust = autoAdjust;
-		this.width = width;
-		this.height = height;
-	}
-
-	/**
-	 * 
-	 * @param fontPath
-	 * @param imagePath
-	 * @param bold
-	 * @param italic
-	 * @param size
-	 * @param width
-	 * @param height
-	 * @throws SlickException
-	 */
-	public Cell(String fontPath, String imagePath, boolean bold,
-			boolean italic, int size, int width, int height) throws SlickException {
-		this.cellFont = new UnicodeFont(fontPath, size, bold, italic);
-		this.fontPath = fontPath;
-		this.cellImage = new Image(imagePath, false);
-		this.imagePath = imagePath;
-		this.bold = bold;
-		this.italic = italic;
-		this.size = size;
-		this.width = width;
-		this.height = height;
-	}
-
-	/**
-	 * 
-	 * @param fontPath
-	 * @param imagePath
-	 * @param parentComponent
-	 * @param bold
-	 * @param italic
-	 * @param size
-	 * @param autoAdjust
-	 * @param width
-	 * @param height
-	 * @throws SlickException
-	 */
-	public Cell(String fontPath, String imagePath, Object parentComponent,
-			boolean bold, boolean italic, int size, boolean autoAdjust,
-			int width, int height) throws SlickException {
-		this.cellFont = new UnicodeFont(fontPath, size, bold, italic);
-		this.fontPath = fontPath;
-		this.cellImage = new Image(imagePath, false);
-		this.imagePath = imagePath;
-		this.parentComponent = parentComponent;
-		this.bold = bold;
-		this.italic = italic;
-		this.size = size;
-		this.autoAdjust = autoAdjust;
-		this.width = width;
-		this.height = height;
-	}
-
-	/**
-	 * 
-	 * @param fontPath
-	 * @param parentComponent
-	 * @param centered
-	 * @param left
-	 * @param right
-	 * @param bold
-	 * @param italic
-	 * @param size
-	 * @param autoAdjust
-	 * @param width
-	 * @param height
-	 * @param cellX
-	 * @param cellY
-	 * @throws SlickException
-	 */
-	public Cell(String fontPath, Object parentComponent, boolean centered,
-			boolean left, boolean right, boolean bold, boolean italic,
-			int size, boolean autoAdjust, int width, int height, int cellX,
-			int cellY) throws SlickException {
-		this.cellFont = new UnicodeFont(fontPath, size, bold, italic);
-		this.fontPath = fontPath;
-		this.parentComponent = parentComponent;
-		this.centered = centered;
-		this.left = left;
-		this.right = right;
-		this.bold = bold;
-		this.italic = italic;
-		this.size = size;
-		this.autoAdjust = autoAdjust;
-		this.width = width;
-		this.height = height;
-		this.cellX = cellX;
-		this.cellY = cellY;
 	}
 	
 	/**
 	 * 
 	 * @param fontPath
-	 * @param imagePath
-	 * @param parentComponent
-	 * @param centered
-	 * @param left
-	 * @param right
-	 * @param bold
-	 * @param italic
-	 * @param size
-	 * @param autoAdjust
+	 * @param fontSize
+	 * @param x
+	 * @param y
 	 * @param width
 	 * @param height
-	 * @param cellX
-	 * @param cellY
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, String imagePath, Object parentComponent,
-			boolean centered, boolean left, boolean right, boolean bold,
-			boolean italic, int size, boolean autoAdjust, int width,
-			int height, int cellX, int cellY) throws SlickException {
-		this.cellFont = new UnicodeFont(fontPath, size, bold, italic);
-		this.fontPath = fontPath;
-		this.cellImage = new Image(imagePath, false);
-		this.imagePath = imagePath;
-		this.parentComponent = parentComponent;
-		this.centered = centered;
-		this.left = left;
-		this.right = right;
-		this.bold = bold;
-		this.italic = italic;
-		this.size = size;
-		this.autoAdjust = autoAdjust;
+	public Cell(String fontPath, int fontSize, int x, int y, int width, int height) throws SlickException {
+		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
+		this.cellBorder = new Rectangle(x, y, width, height);
+		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+		this.size = fontSize;
+		this.cellX = x;
+		this.cellY = y;
 		this.width = width;
 		this.height = height;
-		this.cellX = cellX;
-		this.cellY = cellY;
 	}
+	
+	/**
+	 * 
+	 * @param fontPath
+	 * @param fontSize
+	 * @param imagePath
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @throws SlickException
+	 */
+	public Cell(String fontPath, int fontSize, String imagePath, int x, int y, int width, int height) throws SlickException {
+		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
+		this.cellBorder = new Rectangle(x, y, width, height);
+		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+		this.cellImage = new Image(imagePath);
+		this.imagePath = imagePath;
+		this.size = fontSize;
+		this.cellX = x;
+		this.cellY = y;
+		this.width = width;
+		this.height = height;
+	}
+	
+	/**
+	 * 
+	 * @param fontPath
+	 * @param fontSize
+	 * @param bold
+	 * @param italics
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @throws SlickException
+	 */
+	public Cell(String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, int width, int height) throws SlickException {
+		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
+		this.cellBorder = new Rectangle(x, y, width, height);
+		this.cellFont = FontHelper.newFont(fontPath, size, bold, italics);
+		this.size = fontSize;
+		this.bold = bold;
+		this.italic = italics;
+		this.cellX = x;
+		this.cellY = y;
+		this.width = width;
+		this.height = height;
+	}
+	
+	public void drawCell(Graphics g) throws SlickException{
+		if(active == true){
+			if(edging == true){
+				
+				g.setColor(Color.white);
+				g.fill(cell);
+				g.setColor(Color.magenta);
+				g.setLineWidth(2);
+				g.draw(cellBorder);
+				
+			}else{
+				g.setColor(backgroundColor);
+				g.fill(cell);
+				if(autoAdjust == true){
+					while(cellFont.getHeight(cellText) >= cell.getHeight() - 10|| cellFont.getWidth(cellText) >= cell.getWidth() - 20) {
+						cellFont = FontHelper.newFont(fontPath, size -= 1, bold, italic);
+					}
+					if(left == true){
+						cellFont.drawString(cell.getMinX() + 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+					}else if(centered == true){
+						cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2, cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+					}else{
+						cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+					}
+
+				}else{
+					if(left == true){
+						cellFont.drawString(cell.getMinX() + 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+					}else if(centered == true){
+						cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2, cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+					}else{
+						cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+					}
+				}
+			}
+		}else{
+			return;
+		}
+	}
+
+
 	
 	/**
 	 * Use this method if you want to change the actual fontsettings
@@ -255,7 +202,17 @@ public class Cell{
 	 * @throws SlickException
 	 */
 	public void createNewFont() throws SlickException{
-		cellFont = new UnicodeFont(fontPath, size, bold, italic);
+		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+	}
+	
+	/**
+	 * Use this method if you want to change the resource of the image.
+	 * The imageclass has no setter for these setting so you have
+	 * to overwrite the old image with a new one.
+	 * @throws SlickException
+	 */
+	public void createNewImage() throws SlickException{
+		this.cellImage = new Image(imagePath);
 	}
 	
 	
@@ -453,6 +410,104 @@ public class Cell{
 	 */
 	public void setCellY(int cellY) {
 		this.cellY = cellY;
+	}
+
+	/**
+	 * @return the cellText
+	 */
+	public String getCellText() {
+		return cellText;
+	}
+
+	/**
+	 * @param cellText the cellText to set
+	 */
+	public void setCellText(String cellText) {
+		this.cellText = cellText;
+	}
+
+	/**
+	 * @return the fontPath
+	 */
+	public String getFontPath() {
+		return fontPath;
+	}
+
+	/**
+	 * @param fontPath the fontPath to set
+	 */
+	public void setFontPath(String fontPath) {
+		this.fontPath = fontPath;
+	}
+
+	/**
+	 * @return the imagePath
+	 */
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	/**
+	 * @param imagePath the imagePath to set
+	 */
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	/**
+	 * @return the selected
+	 */
+	public boolean isSelected() {
+		return selected;
+	}
+
+	/**
+	 * @param selected the selected to set
+	 */
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	/**
+	 * @return the highlighted
+	 */
+	public boolean isHighlighted() {
+		return highlighted;
+	}
+
+	/**
+	 * @param highlighted the highlighted to set
+	 */
+	public void setHighlighted(boolean highlighted) {
+		this.highlighted = highlighted;
+	}
+
+	/**
+	 * @return the backgroundColor
+	 */
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	/**
+	 * @param backgroundColor the backgroundColor to set
+	 */
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 
 }
