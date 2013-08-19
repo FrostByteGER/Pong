@@ -22,7 +22,7 @@ public class CellTest extends BasicGame{
 		logger = new ErrorLogger();
 		cell = new Cell(100, 100, 500, 200);
 		cell.setFontPath("data/Alexis.ttf");
-		cell.setSize(100);
+		cell.setSize(200);
 		cell.createNewFont();
 		cell.setCellText("this is a test...");
 		

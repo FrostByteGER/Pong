@@ -18,8 +18,8 @@ public class Cell{
 	private Image cellImage        = null;
 	private Object parentComponent = null;
 	private String cellText        = "";
-	private String fontPath;
-	private String imagePath;
+	private String fontPath        = "";
+	private String imagePath       = "";
 	
 	// Font options
 	private boolean centered = true;
@@ -30,17 +30,20 @@ public class Cell{
 	private int size;
 	
 	// Cell options
-	private boolean active      = true;
-	private boolean autoAdjust  = true;
-	private boolean selected    = false;
-	private boolean highlighted = false;
-	private boolean edging      = false;
-	private Color backgroundColor = Color.green;
-	private Color borderColor     = Color.white;
+	private boolean active               = true;
+	private boolean autoAdjust           = true;
+	private boolean autoAdjustCellWidth  = false;
+	private boolean autoAdjustCellHeight = false;	
+	private boolean selected             = false;
+	private boolean highlighted          = false;
+	private boolean edging               = true;
+	private Color backgroundColor = Color.black;
+	private Color borderColor     = Color.blue;
 	private int width;
 	private int height;
 	private int cellX = 0;
 	private int cellY = 0;
+	private int cellEdgeWidth = 1;
 	
 	/**
 	 * Default constructor.
@@ -152,40 +155,54 @@ public class Cell{
 		this.height = height;
 	}
 	
+	/**
+	 * Draws the cell while taking account of the set celloptions
+	 * like auto adjustment or visibility.
+	 * @param g
+	 * @throws SlickException
+	 */
 	public void drawCell(Graphics g) throws SlickException{
+		System.out.println(cellFont.getWidth(cellText));
 		if(active == true){
-			if(edging == true){
+			if(autoAdjust == true){
+				if(autoAdjustCellHeight == true){
+					//TODO: Fill 
+				}else{
+					
+				}
 				
-				g.setColor(Color.white);
-				g.fill(cell);
-				g.setColor(Color.magenta);
-				g.setLineWidth(2);
+				if(autoAdjustCellWidth == true){
+					
+				}else{
+					
+				}
+
+			}
+			if(edging == true){
+				g.setColor(borderColor);
+				g.setLineWidth(cellEdgeWidth);
 				g.draw(cellBorder);
 				
+
 			}else{
 				g.setColor(backgroundColor);
 				g.fill(cell);
-				if(autoAdjust == true){
-					while(cellFont.getHeight(cellText) >= cell.getHeight() - 10|| cellFont.getWidth(cellText) >= cell.getWidth() - 20) {
-						cellFont = FontHelper.newFont(fontPath, size -= 1, bold, italic);
-					}
-					if(left == true){
-						cellFont.drawString(cell.getMinX() + 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-					}else if(centered == true){
-						cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2, cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-					}else{
-						cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-					}
 
-				}else{
-					if(left == true){
-						cellFont.drawString(cell.getMinX() + 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-					}else if(centered == true){
-						cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2, cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-					}else{
-						cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-					}
+			}
+			if(autoAdjust == true){
+				if(cellFont.getHeight(cellText) >= cell.getHeight() - 10 || cellFont.getWidth(cellText) >= cell.getWidth() - 20) {
+					float i = (float)cellFont.getWidth(cellText) / (float)size;
+					System.out.println(cellFont.getWidth(cellText));
+					size = (int) ((float)width / i);
+					cellFont = FontHelper.newFont(fontPath, size, bold, italic);
 				}
+			}
+			if(left == true){
+				cellFont.drawString(cell.getMinX() + 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+			}else if(centered == true){
+				cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2, cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+			}else{
+				cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
 			}
 		}else{
 			return;
@@ -508,6 +525,62 @@ public class Cell{
 	 */
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
+	}
+
+	/**
+	 * @return the cell
+	 */
+	public Rectangle getCell() {
+		return cell;
+	}
+
+	/**
+	 * @param cell the cell to set
+	 */
+	public void setCell(Rectangle cell) {
+		this.cell = cell;
+	}
+
+	/**
+	 * @return the cellBorder
+	 */
+	public Rectangle getCellBorder() {
+		return cellBorder;
+	}
+
+	/**
+	 * @param cellBorder the cellBorder to set
+	 */
+	public void setCellBorder(Rectangle cellBorder) {
+		this.cellBorder = cellBorder;
+	}
+
+	/**
+	 * @return the edging
+	 */
+	public boolean isEdging() {
+		return edging;
+	}
+
+	/**
+	 * @param edging the edging to set
+	 */
+	public void setEdging(boolean edging) {
+		this.edging = edging;
+	}
+
+	/**
+	 * @return the borderColor
+	 */
+	public Color getBorderColor() {
+		return borderColor;
+	}
+
+	/**
+	 * @param borderColor the borderColor to set
+	 */
+	public void setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
 	}
 
 }
