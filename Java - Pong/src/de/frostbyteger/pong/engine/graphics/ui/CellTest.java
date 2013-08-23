@@ -20,9 +20,11 @@ public class CellTest extends BasicGame{
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		logger = new ErrorLogger();
-		cell = new Cell(100, 100, 500, 200);
+		cell = new Cell(100, 100, 200, 50);
+		cell.setImagePath("data/test_button.png");
+		cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
-		cell.setSize(200);
+		cell.setSize(50);
 		cell.createNewFont();
 		cell.setCellText("this is a test...");
 		
@@ -36,7 +38,7 @@ public class CellTest extends BasicGame{
 
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
-		
+		//System.out.println(cell.getSize());
 	}
 	
 	public static void main(String[] args) throws SlickException {

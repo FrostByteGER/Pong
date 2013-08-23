@@ -22,6 +22,7 @@ public class Cell{
 	private String imagePath       = "";
 	
 	// Font options
+	private Color fontColor = Color.white;
 	private boolean centered = true;
 	private boolean left     = false;
 	private boolean right    = false;
@@ -29,21 +30,29 @@ public class Cell{
 	private boolean italic   = false;
 	private int size;
 	
+	// Image options
+	private float imageScale = 1.0f;
+	
 	// Cell options
 	private boolean active               = true;
+	private boolean visible	             = true;
 	private boolean autoAdjust           = true;
-	private boolean autoAdjustCellWidth  = false;
-	private boolean autoAdjustCellHeight = false;	
+	//private boolean autoAdjustCellWidth  = false;
+	//private boolean autoAdjustCellHeight = false;	
 	private boolean selected             = false;
 	private boolean highlighted          = false;
 	private boolean edging               = true;
 	private Color backgroundColor = Color.black;
 	private Color borderColor     = Color.blue;
-	private int width;
-	private int height;
-	private int cellX = 0;
-	private int cellY = 0;
-	private int cellEdgeWidth = 1;
+	private float cellWidth;
+	private float cellHeight;
+	private float cellScale = 1.0f;
+	private int cellX;
+	private int cellY;
+	private int cellEdgeWidth   = 1;
+	private int cellDrawOffsetX = 20;
+	private int cellDrawOffsetY = 10;
+
 	
 	/**
 	 * Default constructor.
@@ -58,13 +67,30 @@ public class Cell{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(int x, int y, int width, int height) {
+	public Cell(int x, int y, float width, float height) {
 		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellX = x;
 		this.cellY = y;
-		this.width = width;
-		this.height = height;
+		this.cellWidth = width;
+		this.cellHeight = height;
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public Cell(int x, int y, float width, float height, float scale) {
+		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
+		this.cellBorder = new Rectangle(x, y, width, height);
+		this.cellX = x;
+		this.cellY = y;
+		this.cellWidth = width;
+		this.cellHeight = height;
+		this.cellScale = scale;
 	}
 
 	/**
@@ -75,14 +101,14 @@ public class Cell{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(Object parentComponent, int x, int y, int width, int height) {
+	public Cell(Object parentComponent, int x, int y, float width, float height) {
 		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.parentComponent = parentComponent;
 		this.cellX = x;
 		this.cellY = y;
-		this.width = width;
-		this.height = height;
+		this.cellWidth = width;
+		this.cellHeight = height;
 	}
 	
 	/**
@@ -95,15 +121,15 @@ public class Cell{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, int fontSize, int x, int y, int width, int height) throws SlickException {
+	public Cell(String fontPath, int fontSize, int x, int y, float width, float height) throws SlickException {
 		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
 		this.size = fontSize;
 		this.cellX = x;
 		this.cellY = y;
-		this.width = width;
-		this.height = height;
+		this.cellWidth = width;
+		this.cellHeight = height;
 	}
 	
 	/**
@@ -117,7 +143,7 @@ public class Cell{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, int fontSize, String imagePath, int x, int y, int width, int height) throws SlickException {
+	public Cell(String fontPath, int fontSize, String imagePath, int x, int y, float width, float height) throws SlickException {
 		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
@@ -126,8 +152,8 @@ public class Cell{
 		this.size = fontSize;
 		this.cellX = x;
 		this.cellY = y;
-		this.width = width;
-		this.height = height;
+		this.cellWidth = width;
+		this.cellHeight = height;
 	}
 	
 	/**
@@ -142,7 +168,7 @@ public class Cell{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, int width, int height) throws SlickException {
+	public Cell(String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, float width, float height) throws SlickException {
 		this.cell = new Rectangle(x + 1,y, width - 1, height - 1);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, size, bold, italics);
@@ -151,58 +177,63 @@ public class Cell{
 		this.italic = italics;
 		this.cellX = x;
 		this.cellY = y;
-		this.width = width;
-		this.height = height;
+		this.cellWidth = width;
+		this.cellHeight = height;
 	}
 	
 	/**
 	 * Draws the cell while taking account of the set celloptions
 	 * like auto adjustment or visibility.
+	 * However, the autoadjust is not possible for the image due to
+	 * missing methods in the imageclass. 
 	 * @param g
 	 * @throws SlickException
 	 */
 	public void drawCell(Graphics g) throws SlickException{
-		System.out.println(cellFont.getWidth(cellText));
 		if(active == true){
-			if(autoAdjust == true){
-				if(autoAdjustCellHeight == true){
-					//TODO: Fill 
+			if(visible == true){
+				if(edging == true){
+					g.setColor(borderColor);
+					g.setLineWidth(cellEdgeWidth);
+					g.draw(cellBorder);
 				}else{
-					
+					g.setColor(backgroundColor);
+					g.fill(cell);
 				}
-				
-				if(autoAdjustCellWidth == true){
-					
-				}else{
-					
+				if(autoAdjust == true){
+					if(cellFont != null){
+						if(cellFont.getWidth(cellText) >= cell.getWidth()) {
+							float i = (float)cellFont.getWidth(cellText) / (float)size;
+							if(cellWidth > cellDrawOffsetX){
+								size = (int) ((cellWidth - cellDrawOffsetX) / i);			
+							}else{
+								size = (int) (cellWidth / i);			
+							}
+							cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+						}else if(cellFont.getHeight(cellText) >= cell.getHeight()){
+							float i = (float)cellFont.getHeight(cellText) / (float)size;
+							if(cellHeight > cellDrawOffsetY){
+								size = (int) ((cellHeight - cellDrawOffsetY) / i);							
+							}else{
+								size = (int) (cellHeight / i);							
+							}
+							cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+						}
+					}
 				}
-
-			}
-			if(edging == true){
-				g.setColor(borderColor);
-				g.setLineWidth(cellEdgeWidth);
-				g.draw(cellBorder);
-				
-
-			}else{
-				g.setColor(backgroundColor);
-				g.fill(cell);
-
-			}
-			if(autoAdjust == true){
-				if(cellFont.getHeight(cellText) >= cell.getHeight() - 10 || cellFont.getWidth(cellText) >= cell.getWidth() - 20) {
-					float i = (float)cellFont.getWidth(cellText) / (float)size;
-					System.out.println(cellFont.getWidth(cellText));
-					size = (int) ((float)width / i);
-					cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+				if(cellImage != null){
+					cellImage.draw(cell.getMinX(), cell.getMinY(), imageScale);
+					System.out.println("TEST");
 				}
-			}
-			if(left == true){
-				cellFont.drawString(cell.getMinX() + 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-			}else if(centered == true){
-				cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2, cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
-			}else{
-				cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1 , cell.getCenterY() - cellFont.getHeight(cellText)/2, cellText);
+				if(cellFont != null){
+					if(left == true){
+						cellFont.drawString(cell.getMinX() + 1.0f , cell.getCenterY() - cellFont.getHeight(cellText)/2.0f, cellText, fontColor);
+					}else if(centered == true){
+						cellFont.drawString(cell.getCenterX() - cellFont.getWidth(cellText)/2.0f, cell.getCenterY() - cellFont.getHeight(cellText)/2.0f, cellText, fontColor);
+					}else{
+						cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1.0f , cell.getCenterY() - cellFont.getHeight(cellText)/2.0f, cellText, fontColor);
+					}
+				}
 			}
 		}else{
 			return;
@@ -376,29 +407,29 @@ public class Cell{
 	/**
 	 * @return the width
 	 */
-	public int getWidth() {
-		return width;
+	public float getWidth() {
+		return cellWidth;
 	}
 
 	/**
 	 * @param width the width to set
 	 */
 	public void setWidth(int width) {
-		this.width = width;
+		this.cellWidth = width;
 	}
 
 	/**
 	 * @return the height
 	 */
-	public int getHeight() {
-		return height;
+	public float getHeight() {
+		return cellHeight;
 	}
 
 	/**
 	 * @param height the height to set
 	 */
 	public void setHeight(int height) {
-		this.height = height;
+		this.cellHeight = height;
 	}
 
 	/**
@@ -581,6 +612,132 @@ public class Cell{
 	 */
 	public void setBorderColor(Color borderColor) {
 		this.borderColor = borderColor;
+	}
+
+	/**
+	 * @return the imageScale
+	 */
+	public float getImageScale() {
+		return imageScale;
+	}
+
+	/**
+	 * @param imageScale the imageScale to set
+	 */
+	public void setImageScale(float imageScale) {
+		this.imageScale = imageScale;
+	}
+
+	/**
+	 * @return the visible
+	 */
+	public boolean isVisible() {
+		return visible;
+	}
+
+	/**
+	 * @param visible the visible to set
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	/**
+	 * @return the cellWidth
+	 */
+	public float getCellWidth() {
+		return cellWidth;
+	}
+
+	/**
+	 * @param cellWidth the cellWidth to set
+	 */
+	public void setCellWidth(float cellWidth) {
+		this.cellWidth = cellWidth;
+	}
+
+	/**
+	 * @return the cellHeight
+	 */
+	public float getCellHeight() {
+		return cellHeight;
+	}
+
+	/**
+	 * @param cellHeight the cellHeight to set
+	 */
+	public void setCellHeight(float cellHeight) {
+		this.cellHeight = cellHeight;
+	}
+
+	/**
+	 * @return the cellScale
+	 */
+	public float getCellScale() {
+		return cellScale;
+	}
+
+	/**
+	 * @param cellScale the cellScale to set
+	 */
+	public void setCellScale(float cellScale) {
+		this.cellScale = cellScale;
+	}
+
+	/**
+	 * @return the cellEdgeWidth
+	 */
+	public int getCellEdgeWidth() {
+		return cellEdgeWidth;
+	}
+
+	/**
+	 * @param cellEdgeWidth the cellEdgeWidth to set
+	 */
+	public void setCellEdgeWidth(int cellEdgeWidth) {
+		this.cellEdgeWidth = cellEdgeWidth;
+	}
+
+	/**
+	 * @return the cellDrawOffsetX
+	 */
+	public int getCellDrawOffsetX() {
+		return cellDrawOffsetX;
+	}
+
+	/**
+	 * @param cellDrawOffsetX the cellDrawOffsetX to set
+	 */
+	public void setCellDrawOffsetX(int cellDrawOffsetX) {
+		this.cellDrawOffsetX = cellDrawOffsetX;
+	}
+
+	/**
+	 * @return the cellDrawOffsetY
+	 */
+	public int getCellDrawOffsetY() {
+		return cellDrawOffsetY;
+	}
+
+	/**
+	 * @param cellDrawOffsetY the cellDrawOffsetY to set
+	 */
+	public void setCellDrawOffsetY(int cellDrawOffsetY) {
+		this.cellDrawOffsetY = cellDrawOffsetY;
+	}
+
+	/**
+	 * @return the fontColor
+	 */
+	public Color getFontColor() {
+		return fontColor;
+	}
+
+	/**
+	 * @param fontColor the fontColor to set
+	 */
+	public void setFontColor(Color fontColor) {
+		this.fontColor = fontColor;
 	}
 
 }
