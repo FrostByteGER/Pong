@@ -37,8 +37,6 @@ public class Cell{
 	private boolean active               = true;
 	private boolean visible	             = true;
 	private boolean autoAdjust           = true;
-	//private boolean autoAdjustCellWidth  = false;
-	//private boolean autoAdjustCellHeight = false;	
 	private boolean selected             = false;
 	private boolean highlighted          = false;
 	private boolean edging               = true;
@@ -223,7 +221,6 @@ public class Cell{
 				}
 				if(cellImage != null){
 					cellImage.draw(cell.getMinX(), cell.getMinY(), imageScale);
-					System.out.println("TEST");
 				}
 				if(cellFont != null){
 					if(left == true){
