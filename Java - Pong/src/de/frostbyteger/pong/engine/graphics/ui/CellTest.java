@@ -8,7 +8,7 @@ import org.newdawn.slick.SlickException;
 
 import de.frostbyteger.errorlogger.ErrorLogger;
 
-public class CellTest extends BasicGame{
+public class CellTest extends BasicGame implements ComponentListener{
 	
 	private Cell cell;
 	public static ErrorLogger logger;
@@ -20,7 +20,7 @@ public class CellTest extends BasicGame{
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		logger = new ErrorLogger();
-		cell = new Cell(100, 100, 200, 50);
+		cell = new Cell(100, 100, 200, 50, container, this);
 		cell.setImagePath("data/test_button.png");
 		cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
@@ -50,6 +50,13 @@ public class CellTest extends BasicGame{
 		container.setShowFPS(true);
 		container.start();
 
+	}
+
+	@Override
+	public void componentActivated(AbstractComponent source) {
+		System.out.println("ACTIVL : "+source);
+		if (source == cell.getArea()) {
+		}	
 	}
 
 }
