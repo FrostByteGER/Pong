@@ -1,9 +1,12 @@
 package de.frostbyteger.pong.engine.graphics.ui;
 
 /**
- * A descritpion of a class responding to events occuring on a GUI component
- *
- * @author kevin
+ * Original Class by kevglass from Slick Devteam.
+ * Reused and changed by Kevin Kuegler
+ * 
+ * A description of a class responding to events occuring on a GUI component
+ * 
+ * @author Kevin Kuegler
  */
 public interface ComponentListener {
 

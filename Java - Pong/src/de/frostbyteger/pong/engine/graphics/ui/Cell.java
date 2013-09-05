@@ -9,9 +9,13 @@ import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.geom.Rectangle;
 
 import de.frostbyteger.pong.engine.graphics.FontHelper;
-//TODO: Fix wrong xy of MouseOverCell
-//TODO: Add more specific MouseOverCell for Image and Font
-//TODO: Change Description of ComponentListener and AbstractComponent as well as MouseOverCell
+//TODO: Add getter/setter for mouseOverCellMouseNormal,MouseOver and MouseDown
+
+/**
+ * TODO: Add description
+ * @author Kevin Kuegler
+ *
+ */
 public class Cell{
 	
 	// Objects and Paths
@@ -40,7 +44,7 @@ public class Cell{
 	private float imageScale           = 1.0f;
 	private float cellImageDrawOffsetX = 1.0f;
 	private float cellImageDrawOffset  = 1.0f;
-	private boolean autoAdjustImage    = false;
+	private boolean autoAdjustImage    = true;
 	
 	// Cell options
 	private boolean active        = true;
@@ -48,7 +52,7 @@ public class Cell{
 	private boolean autoAdjust    = true;
 	private boolean selected      = false;
 	private boolean highlighted   = false;
-	private boolean edging        = true;
+	private boolean edging        = false;
 	private Color backgroundColor = Color.black;
 	private Color borderColor     = Color.blue;
 	private float cellWidth;
@@ -59,6 +63,9 @@ public class Cell{
 	private int cellEdgeWidth     = 1;
 	private int cellDrawOffsetX   = 20;
 	private int cellDrawOffsetY   = 10;
+	
+	// Additional variables
+	private int areaOffset = 1;
 	
 
 	
@@ -83,10 +90,10 @@ public class Cell{
 		this.cellWidth = width;
 		this.cellHeight = height;
 		this.container = container;
-		this.area = new MouseOverCell(container, x + 1, y, width - 1, height - 1, listener);
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area.setAreaFilled(true);
 		this.area.setNormalColor(new Color(1,1,1,0.0f));
 		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.area.setFilled(true);
 	}
 	
 	/**
@@ -96,7 +103,7 @@ public class Cell{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(int x, int y, float width, float height, float scale) {
+	public Cell(int x, int y, float width, float height, float scale, GameContainer container, ComponentListener listener) {
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellX = x;
@@ -104,6 +111,10 @@ public class Cell{
 		this.cellWidth = width;
 		this.cellHeight = height;
 		this.cellScale = scale;
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area.setAreaFilled(true);
+		this.area.setNormalColor(new Color(1,1,1,0.0f));
+		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
 	}
 
 	/**
@@ -114,7 +125,7 @@ public class Cell{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(Object parentComponent, int x, int y, float width, float height) {
+	public Cell(Object parentComponent, int x, int y, float width, float height, GameContainer container, ComponentListener listener) {
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.parentComponent = parentComponent;
@@ -122,6 +133,10 @@ public class Cell{
 		this.cellY = y;
 		this.cellWidth = width;
 		this.cellHeight = height;
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area.setAreaFilled(true);
+		this.area.setNormalColor(new Color(1,1,1,0.0f));
+		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
 	}
 	
 	/**
@@ -134,7 +149,7 @@ public class Cell{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, int fontSize, int x, int y, float width, float height) throws SlickException {
+	public Cell(String fontPath, int fontSize, int x, int y, float width, float height, GameContainer container, ComponentListener listener) throws SlickException {
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
@@ -143,6 +158,10 @@ public class Cell{
 		this.cellY = y;
 		this.cellWidth = width;
 		this.cellHeight = height;
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area.setAreaFilled(true);
+		this.area.setNormalColor(new Color(1,1,1,0.0f));
+		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
 	}
 	
 	/**
@@ -156,7 +175,7 @@ public class Cell{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, int fontSize, String imagePath, int x, int y, float width, float height) throws SlickException {
+	public Cell(String fontPath, int fontSize, String imagePath, int x, int y, float width, float height, GameContainer container, ComponentListener listener) throws SlickException {
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
@@ -167,6 +186,10 @@ public class Cell{
 		this.cellY = y;
 		this.cellWidth = width;
 		this.cellHeight = height;
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area.setAreaFilled(true);
+		this.area.setNormalColor(new Color(1,1,1,0.0f));
+		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
 	}
 	
 	/**
@@ -181,7 +204,7 @@ public class Cell{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, float width, float height) throws SlickException {
+	public Cell(String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, float width, float height, GameContainer container, ComponentListener listener) throws SlickException {
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, size, bold, italics);
@@ -192,6 +215,10 @@ public class Cell{
 		this.cellY = y;
 		this.cellWidth = width;
 		this.cellHeight = height;
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area.setAreaFilled(true);
+		this.area.setNormalColor(new Color(1,1,1,0.0f));
+		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
 	}
 	
 	/**
@@ -206,10 +233,19 @@ public class Cell{
 		if(active == true){
 			if(visible == true){
 				if(edging == true){
+					if(areaOffset == 0){
+						areaOffset = 1;
+						System.out.println("TEST");
+						area.setArea(new Rectangle(area.getX() + areaOffset, area.getY() + areaOffset, area.getAreaWidth() - (float)areaOffset*2, area.getAreaHeight() - (float)areaOffset*2));
+					}
 					g.setColor(borderColor);
 					g.setLineWidth(cellEdgeWidth);
 					g.draw(cellBorder);
 				}else{
+					if(areaOffset == 1){
+						area.setArea(new Rectangle(area.getX() - areaOffset, area.getY() - areaOffset, area.getAreaWidth() + (float)areaOffset*2, area.getAreaHeight() + (float)areaOffset*2));
+						areaOffset = 0;
+					}
 					g.setColor(backgroundColor);
 					g.fill(cell);
 				}

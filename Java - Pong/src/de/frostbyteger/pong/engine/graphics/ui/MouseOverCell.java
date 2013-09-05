@@ -1,144 +1,181 @@
 package de.frostbyteger.pong.engine.graphics.ui;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.Sound;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 
 /**
- * @author Kevin
+ * Original Class by kevglass from Slick Devteam.
+ * Reused and changed by Kevin Kuegler
+ * 
+ * Creates a MouseOverCellArea in which the mouse listener reacts to.
+ * Either the area lights up if the mouse is in the area and flashes also up
+ * if the mouse listener returns a mouseclick
+ * The area is fully customizable.
+ * 
+ * @author Kevin Kuegler
  *
  */
 public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.AbstractComponent{
 	
-	private static final int NORMAL     = 1;
+	// Input constants
+	private static final int MOUSE_NONE = 1;
 	private static final int MOUSE_DOWN = 2;
 	private static final int MOUSE_OVER = 3;
 	
-	private float height;
-	private float width;
-
-	private Color normalColor = Color.white;
-	private Color mouseOverColor = Color.white;
-	private Color mouseDownColor = Color.white;
-
-	private Sound mouseOverSound;
-	private Sound mouseDownSound;
-
-	private Shape area;
-
-	private Color currentColor = Color.white;
-
-	private boolean over;
+	// Input booleans
+	private boolean mouseOver;
 	private boolean mouseDown;
 	private boolean mouseUp;
 	
-	private boolean filled = false;
+	// Area options
+	private Shape area;
+	private boolean areaFilled = false;
+	private int state = MOUSE_NONE;
+
+	// Additional audio-visual effects
+	private Color normalColor = Color.white;
+	private Color mouseOverColor = Color.white;
+	private Color mouseDownColor = Color.white;
+	private Color currentColor = Color.white;
+	private Sound mouseOverSound;
+	private Sound mouseDownSound;
 	
-	private int state = NORMAL;
+	// Animation options
+	private Animation overAnimation;
+	private boolean animationVisible    = true;
+	private boolean animationCentered   = true; //TODO: Add functionality in render method for centered/left/right
+	private boolean animationLeft       = false;
+	private boolean animationRight      = false;
+	private boolean animationAutoAdjust = false;
+	private int animationX;
+	private int animationY;
+	private float animationWidth;
+	private float animationHeight;
 
 
-	
 	/**
 	 * 
+	 * @param container
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param listener
 	 */
 	public MouseOverCell(GameContainer container, int x, int y, float width, float height, ComponentListener listener) {
 		super(container);
-		this.width = width;
-		this.height = height;
 		this.area = new Rectangle(x, y, width, height);
-		addListener(listener);
+		this.addListener(listener);
 		
-		state = NORMAL;
+		state = MOUSE_NONE;
 		Input input = container.getInput();
-		over = area.contains(input.getMouseX(), input.getMouseY());
+		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
 		mouseDown = input.isMouseButtonDown(0);
-		updateArea();
+		this.updateArea();
 	}
-
+	
+	
 	/**
-	 * Set the x coordinate of this area
 	 * 
-	 * @param x The new x coordinate of this area
+	 * @param container
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param animation
+	 * @param durations
+	 * @param autoUpdate
+	 * @param listener
 	 */
-	public void setX(float x) {
-		area.setX(x);
+	public MouseOverCell(GameContainer container, int x, int y, float width, float height, Image[] animation, int[] durations, boolean autoUpdate, ComponentListener listener) {
+		super(container);
+		this.area = new Rectangle(x, y, width, height);
+		this.overAnimation = new Animation(animation, durations, autoUpdate);
+		this.animationX = x;
+		this.animationY = y;
+		this.animationWidth = this.overAnimation.getWidth();
+		this.animationHeight = this.overAnimation.getHeight();
+		this.addListener(listener);
+		
+		state = MOUSE_NONE;
+		Input input = container.getInput();
+		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
+		mouseDown = input.isMouseButtonDown(0);
+		this.updateArea();
+		
 	}
 	
 	/**
-	 * Set the y coordinate of this area
 	 * 
-	 * @param y The new y coordinate of this area
+	 * @param container
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param animation
+	 * @param duration
+	 * @param autoUpdate
+	 * @param listener
 	 */
-	public void setY(float y) {
-		area.setY(y);
+	public MouseOverCell(GameContainer container, int x, int y, float width, float height, SpriteSheet animation, int duration, boolean autoUpdate, ComponentListener listener) {
+		super(container);
+		this.area = new Rectangle(x, y, width, height);
+		this.overAnimation = new Animation(animation, duration);
+		this.overAnimation.setAutoUpdate(autoUpdate);
+		this.animationX = x;
+		this.animationY = y;
+		this.animationWidth = this.overAnimation.getWidth();
+		this.animationHeight = this.overAnimation.getHeight();
+		this.addListener(listener);
+		
+		state = MOUSE_NONE;
+		Input input = container.getInput();
+		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
+		mouseDown = input.isMouseButtonDown(0);
+		this.updateArea();
+		
 	}
 	
 	/**
-	 * Returns the position in the X coordinate
 	 * 
-	 * @return x
+	 * @param container
+	 * @param g
 	 */
-	public int getX() {
-		return (int) area.getX();
-	}
-
-	/**
-	 * Returns the position in the Y coordinate
-	 * 
-	 * @return y
-	 */
-	public int getY() {
-		return (int) area.getY();
-	}
-	
-	/**
-	 * Set the normal color used on the image in the default state
-	 * 
-	 * @param color
-	 *            The color to be used
-	 */
-	public void setNormalColor(Color color) {
-		normalColor = color;
-	}
-
-	/**
-	 * Set the color to be used when the mouse is over the area
-	 * 
-	 * @param color
-	 *            The color to be used when the mouse is over the area
-	 */
-	public void setMouseOverColor(Color color) {
-		mouseOverColor = color;
-	}
-
-	/**
-	 * Set the color to be used when the mouse is down the area
-	 * 
-	 * @param color
-	 *            The color to be used when the mouse is down the area
-	 */
-	public void setMouseDownColor(Color color) {
-		mouseDownColor = color;
-	}
-	
 	public void render(GameContainer container, Graphics g){
-		if(filled == true){
+		if(areaFilled == true){
 			g.setColor(currentColor);
 			g.fill(area);
 		}else{
 			g.draw(area);
 		}
+		if(overAnimation != null){
+
+			if(animationVisible == true){
+				if(animationAutoAdjust == true){
+					overAnimation.draw(area.getX(), area.getY(), area.getWidth(), area.getHeight());
+				}else{
+					overAnimation.draw(animationX, animationY, animationWidth, animationHeight);
+				}
+			}
+		}
 		updateArea();
 	}
 
+	/**
+	 * 
+	 */
 	public void updateArea() {
-		if (!over) {
+		if (!mouseOver) {
 			currentColor = normalColor;
-			state = NORMAL;
+			state = MOUSE_NONE;
 			mouseUp = false;
 		} else {
 			if (mouseDown) {
@@ -167,84 +204,283 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 		}
 
 		mouseDown = false;
-		state = NORMAL;
-	}
-
-	/**
-	 * Set the mouse over sound effect
-	 * 
-	 * @param sound
-	 *            The mouse over sound effect
-	 */
-	public void setMouseOverSound(Sound sound) {
-		mouseOverSound = sound;
-	}
-
-	/**
-	 * Set the mouse down sound effect
-	 * 
-	 * @param sound
-	 *            The mouse down sound effect
-	 */
-	public void setMouseDownSound(Sound sound) {
-		mouseDownSound = sound;
-	}
-
-	/**
-	 * @see org.newdawn.slick.util.InputAdapter#mouseMoved(int, int, int, int)
-	 */
-	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		over = area.contains(newx, newy);
+		state = MOUSE_NONE;
 	}
 	
 	/**
-	 * @see org.newdawn.slick.util.InputAdapter#mouseDragged(int, int, int, int)
+	 * 
+	 */
+	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+		mouseOver = area.contains(newx, newy);
+	}
+	
+	/**
+	 * 
 	 */
 	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
 		mouseMoved(oldx, oldy, newx, newy);
 	}
-
+	
 	/**
-	 * @see org.newdawn.slick.util.InputAdapter#mousePressed(int, int, int)
+	 * 
 	 */
 	public void mousePressed(int button, int mx, int my) {
-		over = area.contains(mx, my);
+		mouseOver = area.contains(mx, my);
 		if (button == 0) {
 			mouseDown = true; 
 		}
 	}
 	
 	/**
-	 * @see org.newdawn.slick.util.InputAdapter#mouseReleased(int, int, int)
+	 * 
 	 */
 	public void mouseReleased(int button, int mx, int my) {
-		over = area.contains(mx, my);
+		mouseOver = area.contains(mx, my);
 		if (button == 0) {
 			mouseDown = false; 
 		}
 	}
-
+	
 	/**
-	 * @see org.newdawn.slick.gui.AbstractComponent#getHeight()
+	 * @return the area
 	 */
-	public float getHeight() {
-		return height;
+	public Shape getArea() {
+		return area;
 	}
 
 	/**
-	 * @see org.newdawn.slick.gui.AbstractComponent#getWidth()
+	 * @param area the area to set
 	 */
-	public float getWidth() {
-		return width;
+	public void setArea(Shape area) {
+		this.area = area;
+	}
+
+	/**
+	 * @return the areaWidth
+	 */
+	public float getAreaWidth() {
+		return area.getWidth();
+	}
+
+	/**
+	 * @return the areaHeight
+	 */
+	public float getAreaHeight() {
+		return area.getHeight();
+	}
+
+	/**
+	 * @return the areaFilled
+	 */
+	public boolean isAreaFilled() {
+		return areaFilled;
+	}
+
+	/**
+	 * @param areaFilled the areaFilled to set
+	 */
+	public void setAreaFilled(boolean areaFilled) {
+		this.areaFilled = areaFilled;
 	}
 	
 	/**
-	 * Check if the mouse is over this area
 	 * 
-	 * @return True if the mouse is over this area
+	 * @return the x
 	 */
-	public boolean isMouseOver() {
-		return over;
+	public float getX() {
+		return area.getX();
+	}
+
+	/**
+	 * 
+	 * @param x the x to set
+	 */
+	public void setX(float x) {
+		area.setX(x);
+	}
+	
+	/**
+	 * 
+	 * @return the y
+	 */
+	public float getY() {
+		return area.getY();
+	}
+	
+	/**
+	 * 
+	 * @param y the y to set
+	 */
+	public void setY(float y) {
+		area.setY(y);
+	}
+
+	/**
+	 * @return the state
+	 */
+	public int getState() {
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	/**
+	 * @return the overAnimation
+	 */
+	public Animation getOverAnimation() {
+		return overAnimation;
+	}
+
+	/**
+	 * @param overAnimation the overAnimation to set
+	 */
+	public void setOverAnimation(Animation overAnimation) {
+		this.overAnimation = overAnimation;
+	}
+
+	/**
+	 * @return the animationCentered
+	 */
+	public boolean isAnimationCentered() {
+		return animationCentered;
+	}
+
+	/**
+	 * @param animationCentered the animationCentered to set
+	 */
+	public void setAnimationCentered(boolean animationCentered) {
+		this.animationCentered = animationCentered;
+	}
+
+	/**
+	 * @return the animationLeft
+	 */
+	public boolean isAnimationLeft() {
+		return animationLeft;
+	}
+
+	/**
+	 * @param animationLeft the animationLeft to set
+	 */
+	public void setAnimationLeft(boolean animationLeft) {
+		this.animationLeft = animationLeft;
+	}
+
+	/**
+	 * @return the animationRight
+	 */
+	public boolean isAnimationRight() {
+		return animationRight;
+	}
+
+	/**
+	 * @param animationRight the animationRight to set
+	 */
+	public void setAnimationRight(boolean animationRight) {
+		this.animationRight = animationRight;
+	}
+
+	/**
+	 * @return the animationVisible
+	 */
+	public boolean isAnimationVisible() {
+		return animationVisible;
+	}
+
+	/**
+	 * @param animationVisible the animationVisible to set
+	 */
+	public void setAnimationVisible(boolean animationVisible) {
+		this.animationVisible = animationVisible;
+	}
+
+	/**
+	 * @return the animationAutoAdjust
+	 */
+	public boolean isAnimationAutoAdjust() {
+		return animationAutoAdjust;
+	}
+
+	/**
+	 * @param animationAutoAdjust the animationAutoAdjust to set
+	 */
+	public void setAnimationAutoAdjust(boolean animationAutoAdjust) {
+		this.animationAutoAdjust = animationAutoAdjust;
+	}
+
+	/**
+	 * @return the animationX
+	 */
+	public int getAnimationX() {
+		return animationX;
+	}
+
+	/**
+	 * @param animationX the animationX to set
+	 */
+	public void setAnimationX(int animationX) {
+		this.animationX = animationX;
+	}
+
+	/**
+	 * @return the animationY
+	 */
+	public int getAnimationY() {
+		return animationY;
+	}
+
+	/**
+	 * @param animationY the animationY to set
+	 */
+	public void setAnimationY(int animationY) {
+		this.animationY = animationY;
+	}
+
+	/**
+	 * @return the animationWidth
+	 */
+	public float getAnimationWidth() {
+		return animationWidth;
+	}
+
+	/**
+	 * @param animationWidth the animationWidth to set
+	 */
+	public void setAnimationWidth(float animationWidth) {
+		this.animationWidth = animationWidth;
+	}
+
+	/**
+	 * @return the animationHeight
+	 */
+	public float getAnimationHeight() {
+		return animationHeight;
+	}
+
+	/**
+	 * @param animationHeight the animationHeight to set
+	 */
+	public void setAnimationHeight(float animationHeight) {
+		this.animationHeight = animationHeight;
+	}
+
+	/**
+	 * @return the normalColor
+	 */
+	public Color getNormalColor() {
+		return normalColor;
+	}
+
+	/**
+	 * @param normalColor the normalColor to set
+	 */
+	public void setNormalColor(Color normalColor) {
+		this.normalColor = normalColor;
 	}
 
 	/**
@@ -262,17 +498,101 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	}
 
 	/**
-	 * @return the filled
+	 * @return the mouseOverColor
 	 */
-	public boolean isFilled() {
-		return filled;
+	public Color getMouseOverColor() {
+		return mouseOverColor;
 	}
 
 	/**
-	 * @param filled the filled to set
+	 * @param mouseOverColor the mouseOverColor to set
 	 */
-	public void setFilled(boolean filled) {
-		this.filled = filled;
+	public void setMouseOverColor(Color mouseOverColor) {
+		this.mouseOverColor = mouseOverColor;
+	}
+
+	/**
+	 * @return the mouseDownColor
+	 */
+	public Color getMouseDownColor() {
+		return mouseDownColor;
+	}
+
+	/**
+	 * @param mouseDownColor the mouseDownColor to set
+	 */
+	public void setMouseDownColor(Color mouseDownColor) {
+		this.mouseDownColor = mouseDownColor;
+	}
+
+	/**
+	 * @return the mouseOver
+	 */
+	public boolean isMouseOver() {
+		return mouseOver;
+	}
+
+	/**
+	 * @param mouseOver the mouseOver to set
+	 */
+	public void setMouseOver(boolean mouseOver) {
+		this.mouseOver = mouseOver;
+	}
+
+	/**
+	 * @return the mouseDown
+	 */
+	public boolean isMouseDown() {
+		return mouseDown;
+	}
+
+	/**
+	 * @param mouseDown the mouseDown to set
+	 */
+	public void setMouseDown(boolean mouseDown) {
+		this.mouseDown = mouseDown;
+	}
+
+	/**
+	 * @return the mouseUp
+	 */
+	public boolean isMouseUp() {
+		return mouseUp;
+	}
+
+	/**
+	 * @param mouseUp the mouseUp to set
+	 */
+	public void setMouseUp(boolean mouseUp) {
+		this.mouseUp = mouseUp;
+	}
+
+	/**
+	 * @return the mouseOverSound
+	 */
+	public Sound getMouseOverSound() {
+		return mouseOverSound;
+	}
+
+	/**
+	 * @param mouseOverSound the mouseOverSound to set
+	 */
+	public void setMouseOverSound(Sound mouseOverSound) {
+		this.mouseOverSound = mouseOverSound;
+	}
+
+	/**
+	 * @return the mouseDownSound
+	 */
+	public Sound getMouseDownSound() {
+		return mouseDownSound;
+	}
+
+	/**
+	 * @param mouseDownSound the mouseDownSound to set
+	 */
+	public void setMouseDownSound(Sound mouseDownSound) {
+		this.mouseDownSound = mouseDownSound;
 	}
 
 }

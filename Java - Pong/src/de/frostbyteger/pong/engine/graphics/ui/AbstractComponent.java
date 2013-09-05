@@ -9,10 +9,13 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.util.InputAdapter;
 
 /**
+ * Original Class by kevglass from Slick Devteam.
+ * Reused and changed by Kevin Kuegler
+ * 
  * The utility class to handle all the input related gubbins for basic GUI
  * components
  * 
- * @author kevin
+ * @author Kevin Kuegler
  */
 public abstract class AbstractComponent extends InputAdapter {
 	/** The component that currently has focus */
@@ -22,6 +25,7 @@ public abstract class AbstractComponent extends InputAdapter {
 	protected GUIContext container;
 
 	/** Listeners for the component to notify */
+	@SuppressWarnings("rawtypes")
 	protected Set listeners;
 
 	/** True if this component currently has focus */
@@ -36,6 +40,7 @@ public abstract class AbstractComponent extends InputAdapter {
 	 * @param container
 	 *            The container displaying this component
 	 */
+	@SuppressWarnings("rawtypes")
 	public AbstractComponent(GUIContext container) {
 		this.container = container;
 
@@ -54,6 +59,7 @@ public abstract class AbstractComponent extends InputAdapter {
 	 * @param listener
 	 *            listener
 	 */
+	@SuppressWarnings("unchecked")
 	public void addListener(ComponentListener listener) {
 		listeners.add(listener);
 	}
@@ -73,6 +79,7 @@ public abstract class AbstractComponent extends InputAdapter {
 	/**
 	 * Notify all the listeners.
 	 */
+	@SuppressWarnings("rawtypes")
 	public void notifyListeners() {
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
