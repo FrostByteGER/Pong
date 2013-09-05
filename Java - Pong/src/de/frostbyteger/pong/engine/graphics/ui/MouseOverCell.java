@@ -135,9 +135,6 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 		updateArea();
 	}
 
-	/**
-	 * Update the current normalImage based on the mouse state
-	 */
 	public void updateArea() {
 		if (!over) {
 			currentColor = normalColor;

@@ -28,7 +28,7 @@ public class Cell{
 	
 	
 	// Font options
-	private Color fontColor = Color.white;
+	private Color fontColor  = Color.white;
 	private boolean centered = true;
 	private boolean left     = false;
 	private boolean right    = false;
@@ -37,25 +37,28 @@ public class Cell{
 	private int size;
 	
 	// Image options
-	private float imageScale = 1.0f;
+	private float imageScale           = 1.0f;
+	private float cellImageDrawOffsetX = 1.0f;
+	private float cellImageDrawOffset  = 1.0f;
+	private boolean autoAdjustImage    = false;
 	
 	// Cell options
-	private boolean active               = true;
-	private boolean visible	             = true;
-	private boolean autoAdjust           = true;
-	private boolean selected             = false;
-	private boolean highlighted          = false;
-	private boolean edging               = false;
+	private boolean active        = true;
+	private boolean visible	      = true;
+	private boolean autoAdjust    = true;
+	private boolean selected      = false;
+	private boolean highlighted   = false;
+	private boolean edging        = true;
 	private Color backgroundColor = Color.black;
 	private Color borderColor     = Color.blue;
 	private float cellWidth;
 	private float cellHeight;
-	private float cellScale = 1.0f;
+	private float cellScale       = 1.0f;
 	private int cellX;
 	private int cellY;
-	private int cellEdgeWidth   = 1;
-	private int cellDrawOffsetX = 20;
-	private int cellDrawOffsetY = 10;
+	private int cellEdgeWidth     = 1;
+	private int cellDrawOffsetX   = 20;
+	private int cellDrawOffsetY   = 10;
 	
 
 	
@@ -82,7 +85,7 @@ public class Cell{
 		this.container = container;
 		this.area = new MouseOverCell(container, x + 1, y, width - 1, height - 1, listener);
 		this.area.setNormalColor(new Color(1,1,1,0.0f));
-		this.area.setMouseOverColor(new Color(1,1,1,0.9f));
+		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
 		this.area.setFilled(true);
 	}
 	
@@ -210,6 +213,13 @@ public class Cell{
 					g.setColor(backgroundColor);
 					g.fill(cell);
 				}
+				if(edging == false && autoAdjustImage == true){
+					cellImageDrawOffsetX = 0.0f;
+					cellImageDrawOffset = 0.0f;
+				}else if(edging == true && autoAdjustImage == false || edging == false && autoAdjustImage == false){
+					cellImageDrawOffsetX = 1.0f;
+					cellImageDrawOffset = 1.0f;
+				}
 				if(autoAdjust == true){
 					if(cellFont != null){
 						if(cellFont.getWidth(cellText) >= cell.getWidth()) {
@@ -232,7 +242,12 @@ public class Cell{
 					}
 				}
 				if(cellImage != null){
-					cellImage.draw(cell.getMinX(), cell.getMinY() + 5, imageScale);
+					if(autoAdjustImage == true){
+						cellImage.draw(cell.getMinX() + cellImageDrawOffsetX, cell.getMinY(), cellWidth - cellImageDrawOffset, cellHeight - cellImageDrawOffset);
+					}else{
+						cellImage.draw(cell.getMinX() + cellImageDrawOffsetX, cell.getMinY());
+
+					}
 				}
 				area.render(container, g);
 
@@ -633,10 +648,13 @@ public class Cell{
 	}
 
 	/**
+	 * Sets the imagescale to the given scale and rescales the image
+	 * because of missing setScale option of the Slick Image class.
 	 * @param imageScale the imageScale to set
 	 */
 	public void setImageScale(float imageScale) {
 		this.imageScale = imageScale;
+		this.cellImage.getScaledCopy(imageScale);
 	}
 
 	/**
