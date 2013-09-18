@@ -34,6 +34,8 @@ public abstract class AbstractComponent extends InputAdapter {
 	/** The input we're responding to */
 	protected Input input;
 	
+	private String actionCommand = null;
+	
 	/**
 	 * Create a new component
 	 * 
@@ -43,11 +45,10 @@ public abstract class AbstractComponent extends InputAdapter {
 	@SuppressWarnings("rawtypes")
 	public AbstractComponent(GUIContext container) {
 		this.container = container;
+		this.listeners = new HashSet();
 
-		listeners = new HashSet();
-
-		input = container.getInput();
-		input.addPrimaryListener(this);
+		this.input = container.getInput();
+		this.input.addPrimaryListener(this);
 
 	}
 	
@@ -122,6 +123,19 @@ public abstract class AbstractComponent extends InputAdapter {
 	public void consumeEvent() {
 		input.consumeEvent();
 	}
-	
 
+	/**
+	 * @return the actionCommand
+	 */
+	public String getActionCommand() {
+		return actionCommand;
+	}
+
+	/**
+	 * @param actionCommand the actionCommand to set
+	 */
+	public void setActionCommand(String actionCommand) {
+		this.actionCommand = actionCommand;
+	}
+	
 }

@@ -38,13 +38,13 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	// Area options
 	private Shape area;
 	private boolean areaFilled = false;
-	private int state = MOUSE_NONE;
+	private int state          = MOUSE_NONE;
 
 	// Additional audio-visual effects
-	private Color normalColor = Color.white;
+	private Color normalColor    = Color.white;
 	private Color mouseOverColor = Color.white;
 	private Color mouseDownColor = Color.white;
-	private Color currentColor = Color.white;
+	private Color currentColor   = Color.white;
 	private Sound mouseOverSound;
 	private Sound mouseDownSound;
 	
@@ -613,20 +613,6 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	public void setMouseDownSound(Sound mouseDownSound) {
 		this.mouseDownSound = mouseDownSound;
 	}
-	
-	/**
-	 * @param listener
-	 */
-	public void addListener(ComponentListener listener){
-		this.addListener(listener);
-	}
-	
-	/**
-	 * 
-	 * @param listener
-	 */
-	public void removeListener(ComponentListener listener){
-		this.removeListener(listener);
-	}
+
 
 }

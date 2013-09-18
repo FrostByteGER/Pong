@@ -20,13 +20,15 @@ public class CellTest extends BasicGame implements ComponentListener{
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		logger = new ErrorLogger();
-		cell = new Cell(100, 100, 200, 50, container);
+		cell = new Cell("Button1",100, 100, 200, 50, container);
 		cell.setImagePath("data/test_button.png");
 		cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
 		cell.setSize(50);
 		cell.createNewFont();
 		cell.setCellText("this is a test...");
+		cell.addListener(this);
+		cell.setActionCommand("TEST");
 		
 
 	}
@@ -54,8 +56,9 @@ public class CellTest extends BasicGame implements ComponentListener{
 	@Override
 	public void componentActivated(AbstractComponent source) {
 		logger.addError("ACTIVL : "+source);
-		if (source == cell.getArea()) {
-			logger.addError("Area Activated");
+		if (source == cell) {
+			System.out.println("TEST");
+			logger.addError("Area " + source.getClass().getSimpleName() + " Activated");
 		}	
 	}
 

@@ -5,6 +5,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+
 import de.frostbyteger.errorlogger.ErrorLogger;
 
 public class BoxTest extends BasicGame implements ComponentListener{
@@ -45,9 +46,10 @@ public class BoxTest extends BasicGame implements ComponentListener{
 	@Override
 	public void componentActivated(AbstractComponent source) {
 		logger.addError("ACTIVL : "+source);
-		if (true) { //TODO: Add functionality
-			logger.addError("Area Activated");
-		}	
+		if (true) {
+			System.out.println("TEST");
+			logger.addError("Area " + source.getClass().getSimpleName() + " Activated");
+		}		
 	}
 
 }

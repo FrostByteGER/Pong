@@ -3,6 +3,7 @@ package de.frostbyteger.pong.engine.graphics.ui;
 import java.util.ArrayList;
 
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 
 import de.frostbyteger.pong.engine.graphics.FontHelper;
@@ -22,12 +23,16 @@ public class Box{
 	 * 
 	 */
 	public Box(int boxCount, int boxWidth, int boxHeight, String boxFontPath, int boxFontSize, int cellX, int cellY, float cellWidth, float cellHeight, GameContainer container) {
-		boxFont = FontHelper.newFont(boxFontPath, boxFontSize, false, false);
+		try {
+			boxFont = FontHelper.newFont(boxFontPath, boxFontSize, false, false);
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
 		cells = new ArrayList<ArrayList<Cell>>();
 		ArrayList<Cell> tempCell = new ArrayList<Cell>();
 		for(int i = 0;i <= boxWidth;i++){
 			for(int j = 0; j <= boxHeight;j++){
-				Cell cell = new Cell(cellX, cellY, cellWidth, cellHeight, parentContainer);
+				Cell cell = new Cell("CellTestButton",cellX, cellY, cellWidth, cellHeight, parentContainer);
 				cell.setCellFont(boxFont);
 				tempCell.add(cell);
 			}
