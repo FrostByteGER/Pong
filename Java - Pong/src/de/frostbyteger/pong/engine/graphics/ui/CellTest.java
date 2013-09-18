@@ -20,7 +20,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		logger = new ErrorLogger();
-		cell = new Cell(100, 100, 200, 50, container, this);
+		cell = new Cell(100, 100, 200, 50, container);
 		cell.setImagePath("data/test_button.png");
 		cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
@@ -33,12 +33,11 @@ public class CellTest extends BasicGame implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
-		cell.drawCell(g);
+		cell.drawCell();
 	}
 
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
-		//System.out.println(cell.getSize());
 	}
 	
 	public static void main(String[] args) throws SlickException {
@@ -54,8 +53,9 @@ public class CellTest extends BasicGame implements ComponentListener{
 
 	@Override
 	public void componentActivated(AbstractComponent source) {
-		System.out.println("ACTIVL : "+source);
+		logger.addError("ACTIVL : "+source);
 		if (source == cell.getArea()) {
+			logger.addError("Area Activated");
 		}	
 	}
 

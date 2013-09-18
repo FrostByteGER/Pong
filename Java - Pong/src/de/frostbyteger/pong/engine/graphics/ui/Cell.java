@@ -26,6 +26,7 @@ public class Cell{
 	private Object parentComponent  = null;
 	private MouseOverCell area      = null;
 	private GameContainer container = null;
+	private String actionCommand    = null;
 	private String cellText         = "";
 	private String fontPath         = "";
 	private String imagePath        = "";
@@ -82,7 +83,7 @@ public class Cell{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(int x, int y, float width, float height, GameContainer container, ComponentListener listener) {
+	public Cell(int x, int y, float width, float height, GameContainer container) {
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellX = x;
@@ -90,7 +91,7 @@ public class Cell{
 		this.cellWidth = width;
 		this.cellHeight = height;
 		this.container = container;
-		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset, listener);
+		this.area = new MouseOverCell(container, x + areaOffset, y, width - (float)areaOffset, height - (float)areaOffset);
 		this.area.setAreaFilled(true);
 		this.area.setNormalColor(new Color(1,1,1,0.0f));
 		this.area.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -226,10 +227,9 @@ public class Cell{
 	 * like auto adjustment or visibility.
 	 * However, the autoadjust is not possible for the image due to
 	 * missing methods in the imageclass. 
-	 * @param g
 	 * @throws SlickException
 	 */
-	public void drawCell(Graphics g) throws SlickException{
+	public void drawCell() throws SlickException{
 		if(active == true){
 			if(visible == true){
 				if(edging == true){
@@ -238,16 +238,16 @@ public class Cell{
 						System.out.println("TEST");
 						area.setArea(new Rectangle(area.getX() + areaOffset, area.getY() + areaOffset, area.getAreaWidth() - (float)areaOffset*2, area.getAreaHeight() - (float)areaOffset*2));
 					}
-					g.setColor(borderColor);
-					g.setLineWidth(cellEdgeWidth);
-					g.draw(cellBorder);
+					container.getGraphics().setColor(borderColor);
+					container.getGraphics().setLineWidth(cellEdgeWidth);
+					container.getGraphics().draw(cellBorder);
 				}else{
 					if(areaOffset == 1){
 						area.setArea(new Rectangle(area.getX() - areaOffset, area.getY() - areaOffset, area.getAreaWidth() + (float)areaOffset*2, area.getAreaHeight() + (float)areaOffset*2));
 						areaOffset = 0;
 					}
-					g.setColor(backgroundColor);
-					g.fill(cell);
+					container.getGraphics().setColor(backgroundColor);
+					container.getGraphics().fill(cell);
 				}
 				if(edging == false && autoAdjustImage == true){
 					cellImageDrawOffsetX = 0.0f;
@@ -285,7 +285,7 @@ public class Cell{
 
 					}
 				}
-				area.render(container, g);
+				area.render(container, container.getGraphics());
 
 				if(cellFont != null){
 					if(left == true){
@@ -810,6 +810,35 @@ public class Cell{
 	 */
 	public MouseOverCell getArea() {
 		return area;
+	}
+	
+	/**
+	 * @return the actionCommand
+	 */
+	public String getActionCommand() {
+		return actionCommand;
+	}
+
+	/**
+	 * @param actionCommand the actionCommand to set
+	 */
+	public void setActionCommand(String actionCommand) {
+		this.actionCommand = actionCommand;
+	}
+
+	/**
+	 * @param listener
+	 */
+	public void addListener(ComponentListener listener){
+		area.addListener(listener);
+	}
+	
+	/**
+	 * 
+	 * @param listener
+	 */
+	public void removeListener(ComponentListener listener){
+		area.removeListener(listener);
 	}
 
 }

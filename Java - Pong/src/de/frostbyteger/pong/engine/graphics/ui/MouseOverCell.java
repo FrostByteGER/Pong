@@ -60,7 +60,26 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	private float animationWidth;
 	private float animationHeight;
 
-
+	/**
+	 * 
+	 * @param container
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param listener
+	 */
+	public MouseOverCell(GameContainer container, int x, int y, float width, float height) {
+		super(container);
+		this.area = new Rectangle(x, y, width, height);
+		
+		state = MOUSE_NONE;
+		Input input = container.getInput();
+		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
+		mouseDown = input.isMouseButtonDown(0);
+		this.updateArea();
+	}
+	
 	/**
 	 * 
 	 * @param container
@@ -593,6 +612,21 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	 */
 	public void setMouseDownSound(Sound mouseDownSound) {
 		this.mouseDownSound = mouseDownSound;
+	}
+	
+	/**
+	 * @param listener
+	 */
+	public void addListener(ComponentListener listener){
+		this.addListener(listener);
+	}
+	
+	/**
+	 * 
+	 * @param listener
+	 */
+	public void removeListener(ComponentListener listener){
+		this.removeListener(listener);
 	}
 
 }
