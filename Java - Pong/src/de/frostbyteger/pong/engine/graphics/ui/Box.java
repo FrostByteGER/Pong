@@ -10,6 +10,7 @@ import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 /**
  * @author Kevin
+ * TODO: Add all functionalities
  *
  */
 public class Box{
@@ -20,9 +21,10 @@ public class Box{
 	private ArrayList<ArrayList<Cell>> cells;
 
 	/**
-	 * 
+	 * TODO: finish constructor
 	 */
 	public Box(int boxCount, int boxWidth, int boxHeight, String boxFontPath, int boxFontSize, int cellX, int cellY, float cellWidth, float cellHeight, GameContainer container) {
+		parentContainer = container;
 		try {
 			boxFont = FontHelper.newFont(boxFontPath, boxFontSize, false, false);
 		} catch (SlickException e) {
@@ -30,19 +32,43 @@ public class Box{
 		}
 		cells = new ArrayList<ArrayList<Cell>>();
 		ArrayList<Cell> tempCell = new ArrayList<Cell>();
-		for(int i = 0;i <= boxWidth;i++){
-			for(int j = 0; j <= boxHeight;j++){
-				Cell cell = new Cell("CellTestButton",cellX, cellY, cellWidth, cellHeight, parentContainer);
-				cell.setCellFont(boxFont);
-				tempCell.add(cell);
+		for(int i = 0;i < boxWidth;i++){
+			for(int j = 0; j < boxHeight;j++){
+				tempCell.add(new Cell(cellX, cellY, cellWidth, cellHeight, container));
+				cellY += cellHeight;
 			}
 			cells.add(tempCell);
-			tempCell.clear();
+			tempCell = new ArrayList<Cell>();
+			cellX += cellWidth;
+			cellY -= cellHeight*boxHeight;
+		}
+		for(int k = 0; k < cells.size();k++){
+			for(int l = 0; l < cells.get(k).size();l++){
+				Cell temp = cells.get(k).get(l);
+				temp.setFontPath("data/Alexis.ttf");
+				temp.setSize(50);
+				try {
+					temp.createNewFont();
+				} catch (SlickException e) {
+					e.printStackTrace();
+					//TODO
+				}
+				temp.setCellText("This is a test!");
+			}
 		}
 	}
 	
 	public void render(){
-		
+		for(int i = 0; i < cells.size();i++){
+			for(int j = 0; j < cells.get(i).size();j++){
+				try {
+					cells.get(i).get(j).drawCell();
+				} catch (SlickException e) {
+					e.printStackTrace();
+					//TODO
+				};
+			}
+		}
 	}
 	
 	public void update(){
@@ -68,6 +94,20 @@ public class Box{
 		}
 		
 		return 0;
+	}
+
+	/**
+	 * @return the cells
+	 */
+	public ArrayList<ArrayList<Cell>> getCells() {
+		return cells;
+	}
+
+	/**
+	 * @param cells the cells to set
+	 */
+	public void setCells(ArrayList<ArrayList<Cell>> cells) {
+		this.cells = cells;
 	}
 
 }

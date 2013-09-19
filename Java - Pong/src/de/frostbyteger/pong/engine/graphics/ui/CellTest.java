@@ -11,6 +11,7 @@ import de.frostbyteger.errorlogger.ErrorLogger;
 public class CellTest extends BasicGame implements ComponentListener{
 	
 	private Cell cell;
+	private Cell cell2;
 	public static ErrorLogger logger;
 
 	public CellTest() {
@@ -20,6 +21,8 @@ public class CellTest extends BasicGame implements ComponentListener{
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		logger = new ErrorLogger();
+		logger.getFrame().setAlwaysOnTop(true);
+		
 		cell = new Cell("Button1",100, 100, 200, 50, container);
 		cell.setImagePath("data/test_button.png");
 		cell.createNewImage();
@@ -30,12 +33,23 @@ public class CellTest extends BasicGame implements ComponentListener{
 		cell.addListener(this);
 		cell.setActionCommand("TEST");
 		
+		cell2 = new Cell("Button2",100, 175, 200, 50, container);
+		cell2.setImagePath("data/test_button.png");
+		cell2.createNewImage();
+		cell2.setFontPath("data/Alexis.ttf");
+		cell2.setSize(50);
+		cell2.createNewFont();
+		cell2.setCellText("this is a test too");
+		cell2.addListener(this);
+		cell2.setActionCommand("TEST2");
+		
 
 	}
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		cell.drawCell();
+		cell2.drawCell();
 	}
 
 	@Override
@@ -55,10 +69,12 @@ public class CellTest extends BasicGame implements ComponentListener{
 
 	@Override
 	public void componentActivated(AbstractComponent source) {
-		logger.addError("ACTIVL : "+source);
+		logger.addError("ACTIVL : " + source.getClass());
 		if (source == cell) {
-			System.out.println("TEST");
-			logger.addError("Area " + source.getClass().getSimpleName() + " Activated");
+			logger.addError("Area " + source + " Activated");
+		}	
+		else if(source == cell2) {
+			logger.addError("Area " + source + " Activated");
 		}	
 	}
 
