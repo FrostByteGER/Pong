@@ -6,13 +6,13 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
-import de.frostbyteger.errorlogger.ErrorLogger;
+import de.frostbyteger.messagelogger.MessageLogger;
 
 public class CellTest extends BasicGame implements ComponentListener{
 	
 	private Cell cell;
 	private Cell cell2;
-	public static ErrorLogger logger;
+	public static MessageLogger logger;
 
 	public CellTest() {
 		super("Cell Test");
@@ -20,7 +20,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 	
 	@Override
 	public void init(GameContainer container) throws SlickException {
-		logger = new ErrorLogger();
+		logger = new MessageLogger();
 		logger.getFrame().setAlwaysOnTop(true);
 		
 		cell = new Cell("Button1",100, 100, 200, 50, container);
@@ -69,12 +69,12 @@ public class CellTest extends BasicGame implements ComponentListener{
 
 	@Override
 	public void componentActivated(AbstractComponent source) {
-		logger.addError("ACTIVL : " + source.getClass());
+		logger.addMessage("ACTIVL : " + source.getClass());
 		if (source == cell) {
-			logger.addError("Area " + source + " Activated");
+			logger.addMessage("Area " + source + " Activated");
 		}	
 		else if(source == cell2) {
-			logger.addError("Area " + source + " Activated");
+			logger.addMessage("Area " + source + " Activated");
 		}	
 	}
 

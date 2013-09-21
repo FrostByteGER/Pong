@@ -47,11 +47,12 @@ public class Cell extends MouseOverCell{
 	private boolean active        = true;
 	private boolean visible	      = true;
 	private boolean autoAdjust    = true;
+	private boolean clickable     = true;
 	private boolean selected      = false;
 	private boolean highlighted   = false;
 	private boolean edging        = false;
-	private Color backgroundColor = Color.black;
-	private Color borderColor     = Color.blue;
+	private Color backgroundColor = Color.transparent;
+	private Color borderColor     = Color.white;
 	private float cellWidth;
 	private float cellHeight;
 	private float cellScale       = 1.0f;
@@ -254,7 +255,6 @@ public class Cell extends MouseOverCell{
 				if(edging == true){
 					if(areaOffset == 0){
 						areaOffset = 1;
-						System.out.println("TEST");
 						this.setArea(new Rectangle(this.getX() + areaOffset, this.getY() + areaOffset, this.getAreaWidth() - (float)areaOffset*2, this.getAreaHeight() - (float)areaOffset*2));
 					}
 					container.getGraphics().setColor(borderColor);
@@ -304,7 +304,9 @@ public class Cell extends MouseOverCell{
 
 					}
 				}
-				this.render(container, container.getGraphics());
+				if(clickable == true){
+					this.render(container, container.getGraphics());
+				}
 
 				if(cellFont != null){
 					if(left == true){
@@ -318,6 +320,17 @@ public class Cell extends MouseOverCell{
 			}
 		}else{
 			return;
+		}
+	}
+	
+	public void updateCell(){
+		if(this.getState() == MOUSE_OVER && highlighted == false){
+			highlighted = true;
+		}else if(this.getState() == MOUSE_DOWN && selected == false){
+			selected = true;
+		}else if(this.getState() == MOUSE_NONE && highlighted == true || this.getState() == MOUSE_NONE && selected == true){
+			highlighted = false;
+			selected = false;
 		}
 	}
 
@@ -350,13 +363,6 @@ public class Cell extends MouseOverCell{
 	 */
 	public UnicodeFont getCellFont() {
 		return cellFont;
-	}
-
-	/**
-	 * @param cellFont the cellFont to set
-	 */
-	public void setCellFont(UnicodeFont cellFont) {
-		this.cellFont = cellFont;
 	}
 
 	/**
@@ -398,7 +404,13 @@ public class Cell extends MouseOverCell{
 	 * @param centered the centered to set
 	 */
 	public void setCentered(boolean centered) {
-		this.centered = centered;
+		if(this.centered == false && left == true || this.centered == false && right == true){
+			this.centered = true;
+			this.right = false;
+			this.left = false;
+		}else{
+			return;
+		}
 	}
 
 	/**
@@ -412,7 +424,13 @@ public class Cell extends MouseOverCell{
 	 * @param left the left to set
 	 */
 	public void setLeft(boolean left) {
-		this.left = left;
+		if(this.left == false && centered == true || this.left == false && right == true){
+			this.centered = false;
+			this.right = false;
+			this.left = true;
+		}else{
+			return;
+		}
 	}
 
 	/**
@@ -426,7 +444,13 @@ public class Cell extends MouseOverCell{
 	 * @param right the right to set
 	 */
 	public void setRight(boolean right) {
-		this.right = right;
+		if(this.right == false && left == true || this.right == false && centered == true){
+			this.centered = false;
+			this.right = true;
+			this.left = false;
+		}else{
+			return;
+		}
 	}
 
 	/**
@@ -850,6 +874,34 @@ public class Cell extends MouseOverCell{
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the autoAdjustImage
+	 */
+	public boolean isAutoAdjustImage() {
+		return autoAdjustImage;
+	}
+
+	/**
+	 * @param autoAdjustImage the autoAdjustImage to set
+	 */
+	public void setAutoAdjustImage(boolean autoAdjustImage) {
+		this.autoAdjustImage = autoAdjustImage;
+	}
+
+	/**
+	 * @return the clickable
+	 */
+	public boolean isClickable() {
+		return clickable;
+	}
+
+	/**
+	 * @param clickable the clickable to set
+	 */
+	public void setClickable(boolean clickable) {
+		this.clickable = clickable;
 	}
 	
 }

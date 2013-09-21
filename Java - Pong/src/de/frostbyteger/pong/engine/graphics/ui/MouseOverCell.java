@@ -26,9 +26,9 @@ import org.newdawn.slick.geom.Shape;
 public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.AbstractComponent{
 	
 	// Input constants
-	private static final int MOUSE_NONE = 1;
-	private static final int MOUSE_DOWN = 2;
-	private static final int MOUSE_OVER = 3;
+	protected static final int MOUSE_NONE = 1;
+	protected static final int MOUSE_DOWN = 2;
+	protected static final int MOUSE_OVER = 3;
 	
 	// Input booleans
 	private boolean mouseOver;
