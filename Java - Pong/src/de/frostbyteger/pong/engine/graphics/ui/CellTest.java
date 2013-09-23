@@ -12,6 +12,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 	
 	private Cell cell;
 	private Cell cell2;
+	private Cell cell3;
 	public static MessageLogger logger;
 
 	public CellTest() {
@@ -24,8 +25,9 @@ public class CellTest extends BasicGame implements ComponentListener{
 		logger.getFrame().setAlwaysOnTop(true);
 		
 		cell = new Cell("Button1",100, 100, 200, 50, container);
-		cell.setImagePath("data/test_button.png");
-		cell.createNewImage();
+		cell.setEdging(false);
+		//cell.setImagePath("data/test_button.png");
+		//cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
 		cell.setSize(50);
 		cell.createNewFont();
@@ -34,14 +36,23 @@ public class CellTest extends BasicGame implements ComponentListener{
 		cell.setActionCommand("TEST");
 		
 		cell2 = new Cell("Button2",100, 175, 200, 50, container);
-		cell2.setImagePath("data/test_button.png");
-		cell2.createNewImage();
+		cell2.setEdging(true);
 		cell2.setFontPath("data/Alexis.ttf");
 		cell2.setSize(50);
 		cell2.createNewFont();
 		cell2.setCellText("this is a test too");
 		cell2.addListener(this);
 		cell2.setActionCommand("TEST2");
+		
+		cell3 = new Cell("Button3",100, 250, 200, 50, container);
+		cell3.setImagePath("data/test_button.png");
+		cell3.createNewImage();
+		cell3.setFontPath("data/Alexis.ttf");
+		cell3.setSize(50);
+		cell3.createNewFont();
+		cell3.setCellText("this is test 3");
+		cell3.addListener(this);
+		cell3.setActionCommand("TEST3");
 		
 
 	}
@@ -50,6 +61,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		cell.drawCell();
 		cell2.drawCell();
+		cell3.drawCell();
 	}
 
 	@Override

@@ -15,25 +15,31 @@ import org.newdawn.slick.geom.Shape;
  * Original Class by kevglass from Slick Devteam.
  * Reused and changed by Kevin Kuegler
  * 
- * Creates a MouseOverCellArea in which the mouse listener reacts to.
- * Either the area lights up if the mouse is in the area and flashes also up
- * if the mouse listener returns a mouseclick
+ * Creates a CellListener in which the mouse- and keylistener reacts to.
+ * Either the area lights up if the mouse is in the area or the cell is focused and flashes also up
+ * if the mouse listener returns a mouseclick or specific keys are pressed.
  * The area is fully customizable.
  * 
  * @author Kevin Kuegler
  *
  */
-public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.AbstractComponent{
+public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.AbstractComponent{
 	
 	// Input constants
-	protected static final int MOUSE_NONE = 1;
-	protected static final int MOUSE_DOWN = 2;
-	protected static final int MOUSE_OVER = 3;
+	private static final int MOUSE_NONE = 1;
+	private static final int MOUSE_DOWN = 2;
+	private static final int MOUSE_OVER = 3;
 	
 	// Input booleans
 	private boolean mouseOver;
 	private boolean mouseDown;
 	private boolean mouseUp;
+	private boolean focused = false;
+	private boolean keyPressed = false;
+	private boolean keysActive = false;
+	
+	// Input keySet
+	private int[] keySet = {Input.KEY_ENTER};
 	
 	// Area options
 	private Shape area;
@@ -67,17 +73,18 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	 * @param y
 	 * @param width
 	 * @param height
-	 * @param listener
+	 * @param keysActivated
 	 */
-	public MouseOverCell(GameContainer container, int x, int y, float width, float height) {
+	public CellListener(GameContainer container, int x, int y, float width, float height, boolean keysActivated) {
 		super(container);
 		this.area = new Rectangle(x, y, width, height);
 		
-		state = MOUSE_NONE;
+		this.state = MOUSE_NONE;
 		Input input = container.getInput();
-		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
-		mouseDown = input.isMouseButtonDown(0);
-		this.updateArea();
+		this.mouseOver = area.contains(input.getMouseX(), input.getMouseY());
+		this.mouseDown = input.isMouseButtonDown(0);
+		this.keysActive = keysActivated;
+		this.update();
 	}
 	
 	/**
@@ -88,48 +95,19 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	 * @param width
 	 * @param height
 	 * @param listener
+	 * @param keysActivated
 	 */
-	public MouseOverCell(GameContainer container, int x, int y, float width, float height, ComponentListener listener) {
+	public CellListener(GameContainer container, int x, int y, float width, float height, ComponentListener listener, boolean keysActivated) {
 		super(container);
 		this.area = new Rectangle(x, y, width, height);
 		this.addListener(listener);
 		
-		state = MOUSE_NONE;
+		this.state = MOUSE_NONE;
 		Input input = container.getInput();
-		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
-		mouseDown = input.isMouseButtonDown(0);
-		this.updateArea();
-	}
-	
-	
-	/**
-	 * 
-	 * @param container
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param animation
-	 * @param durations
-	 * @param autoUpdate
-	 * @param listener
-	 */
-	public MouseOverCell(GameContainer container, int x, int y, float width, float height, Image[] animation, int[] durations, boolean autoUpdate, ComponentListener listener) {
-		super(container);
-		this.area = new Rectangle(x, y, width, height);
-		this.overAnimation = new Animation(animation, durations, autoUpdate);
-		this.animationX = x;
-		this.animationY = y;
-		this.animationWidth = this.overAnimation.getWidth();
-		this.animationHeight = this.overAnimation.getHeight();
-		this.addListener(listener);
-		
-		state = MOUSE_NONE;
-		Input input = container.getInput();
-		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
-		mouseDown = input.isMouseButtonDown(0);
-		this.updateArea();
-		
+		this.mouseOver = area.contains(input.getMouseX(), input.getMouseY());
+		this.mouseDown = input.isMouseButtonDown(0);
+		this.keysActive = keysActivated;
+		this.update();
 	}
 	
 	/**
@@ -143,8 +121,9 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	 * @param duration
 	 * @param autoUpdate
 	 * @param listener
+	 * @param keysActivated
 	 */
-	public MouseOverCell(GameContainer container, int x, int y, float width, float height, SpriteSheet animation, int duration, boolean autoUpdate, ComponentListener listener) {
+	public CellListener(GameContainer container, int x, int y, float width, float height, SpriteSheet animation, int duration, boolean autoUpdate, ComponentListener listener, boolean keysActivated) {
 		super(container);
 		this.area = new Rectangle(x, y, width, height);
 		this.overAnimation = new Animation(animation, duration);
@@ -159,7 +138,40 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 		Input input = container.getInput();
 		mouseOver = area.contains(input.getMouseX(), input.getMouseY());
 		mouseDown = input.isMouseButtonDown(0);
-		this.updateArea();
+		this.update();
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param container
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param animation
+	 * @param durations
+	 * @param autoUpdate
+	 * @param listener
+	 * @param keysActivated
+	 */
+	public CellListener(GameContainer container, int x, int y, float width, float height, Image[] animation, int[] durations, boolean autoUpdate, ComponentListener listener, boolean keysActivated) {
+		super(container);
+		this.area = new Rectangle(x, y, width, height);
+		this.overAnimation = new Animation(animation, durations, autoUpdate);
+		this.animationX = x;
+		this.animationY = y;
+		this.animationWidth = this.overAnimation.getWidth();
+		this.animationHeight = this.overAnimation.getHeight();
+		this.addListener(listener);
+		
+		this.state = MOUSE_NONE;
+		Input input = container.getInput();
+		this.mouseOver = area.contains(input.getMouseX(), input.getMouseY());
+		this.mouseDown = input.isMouseButtonDown(0);
+		this.keysActive = keysActivated;
+		this.update();
 		
 	}
 	
@@ -185,45 +197,78 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 				}
 			}
 		}
-		updateArea();
+		update();
 	}
 
 	/**
 	 * 
 	 */
-	public void updateArea() {
-		if (!mouseOver) {
-			currentColor = normalColor;
-			state = MOUSE_NONE;
-			mouseUp = false;
-		} else {
-			if (mouseDown) {
-				if ((state != MOUSE_DOWN) && (mouseUp)) {
-					if (mouseDownSound != null) {
-						mouseDownSound.play();
-					}
-					currentColor = mouseDownColor;
-					state = MOUSE_DOWN;
-					
-					notifyListeners();
-					mouseUp = false;
-				}
-				
-				return;
+	public void update() {
+		if(!keysActive){
+			if (!mouseOver) {
+				currentColor = normalColor;
+				state = MOUSE_NONE;
+				mouseUp = false;
 			} else {
-				mouseUp = true;
-				if (state != MOUSE_OVER) {
-					if (mouseOverSound != null) {
-						mouseOverSound.play();
+				if (mouseDown) {
+					if ((state != MOUSE_DOWN) && (mouseUp)) {
+						if (mouseDownSound != null) {
+							mouseDownSound.play();
+						}
+						currentColor = mouseDownColor;
+						state = MOUSE_DOWN;
+						
+						notifyListeners();
+						mouseUp = false;
 					}
-					currentColor = mouseOverColor;
-					state = MOUSE_OVER;
+					
+					return;
+				} else {
+					mouseUp = true;
+					if (state != MOUSE_OVER) {
+						if (mouseOverSound != null) {
+							mouseOverSound.play();
+						}
+						currentColor = mouseOverColor;
+						state = MOUSE_OVER;
+					}
 				}
 			}
+	
+			mouseDown = false;
+			state = MOUSE_NONE;
+		}else{
+			if (!focused) {
+				currentColor = normalColor;
+				state = MOUSE_NONE;
+				mouseUp = false;
+			} else {
+				if (keyPressed) {
+					if ((state != MOUSE_DOWN) && (mouseUp)) {
+						if (mouseDownSound != null) {
+							mouseDownSound.play();
+						}
+						currentColor = mouseDownColor;
+						state = MOUSE_DOWN;
+						notifyListeners();
+						mouseUp = false;
+						
+					}
+					keyPressed = false;
+					return;
+				} else {
+					mouseUp = true;
+					if (state != MOUSE_OVER) {
+						if (mouseOverSound != null) {
+							mouseOverSound.play();
+						}
+						currentColor = mouseOverColor;
+						state = MOUSE_OVER;
+					}
+				}
+			}
+			state = MOUSE_NONE;
 		}
-
-		mouseDown = false;
-		state = MOUSE_NONE;
 	}
 	
 	/**
@@ -239,6 +284,7 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
 		mouseMoved(oldx, oldy, newx, newy);
 	}
+
 	
 	/**
 	 * 
@@ -258,6 +304,16 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 		if (button == 0) {
 			mouseDown = false; 
 		}
+	}
+	
+	public void keyPressed(int key, char c){
+		for(int i = 0; i < this.keySet.length;i++){
+			if(key == this.keySet[i]){
+				keyPressed = true;
+				return;
+			}
+		}
+
 	}
 	
 	/**
@@ -612,6 +668,62 @@ public class MouseOverCell extends de.frostbyteger.pong.engine.graphics.ui.Abstr
 	 */
 	public void setMouseDownSound(Sound mouseDownSound) {
 		this.mouseDownSound = mouseDownSound;
+	}
+
+	/**
+	 * @return the focused
+	 */
+	public boolean isFocused() {
+		return focused;
+	}
+
+	/**
+	 * @param focused the focused to set
+	 */
+	public void setFocused(boolean focused) {
+		this.focused = focused;
+	}
+
+	/**
+	 * @return the keyPressed
+	 */
+	public boolean isKeyPressed() {
+		return keyPressed;
+	}
+
+	/**
+	 * @param keyPressed the keyPressed to set
+	 */
+	public void setKeyPressed(boolean keyPressed) {
+		this.keyPressed = keyPressed;
+	}
+
+	/**
+	 * @return the keysActive
+	 */
+	public boolean isKeysActive() {
+		return keysActive;
+	}
+
+	/**
+	 * @param keysActive the keysActive to set
+	 */
+	public void setKeysActive(boolean keysActive) {
+		this.keysActive = keysActive;
+	}
+
+	/**
+	 * @return the keySet
+	 */
+	public int[] getKeySet() {
+		return keySet;
+	}
+
+	/**
+	 * @param keySet the keySet to set
+	 */
+	public void setKeySet(int[] keySet) {
+		this.keySet = keySet;
 	}
 
 

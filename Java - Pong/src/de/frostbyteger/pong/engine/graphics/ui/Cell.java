@@ -9,11 +9,12 @@ import org.newdawn.slick.geom.Rectangle;
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 /**
- * TODO: Add description
+ * This class creates a fully customizable cell which
+ * is similar to a table cell. You can change almost everything.
  * @author Kevin Kuegler
  *
  */
-public class Cell extends MouseOverCell{
+public class Cell extends CellListener{
 	
 	// Objects and Paths
 	private String name             = null;
@@ -74,7 +75,7 @@ public class Cell extends MouseOverCell{
 	 * @param container
 	 */
 	public Cell(int x, int y, float width, float height, GameContainer container) {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -96,7 +97,7 @@ public class Cell extends MouseOverCell{
 	 * @param height
 	 */
 	public Cell(String name, int x, int y, float width, float height, GameContainer container) {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -119,17 +120,17 @@ public class Cell extends MouseOverCell{
 	 * @param height
 	 */
 	public Cell(String name, int x, int y, float width, float height, float scale, GameContainer container) {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width * scale - (float)1, height * scale - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
 		this.name = name;
-		this.cell = new Rectangle(x,y, width, height);
-		this.cellBorder = new Rectangle(x, y, width, height);
+		this.cell = new Rectangle(x,y, width * scale, height * scale);
+		this.cellBorder = new Rectangle(x, y, width * scale, height * scale);
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
+		this.cellWidth = width * scale;
+		this.cellHeight = height * scale;
 		this.cellScale = scale;
 	}
 
@@ -142,7 +143,7 @@ public class Cell extends MouseOverCell{
 	 * @param height
 	 */
 	public Cell(String name, Object parentComponent, int x, int y, float width, float height, GameContainer container) {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -167,7 +168,7 @@ public class Cell extends MouseOverCell{
 	 * @throws SlickException
 	 */
 	public Cell(String name, String fontPath, int fontSize, int x, int y, float width, float height, GameContainer container) throws SlickException {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -194,7 +195,7 @@ public class Cell extends MouseOverCell{
 	 * @throws SlickException
 	 */
 	public Cell(String name, String fontPath, int fontSize, String imagePath, int x, int y, float width, float height, GameContainer container) throws SlickException {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -225,7 +226,7 @@ public class Cell extends MouseOverCell{
 	 * @throws SlickException
 	 */
 	public Cell(String name, String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, float width, float height, GameContainer container) throws SlickException {
-		super(container, x + 1, y, width - (float)1, height - (float)1);
+		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
@@ -305,6 +306,11 @@ public class Cell extends MouseOverCell{
 					}
 				}
 				if(clickable == true){
+					if(highlighted == true && isFocused() == false){
+						setFocused(true);
+					}else if(highlighted == false && isFocused() == true){
+						setFocused(false);
+					}
 					this.render(container, container.getGraphics());
 				}
 
@@ -324,14 +330,14 @@ public class Cell extends MouseOverCell{
 	}
 	
 	public void updateCell(){
-		if(this.getState() == MOUSE_OVER && highlighted == false){
+		/*if(this.getState() == MOUSE_OVER && highlighted == false){
 			highlighted = true;
 		}else if(this.getState() == MOUSE_DOWN && selected == false){
 			selected = true;
 		}else if(this.getState() == MOUSE_NONE && highlighted == true || this.getState() == MOUSE_NONE && selected == true){
 			highlighted = false;
 			selected = false;
-		}
+		}*/
 	}
 
 
@@ -401,9 +407,12 @@ public class Cell extends MouseOverCell{
 	}
 
 	/**
-	 * @param centered the centered to set
+	 * Sets the cells textlayout to centered. Note that you dont need a parameter. 
+	 * Just call this method and all other textlayouts(right and left) will
+	 * be deactivated. This prevents that you can have 2 different activated
+	 * textlayouts. That would crash the application
 	 */
-	public void setCentered(boolean centered) {
+	public void setCentered() {
 		if(this.centered == false && left == true || this.centered == false && right == true){
 			this.centered = true;
 			this.right = false;
@@ -421,9 +430,12 @@ public class Cell extends MouseOverCell{
 	}
 
 	/**
-	 * @param left the left to set
+	 * Sets the cells textlayout to left. Note that you dont need a parameter. 
+	 * Just call this method and all other textlayouts(centered and right) will
+	 * be deactivated. This prevents that you can have 2 different activated
+	 * textlayouts. That would crash the application
 	 */
-	public void setLeft(boolean left) {
+	public void setLeft() {
 		if(this.left == false && centered == true || this.left == false && right == true){
 			this.centered = false;
 			this.right = false;
@@ -441,9 +453,12 @@ public class Cell extends MouseOverCell{
 	}
 
 	/**
-	 * @param right the right to set
+	 * Sets the cells textlayout to right. Note that you dont need a parameter. 
+	 * Just call this method and all other textlayouts(centered and left) will
+	 * be deactivated. This prevents that you can have 2 different activated
+	 * textlayouts. That would crash the application
 	 */
-	public void setRight(boolean right) {
+	public void setRight() {
 		if(this.right == false && left == true || this.right == false && centered == true){
 			this.centered = false;
 			this.right = true;
@@ -788,7 +803,7 @@ public class Cell extends MouseOverCell{
 	/**
 	 * @param cellScale the cellScale to set
 	 */
-	public void setCellScale(float cellScale) {
+	public void setCellScale(float cellScale) { //TODO: Add functionality
 		this.cellScale = cellScale;
 	}
 

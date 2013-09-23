@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.geom.Rectangle;
-
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 /**
@@ -22,18 +22,34 @@ public class Box{
 	private GameContainer parentContainer;
 	private UnicodeFont boxFont;
 	private ArrayList<Cell> sources;
-	private Cell header   = null;
-
+	private Cell header        = null;
+	private Rectangle edgedBox = null;
+	
+	
+	
+	
+	
+	//TODO: Add X/Y Coordinates for KeyListener
+	private int[] boxKeyCoordinates = new int[2];
+	
+	
 	// Box options
 	private int boxWidth;
 	private int boxHeight;
 	private int boxX;
 	private int boxY;
 	private int boxFontSize;
-	private boolean active       = true;
-	private boolean visible      = true;
-	private boolean clickable    = true;
-	private boolean edged        = false;
+	private Color boxBorderColor      = Color.white;
+	private boolean active            = true;
+	private boolean visible           = true;
+	private boolean clickable         = true;
+	private boolean focused           = false;
+	private boolean edged             = false;
+	private boolean keyInput          = false;
+	
+	// Box image options
+	private Image boxImage = null;
+	private boolean imageVisible = false;
 
 
 
@@ -53,12 +69,14 @@ public class Box{
 	public Box(int boxWidth, int boxHeight, int boxX, int boxY, String boxFontPath, int boxFontSize, float cellWidth, float cellHeight, GameContainer container) throws SlickException {
 		this.parentContainer = container;
 		this.sources = new ArrayList<Cell>();
+		
 		if(boxWidth <= 0 || boxHeight <= 0){
-			throw new IllegalBoxArgumentException("Boxes width or height is 0 or below!");
+			throw new IllegalBoxArgumentException("Boxes width or height is 0 or negative!");
 		}
 		if(cellWidth <= 0 || cellHeight <= 0){
-			throw new IllegalCellArgumentException("Cell width or height is 0 or below!");
+			throw new IllegalCellArgumentException("Cell width or height is 0 or negative!");
 		}
+		
 		this.boxWidth = boxWidth;
 		this.boxHeight = boxHeight;
 		this.boxX = boxX;
@@ -68,6 +86,7 @@ public class Box{
 		this.boxFontSize = boxFontSize;
 		this.boxFont = FontHelper.newFont(boxFontPath, boxFontSize, false, false);
 		this.cells = new ArrayList<ArrayList<Cell>>();
+		this.edgedBox = new Rectangle(cellX, cellY, cellWidth * boxWidth, cellHeight * boxHeight);
 		this.header = new Cell(cellX, cellY - 50, cellWidth * boxWidth, 50, container);
 		this.header.setFontPath(boxFontPath);
 		this.header.setSize(boxFontSize);
@@ -88,34 +107,49 @@ public class Box{
 			cellX += cellWidth;
 			cellY -= cellHeight * boxHeight;
 		}
-		int x = 1;
 		for(int k = 0; k < this.cells.size();k++){
 			for(int l = 0; l < this.cells.get(k).size();l++){
 				Cell temp = this.cells.get(k).get(l);
 				temp.setFontPath(boxFontPath);
 				temp.setSize(boxFontSize);
 				temp.createNewFont();
-				temp.setCellText("Button" + x); //TODO: Delete
 				this.sources.add(temp);
-				x++;
 			}
 		}
 		
 	}
 	
 	public void render() throws SlickException{
-		if(header.isActive() == true){
-			header.drawCell();
-		}
+
 		for(int i = 0; i < cells.size();i++){
 			for(int j = 0; j < cells.get(i).size();j++){
 					cells.get(i).get(j).drawCell();
 			}
 		}
+		parentContainer.getGraphics().setColor(boxBorderColor);
+		parentContainer.getGraphics().draw(edgedBox);
+		
+		if(header.isActive() == true){
+			header.drawCell();
+		}
 	}
 	
 	public void update(){
-		
+		if(focused == true && keyInput == true){
+			if((boxKeyCoordinates[0] > 0 && boxKeyCoordinates[1] > 0) && cells.get(boxKeyCoordinates[0] - 1).get(boxKeyCoordinates[1] - 1).isHighlighted() == false){
+				for(int i = 0;i < sources.size();i++){
+					sources.get(i).setHighlighted(false);
+				}
+				cells.get(boxKeyCoordinates[0] - 1).get(boxKeyCoordinates[1] - 1).setHighlighted(true);
+			}else if(boxKeyCoordinates[0] <= 0 || boxKeyCoordinates[1] <= 0){
+				throw new BoxIndexOutOfBoundsException("BoxKeyCoordinates 0 or negative");
+			}
+		}else if(focused == false){
+			for(int i = 0;i < sources.size();i++){
+				sources.get(i).setHighlighted(false);
+			}
+		}
+
 	}
 	
 	
@@ -401,6 +435,118 @@ public class Box{
 	public void setHeaderClickable(boolean clickable){
 		this.header.setClickable(clickable);
 	}
+
+	/**
+	 * @return the boxKeyCoordinates
+	 */
+	public int[] getBoxKeyCoordinates() {
+		return boxKeyCoordinates;
+	}
+
+	/**
+	 * @param boxKeyCoordinates the boxKeyCoordinates to set
+	 */
+	public void setBoxKeyCoordinates(int[] boxKeyCoordinates) {
+		this.boxKeyCoordinates = boxKeyCoordinates;
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void setBoxKeyCoordinates(int x, int y){
+		this.boxKeyCoordinates[0] = x;
+		this.boxKeyCoordinates[1] = y;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getBoxKeyX(){
+		return boxKeyCoordinates[0];
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 */
+	public void setBoxKeyX(int x){
+		this.boxKeyCoordinates[0] = x;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getBoxKeyY(){
+		return boxKeyCoordinates[1];
+	}
+	
+	/**
+	 * 
+	 * @param y
+	 */
+	public void setBoxKeyY(int y){
+		this.boxKeyCoordinates[1] = y;	
+	}
+	
+
+
+	/**
+	 * @return the focused
+	 */
+	public boolean isFocused() {
+		return focused;
+	}
+
+	/**
+	 * @param focused the focused to set
+	 */
+	public void setFocus(boolean focus) {
+		this.focused = focus;
+	}
+	
+	public void setKeyInput(boolean activated){
+		for(int i = 0; i < this.getSources().size();i++){
+			this.getSources().get(i).setKeysActive(activated);
+		}
+		this.keyInput = activated;
+	}
+	
+	public boolean isKeyInputActivated(){
+		return this.keyInput;
+	}
+
+	/**
+	 * @return the boxImage
+	 */
+	public Image getBoxImage() {
+		return boxImage;
+	}
+
+	/**
+	 * @param boxImage the boxImage to set
+	 */
+	public void setBoxImage(Image boxImage) {
+		this.boxImage = boxImage;
+	}
+
+	/**
+	 * @return the imageVisible
+	 */
+	public boolean isImageVisible() {
+		return imageVisible;
+	}
+
+	/**
+	 * @param imageVisible the imageVisible to set
+	 */
+	public void setImageVisible(boolean imageVisible) {
+		this.imageVisible = imageVisible;
+	}
+	
 	
 
 

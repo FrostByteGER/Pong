@@ -4,6 +4,7 @@ import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -13,7 +14,7 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 	
 	public static MessageLogger logger;
 	
-	public Box box;
+	public Box box, box3;
 	
 	public Rectangle overlay;
 	public Box box2;
@@ -24,15 +25,14 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 	
 	@Override
 	public void init(GameContainer container) throws SlickException {
-		
 		overlay = new Rectangle(0, 0, container.getWidth(), container.getHeight());
-		try{
+		/*try{
 			box2 = new Box(2, 1, container.getWidth()/2 - 200, container.getHeight()/2 - 50, "data/Alexis.ttf", 40, 200, 0, container); // TODO: Change font to systemfont with throws
 			box2.getSources().get(0).setCellText("Yes");
 			box2.getSources().get(1).setCellText("No");
 		}catch(IllegalCellArgumentException e){
 			e.printStackTrace();
-		}
+		}*/
 
 		
 		
@@ -44,17 +44,29 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		for(int i = 0; i < box.getSources().size();i++){
 			box.getSources().get(i).setActionCommand("TEST" + i);
 			box.getSources().get(i).addListener(this);
+			box.getSources().get(i).setKeysActive(true);
+		}
+		box3 = new Box(2, 4, 500, 100,"data/Alexis.ttf", 40, 200, 50, container);
+		box3.setHeaderTitle("Box_02");
+		box3.setHeaderActive(true);
+		for(int i = 0; i < box3.getSources().size();i++){
+			box3.getSources().get(i).addListener(this);
+			box3.getSources().get(i).setClickable(true);
 		}
 	}
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		box.render();
+		box3.render();
 		//Box.showOptionBox(overlay, box2,container, "Continue?", BoxOptionSelection.YES_NO_BOX);
+		
 	}
 
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
+		box.update();
+		box3.update();
 	}
 	
 	public static void main(String[] args) throws SlickException {
@@ -76,6 +88,13 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 				return;
 			}
 
+		}		
+		for(int j = 0; j < box3.getSources().size();j++){
+			if (source == box3.getSources().get(j)) {
+				logger.addMessage("Area " + source + " Activated");
+				return;
+			}
+
 		}
 	
 	}
@@ -85,5 +104,48 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		logger = new MessageLogger();
 		logger.getFrame().setAlwaysOnTop(true);
 	}
+	
+	public void keyPressed(int key, char c) {
+		if(key == Input.KEY_TAB && box.isFocused() == false){
+			box3.setFocus(false);
+			box.setFocus(true);
+			box.setKeyInput(true);
+			box.setBoxKeyCoordinates(new int[] {1,1});
+		}else if(key == Input.KEY_TAB && box.isFocused() == true){
+			box.setFocus(false);
+			box3.setFocus(true);
+			//box3.setKeyInput(true);
+			//box3.setBoxKeyCoordinates(new int[] {1,1});
+		}
+		if(box.isKeyInputActivated() == true && box.isFocused() == true){
+			if(key == Input.KEY_UP && box.getBoxKeyY() > 1){
+				box.setBoxKeyY(box.getBoxKeyY() - 1);
+			}else if(key == Input.KEY_DOWN && box.getBoxKeyY() < box.getBoxHeight()){
+				box.setBoxKeyY(box.getBoxKeyY() + 1);
+			}else if(key == Input.KEY_RIGHT && box.getBoxKeyX() < box.getBoxWidth()){
+				box.setBoxKeyX(box.getBoxKeyX() + 1);
+			}else if(key == Input.KEY_LEFT && box.getBoxKeyX() > 1){
+				box.setBoxKeyX(box.getBoxKeyX() - 1);
+			}
+		}else if(box3.isKeyInputActivated() == true && box3.isFocused() == true){
+			if(key == Input.KEY_UP && box3.getBoxKeyY() > 1){
+				box3.setBoxKeyY(box3.getBoxKeyY() - 1);
+			}else if(key == Input.KEY_DOWN && box3.getBoxKeyY() < box3.getBoxHeight()){
+				box3.setBoxKeyY(box3.getBoxKeyY() + 1);
+			}else if(key == Input.KEY_RIGHT && box3.getBoxKeyX() < box3.getBoxWidth()){
+				box3.setBoxKeyX(box3.getBoxKeyX() + 1);
+			}else if(key == Input.KEY_LEFT && box3.getBoxKeyX() > 1){
+				box3.setBoxKeyX(box3.getBoxKeyX() - 1);
+			}
+		}
+		if(key == Input.KEY_F1){
+			box3.setKeyInput(true);
+			box3.setBoxKeyCoordinates(new int[] {1,1});
+		}else if(key == Input.KEY_F2){
+			box3.setKeyInput(false);
+		}
+	}
+	
+
 
 }
