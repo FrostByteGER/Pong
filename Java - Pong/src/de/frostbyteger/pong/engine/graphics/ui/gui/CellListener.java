@@ -9,7 +9,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Shape;
 
 /**
  * Original Class by kevglass from Slick Devteam.
@@ -42,7 +41,7 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 	private int[] keySet = {Input.KEY_ENTER};
 	
 	// Area options
-	private Shape area;
+	private Rectangle area;
 	private boolean areaFilled = false;
 	private int state          = MOUSE_NONE;
 
@@ -319,14 +318,14 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 	/**
 	 * @return the area
 	 */
-	public Shape getArea() {
+	public Rectangle getArea() {
 		return area;
 	}
 
 	/**
 	 * @param area the area to set
 	 */
-	public void setArea(Shape area) {
+	public void setArea(Rectangle area) {
 		this.area = area;
 	}
 
@@ -336,12 +335,26 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 	public float getAreaWidth() {
 		return area.getWidth();
 	}
+	
+	/**
+	 * @param the areaWidth
+	 */
+	public void setAreaWidth(float width) {
+		this.area.setWidth(width);
+	}
 
 	/**
 	 * @return the areaHeight
 	 */
 	public float getAreaHeight() {
 		return area.getHeight();
+	}
+	
+	/**
+	 * @param the areaHeight
+	 */
+	public void setAreaHeight(float height) {
+		this.area.setHeight(height);
 	}
 
 	/**

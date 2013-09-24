@@ -37,6 +37,9 @@ public class Pong extends StateBasedGame{
 	public static final String MD5_LEFT  = "42a88f1b4fa5de64c17bb8f8ca300234";
 	public static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
 	
+	// Additional
+	public static final String FONT = "data/alexis.ttf";
+	
 	public static AppGameContainer S_container;
 	public static ConfigHelper ch = new ConfigHelper("data/", "config",".xml");
 

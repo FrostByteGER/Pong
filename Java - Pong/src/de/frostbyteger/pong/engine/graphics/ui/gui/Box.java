@@ -1,6 +1,7 @@
 package de.frostbyteger.pong.engine.graphics.ui.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -8,6 +9,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.geom.Rectangle;
+
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 /**
@@ -33,6 +35,9 @@ public class Box{
 	private int boxX;
 	private int boxY;
 	private int boxFontSize;
+	private int boxHeaderHeight       = 50;
+	private float cellWidth;
+	private float cellHeight;
 	private Color boxBorderColor      = Color.white;
 	private boolean active            = true;
 	private boolean visible           = true;
@@ -40,6 +45,7 @@ public class Box{
 	private boolean focused           = false;
 	private boolean edged             = false;
 	private boolean keyInput          = false;
+	private boolean autoAdjustBox     = false;
 	
 	// Box image options
 	private Image boxImage = null;
@@ -75,13 +81,15 @@ public class Box{
 		this.boxHeight = boxHeight;
 		this.boxX = boxX;
 		this.boxY = boxY;
+		this.cellWidth = cellWidth;
+		this.cellHeight = cellHeight;
 		int cellX = boxX;
 		int cellY = boxY;
 		this.boxFontSize = boxFontSize;
 		this.boxFont = FontHelper.newFont(boxFontPath, boxFontSize, false, false);
 		this.cells = new ArrayList<ArrayList<Cell>>();
-		this.edgedBox = new Rectangle(cellX, cellY, cellWidth * boxWidth, cellHeight * boxHeight);
-		this.header = new Cell(cellX, cellY - 50, cellWidth * boxWidth, 50, container);
+		this.edgedBox = new Rectangle(cellX, cellY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
+		this.header = new Cell(cellX, cellY, cellWidth * boxWidth, this.boxHeaderHeight, container);
 		this.header.setFontPath(boxFontPath);
 		this.header.setSize(boxFontSize);
 		this.header.createNewFont();
@@ -93,7 +101,7 @@ public class Box{
 		
 		for(int i = 0;i < boxWidth;i++){
 			for(int j = 0; j < boxHeight;j++){
-				tempCell.add(new Cell(cellX, cellY, cellWidth, cellHeight, container));
+				tempCell.add(new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, container));
 				cellY += cellHeight;
 			}
 			this.cells.add(tempCell);
@@ -120,12 +128,16 @@ public class Box{
 					cells.get(i).get(j).drawCell();
 			}
 		}
-		parentContainer.getGraphics().setColor(boxBorderColor);
-		parentContainer.getGraphics().draw(edgedBox);
+		if(edged){
+			parentContainer.getGraphics().setColor(boxBorderColor);
+			parentContainer.getGraphics().draw(edgedBox);			
+		}
+
 		
-		if(header.isActive() == true){
+		if(header.isActive()){
 			header.drawCell();
 		}
+		parentContainer.getGraphics().setColor(Color.white);
 	}
 	
 	public void update(){
@@ -530,7 +542,242 @@ public class Box{
 	public void setImageVisible(boolean imageVisible) {
 		this.imageVisible = imageVisible;
 	}
+
+	/**
+	 * @return the boxHeaderHeight
+	 */
+	public int getBoxHeaderHeight() {
+		return boxHeaderHeight;
+	}
+
+	/**
+	 * @param boxHeaderHeight the boxHeaderHeight to set
+	 */
+	public void setBoxHeaderHeight(int boxHeaderHeight) {
+		this.boxHeaderHeight = boxHeaderHeight;
+	}
+
+	/**
+	 * @return the boxBorderColor
+	 */
+	public Color getBoxBorderColor() {
+		return boxBorderColor;
+	}
+
+	/**
+	 * @param boxBorderColor the boxBorderColor to set
+	 */
+	public void setBoxBorderColor(Color boxBorderColor) {
+		this.boxBorderColor = boxBorderColor;
+	}
 	
+	/**
+	 * Checks if ALL cells in the box are centered or not.
+	 * If only ONE cell returns no, the return value will be false.
+	 * @return true if whole box is centered, false if not
+	 */
+	public boolean isBoxCentered(){
+		for(int i = 0;i < sources.size();i++){
+			if(!sources.get(i).isCentered()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Sets ALL cells of the box centered.
+	 */
+	public void setBoxCentered(){
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).setCentered();
+		}
+	}
+	
+	/**
+	 * Checks if ALL cells in the box are left or not.
+	 * If only ONE cell returns no, the return value will be false.
+	 * @return true if whole box is left, false if not
+	 */
+	public boolean isBoxLeft(){
+		for(int i = 0;i < sources.size();i++){
+			if(!sources.get(i).isLeft()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Sets ALL cells of the box left.
+	 */
+	public void setBoxLeft(){
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).setLeft();
+		}
+	}
+	
+	/**
+	 * Checks if ALL cells in the box are right or not.
+	 * If only ONE cell returns no, the return value will be false.
+	 * @return true if whole box is right, false if not
+	 */
+	public boolean isBoxRight(){
+		for(int i = 0;i < sources.size();i++){
+			if(!sources.get(i).isRight()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Sets ALL cells of the box right.
+	 */
+	public void setBoxRight(){
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).setRight();
+		}
+	}
+	
+	/**
+	 * Sets the action commands of every cell in the box to
+	 * the given list content.
+	 * @param actionCommands the action commands you want to set
+	 */
+	public void setAllActionCommands(String[] actionCommands){
+		for(int i = 0;i < actionCommands.length;i++){
+			sources.get(i).setActionCommand(actionCommands[i]);
+		}
+	}
+	
+	/**
+	 * Returns all action commands from the boxes cells.
+	 * @return the action commands
+	 */
+	public String[] getAllActionCommands(){
+		String[] actionCommands = new String[sources.size()];
+		for(int i = 0;i < actionCommands.length;i++){
+			actionCommands[i] = sources.get(i).getActionCommand();
+		}
+		return actionCommands;
+	}
+	
+	/**
+	 * Sets the titles of every cell in the box to
+	 * the given list content.
+	 * @param titles the titles you want to set
+	 */
+	public void setAllCellTitles(String[] titles){
+		for(int i = 0;i < titles.length;i++){
+			sources.get(i).setCellText(titles[i]);
+		}
+	}
+	
+	/**
+	 * Returns all cell titles from the boxes cells.
+	 * @return the cell titles
+	 */
+	public String[] getAllCellTitles(){
+		String[] titles = new String[sources.size()];
+		for(int i = 0;i < titles.length;i++){
+			titles[i] = sources.get(i).getCellText();
+		}
+		return titles;
+	}
+	
+	/**
+	 * Adds listeners to every cell in the box from
+	 * the given list content.
+	 * @param listeners the listeners you want to add
+	 */
+	public void addAllListeners(ComponentListener[] listeners){
+		for(int i = 0;i < listeners.length;i++){
+			sources.get(i).addListener(listeners[i]);
+		}
+	}
+	
+	/**
+	 * Adds a listener to every cell in the box.
+	 * @param listener the listener you want to add
+	 */
+	public void addBoxListener(ComponentListener listener){
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).addListener(listener);
+		}
+	}
+	
+	/**
+	 * Removes all listeners from the boxes cells.
+	 * @param the listener to remove
+	 */
+	public void removeAllListeners(ComponentListener listener){
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).removeListener(listener);;
+		}
+	}
+	
+	/**
+	 * Sets the auto adjust ability of every cell in the box to
+	 * true or false.
+	 * @param activated set auto ajust to true or false
+	 */
+	public void setAllAutoAdjust(boolean active){
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).setAutoAdjust(active);
+		}
+	}
+
+	/**
+	 * @return the autoAdjustBox
+	 */
+	public boolean isAutoAdjustBox() {
+		return autoAdjustBox;
+	}
+
+	/**
+	 * Sets the auto adjust ability of the box
+	 * to true or false. This changes all cell widths
+	 * and heights to the maximum string length/height
+	 * from the boxes cells or reverts it back to its
+	 * original length and height.
+	 * @param autoAdjustBox the autoAdjustBox to set
+	 */
+	public void setAutoAdjustBox(boolean autoAdjustBox) {
+		this.autoAdjustBox = autoAdjustBox;
+		if(autoAdjustBox){
+			int[] width = new int[sources.size()];
+			int[] height = new int[sources.size()];
+			
+			for(int i = 0;i < sources.size();i++){
+				width[i] = sources.get(i).getCellTextWidth();
+			}
+			Arrays.sort(width);
+			for(int i = 0;i < sources.size();i++){
+				sources.get(i).setWidth(width[width.length - 1] + sources.get(i).getCellDrawOffsetX());
+				sources.get(i).setAreaWidth(width[width.length - 1] + sources.get(i).getCellDrawOffsetX());
+			}
+			/*// TODO: Fix bugs
+			for(int i = 0;i < sources.size();i++){
+				height[i] = sources.get(i).getCellTextHeight();
+			}
+			Arrays.sort(height);
+			for(int i = 0;i < sources.size();i++){
+				sources.get(i).setHeight(height[height.length - 1] + sources.get(i).getCellDrawOffsetY());
+				System.out.println(width[i] + "|" + height[i]);
+				sources.get(i).setAreaHeight(height[height.length - 1] + sources.get(i).getCellDrawOffsetY());
+			}
+			*/
+			
+		}else{
+			for(int i = 0;i < sources.size();i++){
+				sources.get(i).setWidth(cellWidth);
+				sources.get(i).setAreaWidth(cellWidth);
+				sources.get(i).setHeight(cellHeight);
+				sources.get(i).setAreaHeight(cellHeight);
+			}
+		}
+	}
 	
 
 

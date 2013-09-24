@@ -18,13 +18,16 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import de.frostbyteger.pong.engine.OptionState;
 import de.frostbyteger.pong.engine.graphics.FontHelper;
+import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
+import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
+import de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener;
 import de.frostbyteger.pong.start.Pong;
 
 /**
  * @author Kevin
  * TODO: Implement save function for submenus
  */
-public class Options extends BasicGameState {
+public class Options extends BasicGameState implements ComponentListener{
 
 	protected final static int ID = 002;
 	
@@ -34,6 +37,11 @@ public class Options extends BasicGameState {
 	private final String[] MENU_OPTIONS_GRAPHICS_ARRAY = {"Resolution: ","Volume: ","Volume","DEBUG MODE","Save","Back"};
 	private final String[] MENU_OPTIONS_CONTROLS_ARRAY = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","Save","Back"};
 	private final String[] MENU_OPTIONS_NETWORK_ARRAY  = {"IP","Port","PLACEHOLDER","Save","Back"};
+	
+	private final String[] COMMANDS_MENU_OPTIONS_MAIN = {"audiovisual","controls","network","return"};
+	private final String[] COMMANDS_MENU_OPTIONS_GRAPHICS = {"resolution","","volume","debug","save","return"};
+	private final String[] COMMANDS_MENU_OPTIONS_CONTROLS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","save","return"};
+	private final String[] COMMANDS_MENU_OPTIONS_NETWORK = {"ip","port","PLACEHOLDER","save","return"};
 	
 	private final String PONG    = "Pong";
 	private final String OPTIONS = "Options";
@@ -55,8 +63,11 @@ public class Options extends BasicGameState {
 	
 	private boolean savebool = false;
 	
-	private ArrayList<Color> optionArray = new ArrayList<Color>();
-	
+	private Box optionBoxMain;
+	private Box optionBoxGraphics;
+	private Box optionBoxControls;
+	private Box optionBoxNetwork;
+		
 	/**
 	 * 
 	 */
@@ -66,6 +77,17 @@ public class Options extends BasicGameState {
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
+		optionBoxMain = new Box(1, MENU_OPTIONS_MAIN_ARRAY.length, OFFSET_X, Pong.S_resY/2, Pong.FONT, 40, 200, 50, container);
+		optionBoxMain.setAllAutoAdjust(false);
+		optionBoxMain.setBoxLeft();
+		optionBoxMain.setEdged(false);
+		optionBoxMain.setKeyInput(true);
+		optionBoxMain.setFocus(true);
+		optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
+		optionBoxMain.setAllCellTitles(MENU_OPTIONS_MAIN_ARRAY);
+		optionBoxMain.setAllActionCommands(COMMANDS_MENU_OPTIONS_MAIN);
+		optionBoxMain.addBoxListener(this);
+		optionBoxMain.setAutoAdjustBox(true);
 		//Ensures that the displayed resolution in the optionsmenu equals the actual gamewindow resolution when
 		//starting the game
 		for(int i = 0; i < RES_ARRAY.length;i++){
@@ -73,28 +95,18 @@ public class Options extends BasicGameState {
 				resolutionselection = i;
 			}
 		}
-		for(int e = 0;e <= 13;e++){
-			optionArray.add(Color.gray);
-		}
 		
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		optionBoxMain.render();
+		/*
 		FontHelper.bigfont.drawString(Pong.S_resX/2 - FontHelper.bigfont.getWidth(PONG)/2, 20 + FontHelper.bigfont.getHeight(PONG), PONG, Color.white);	
 		
 		FontHelper.mediumfont.drawString(OFFSET_X, Pong.S_resY/2 - 30, OPTIONS, Color.cyan);	
 
-		if(ostate == OptionState.Main){
-			for(int i = 0,localoffset = 0; i < 4; i++){
-				if(localoffset == 60){
-					localoffset += 10;
-				}
-				FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + localoffset, MENU_OPTIONS_MAIN_ARRAY[i],optionArray.get(i));
-				localoffset += 20;
-			}
-			
-		} else if(ostate == OptionState.Graphics){
+		else if(ostate == OptionState.Graphics){
 			FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2, MENU_OPTIONS_GRAPHICS_ARRAY[0],optionArray.get(0));
 			FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS_ARRAY[0]), Pong.S_resY/2, RES_ARRAY[resolutionselection][0] + "x" + RES_ARRAY[resolutionselection][1], optionArray.get(0));
 			
@@ -137,7 +149,7 @@ public class Options extends BasicGameState {
 		}else{
 			savebool = false;
 		}
-
+	*/
 	}
 	
 	/**
@@ -145,6 +157,8 @@ public class Options extends BasicGameState {
 	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		optionBoxMain.update();
+		/*
 		System.out.println(networkconfigselection);
 
 		//Timer for savemessage
@@ -154,17 +168,23 @@ public class Options extends BasicGameState {
 			savetimer = 0;
 			
 		}
+		*/
 	}
 	
 	public void keyPressed(int key, char c) {
 		if(ostate == OptionState.Main){
-			mainHelper(key);
+			if(key == Input.KEY_UP && optionBoxMain.getBoxKeyY() > 1){
+				optionBoxMain.setBoxKeyY(optionBoxMain.getBoxKeyY() - 1);
+			}else if(key == Input.KEY_DOWN && optionBoxMain.getBoxKeyY() < optionBoxMain.getBoxHeight()){
+				optionBoxMain.setBoxKeyY(optionBoxMain.getBoxKeyY() + 1);
+			}else if(key == Input.KEY_RIGHT && optionBoxMain.getBoxKeyX() < optionBoxMain.getBoxWidth()){
+				optionBoxMain.setBoxKeyX(optionBoxMain.getBoxKeyX() + 1);
+			}else if(key == Input.KEY_LEFT && optionBoxMain.getBoxKeyX() > 1){
+				optionBoxMain.setBoxKeyX(optionBoxMain.getBoxKeyX() - 1);
+			}
 		}else if(ostate == OptionState.Graphics){
-			graphicsHelper(key);
 		}else if(ostate == OptionState.Controls){
-			controlHelper(key);
 		}else if(ostate == OptionState.Network){
-			networkHelper(key);
 		}
 	}
 	
@@ -486,6 +506,12 @@ public class Options extends BasicGameState {
 	@Override
 	public int getID() {
 		return ID;
+	}
+
+	@Override
+	public void componentActivated(AbstractComponent source) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -3,8 +3,6 @@
  */
 package de.frostbyteger.pong.core;
 
-import java.util.ArrayList;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -16,7 +14,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-import de.frostbyteger.pong.engine.graphics.FontHelper;
+import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
+import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
 import de.frostbyteger.pong.start.Pong;
 
@@ -24,17 +23,18 @@ import de.frostbyteger.pong.start.Pong;
  * @author Kevin
  *
  */
-public class MainMenu extends BasicGameState {
+public class MainMenu extends BasicGameState implements de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener {
 	
 	protected static final int ID = 001;
 	
-	private StateBasedGame game;
-
+	private final String[] COMMANDS   = {"game","lan","options","profile","exit"};
 	private final String[] MENU_ARRAY = {"New Game", "LAN-Mode", "Options", "Profile", "Quit Game"};
-
-	private ArrayList<Color> mainArray = new ArrayList<Color>();
 	
-	private int selection = 0;
+	private StateBasedGame game;
+	
+	// Menu
+	private Box menuBox;
+	private Cell header;
 		
 	private Music msc;
 	
@@ -49,90 +49,47 @@ public class MainMenu extends BasicGameState {
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
+		header = new Cell(Pong.FONT, 120, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
+		header.setCellText("PONG");
+		header.setClickable(false);
+		menuBox = new Box(1, MENU_ARRAY.length, Pong.S_resX/2 - 200/2, Pong.S_resY/2 - (5*30)/2, Pong.FONT, 30, 200, 30, container);
+		menuBox.setEdged(false);
+		menuBox.setKeyInput(true);
+		menuBox.setFocus(true);
+		menuBox.setBoxKeyCoordinates(new int[] {1,1});
+		menuBox.setAllCellTitles(MENU_ARRAY);
+		menuBox.setAllActionCommands(COMMANDS);
+		menuBox.addBoxListener(this);
+
 		
-		FontHelper.smallfont = FontHelper.newFont(FontHelper.FONT, 25, false, false);
-		FontHelper.normalfont = FontHelper.newFont(FontHelper.FONT, 40, false, false);
-		FontHelper.mediumfont = FontHelper.newFont(FontHelper.FONT, 50, false, false);
-		FontHelper.bigfont = FontHelper.newFont(FontHelper.FONT, 120, false, false);
 		msc = new Music("data/snd/sample.wav");
-		
-		for(int e = 0;e <= 13;e++){
-			mainArray.add(Color.gray);
-		}
 		
 		//msc.loop();
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		FontHelper.bigfont.drawString(Pong.S_resX/2 - FontHelper.bigfont.getWidth("Pong")/2, 20 + FontHelper.bigfont.getHeight("Pong"), "Pong", Color.white);	
-		
-		for(int i = 0, y_offset = 0;i < 5;i++){
-			FontHelper.normalfont.drawString(Pong.S_resX/2 - FontHelper.normalfont.getWidth(MENU_ARRAY[i])/2, Pong.S_resY/2 + y_offset, MENU_ARRAY[i], mainArray.get(i));		
-			y_offset += 20;
-		}
 		g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 128, Pong.S_resY - 15);
+		header.drawCell();
+		menuBox.render();
 		
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-
-		//Coloration for menu
-		if(selection == 0){
-			for(int e = 0;e < mainArray.size();e++){
-				mainArray.set(e, Color.gray);
-			}
-			mainArray.set(0, Color.white);
-		}else if(selection == 1){
-			for(int e = 0;e < mainArray.size();e++){
-				mainArray.set(e, Color.gray);
-			}
-			mainArray.set(1, Color.white);
-		}else if(selection == 2){
-			for(int e = 0;e < mainArray.size();e++){
-				mainArray.set(e, Color.gray);
-			}
-			mainArray.set(2, Color.white);
-		}else if(selection == 3){
-			for(int e = 0;e < mainArray.size();e++){
-				mainArray.set(e, Color.gray);
-			}
-			mainArray.set(3, Color.white);
-		}else if(selection == 4){
-			for(int e = 0;e < mainArray.size();e++){
-				mainArray.set(e, Color.gray);
-			}
-			mainArray.set(4, Color.white);
-		}
-		
-
-
+		menuBox.update();
+	
 	}
 	
 	public void keyPressed(int key, char c) {
-		mainMenuHelper(key);
-	}
-	
-	private void mainMenuHelper(int key){
-		if (key == Input.KEY_UP && selection > 0) {
-			selection -= 1;
-		}else if (key == Input.KEY_DOWN && selection < MENU_ARRAY.length - 1) {
-			selection += 1;
-		}
-		if(key == Input.KEY_ENTER){
-			if(selection == 0){
-				game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-			}else if(selection == 1){
-				//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-			}else if(selection == 2){
-				game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-			}else if(selection == 3){
-				game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-			}else if(selection == 4){
-				Pong.S_container.exit();
-			}
-
+		if(key == Input.KEY_UP && menuBox.getBoxKeyY() > 1){
+			menuBox.setBoxKeyY(menuBox.getBoxKeyY() - 1);
+		}else if(key == Input.KEY_DOWN && menuBox.getBoxKeyY() < menuBox.getBoxHeight()){
+			menuBox.setBoxKeyY(menuBox.getBoxKeyY() + 1);
+		}else if(key == Input.KEY_RIGHT && menuBox.getBoxKeyX() < menuBox.getBoxWidth()){
+			menuBox.setBoxKeyX(menuBox.getBoxKeyX() + 1);
+		}else if(key == Input.KEY_LEFT && menuBox.getBoxKeyX() > 1){
+			menuBox.setBoxKeyX(menuBox.getBoxKeyX() - 1);
 		}else if(key == Input.KEY_ESCAPE){
 			Pong.S_container.exit();
 		}
@@ -142,5 +99,22 @@ public class MainMenu extends BasicGameState {
 	public int getID() {
 		return ID;
 	}
+
+	@Override
+	public void componentActivated(de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent source) {
+		if(source.getActionCommand().equals(COMMANDS[0])){
+			game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+		}else if(source.getActionCommand().equals(COMMANDS[1])){
+			//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+		}else if(source.getActionCommand().equals(COMMANDS[2])){
+			game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+		}else if(source.getActionCommand().equals(COMMANDS[3])){
+			game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+		}else if(source.getActionCommand().equals(COMMANDS[4])){
+			Pong.S_container.exit();
+		}
+		
+	}
+
 
 }

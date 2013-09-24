@@ -12,16 +12,8 @@ import org.newdawn.slick.font.effects.ColorEffect;
  *
  */
 public class FontHelper {
-
-	public static final String FONT = "data/alexis.ttf";
-	public static UnicodeFont smallfont;
-	public static UnicodeFont normalfont;
-	public static UnicodeFont mediumfont;
-	public static UnicodeFont bigfont;
 	
-	public FontHelper() {
-	}
-	
+	@SuppressWarnings("unchecked")
 	public static UnicodeFont newFont(String font,int fontsize, boolean bold, boolean italic) throws SlickException{
 		UnicodeFont unifont = new UnicodeFont(font,fontsize , bold, italic);
 		unifont.addAsciiGlyphs();

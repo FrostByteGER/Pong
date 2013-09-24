@@ -17,7 +17,6 @@ import de.frostbyteger.pong.engine.graphics.FontHelper;
 public class Cell extends CellListener{
 	
 	// Objects and Paths
-	private String name             = null;
 	private Rectangle cell          = null;
 	private Rectangle cellBorder    = null;
 	private UnicodeFont cellFont    = null;
@@ -54,8 +53,6 @@ public class Cell extends CellListener{
 	private boolean edging        = false;
 	private Color backgroundColor = Color.transparent;
 	private Color borderColor     = Color.white;
-	private float cellWidth;
-	private float cellHeight;
 	private float cellScale       = 1.0f;
 	private int cellX;
 	private int cellY;
@@ -83,8 +80,6 @@ public class Cell extends CellListener{
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
 		this.container = container;
 
 	}
@@ -96,42 +91,17 @@ public class Cell extends CellListener{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(String name, int x, int y, float width, float height, GameContainer container) {
-		super(container, x + 1, y, width - (float)1, height - (float)1, false);
-		super.setAreaFilled(true);
-		super.setNormalColor(new Color(1,1,1,0.0f));
-		super.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.name = name;
-		this.cell = new Rectangle(x,y, width, height);
-		this.cellBorder = new Rectangle(x, y, width, height);
-		this.cellX = x;
-		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
-		this.container = container;
-
-	}
-	
-	/**
-	 * 
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 */
-	public Cell(String name, int x, int y, float width, float height, float scale, GameContainer container) {
+	public Cell(int x, int y, float width, float height, float scale, GameContainer container) {
 		super(container, x + 1, y, width * scale - (float)1, height * scale - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.name = name;
 		this.cell = new Rectangle(x,y, width * scale, height * scale);
 		this.cellBorder = new Rectangle(x, y, width * scale, height * scale);
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width * scale;
-		this.cellHeight = height * scale;
 		this.cellScale = scale;
+		this.container = container;
 	}
 
 	/**
@@ -142,19 +112,17 @@ public class Cell extends CellListener{
 	 * @param width
 	 * @param height
 	 */
-	public Cell(String name, Object parentComponent, int x, int y, float width, float height, GameContainer container) {
+	public Cell(Object parentComponent, int x, int y, float width, float height, GameContainer container) {
 		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.name = name;
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.parentComponent = parentComponent;
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
+		this.container = container;
 	}
 	
 	/**
@@ -167,20 +135,18 @@ public class Cell extends CellListener{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String name, String fontPath, int fontSize, int x, int y, float width, float height, GameContainer container) throws SlickException {
+	public Cell(String fontPath, int fontSize, int x, int y, float width, float height, GameContainer container) throws SlickException {
 		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.name = name;
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
-		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italic);
 		this.size = fontSize;
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
+		this.container = container;
 	}
 	
 	/**
@@ -194,22 +160,20 @@ public class Cell extends CellListener{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String name, String fontPath, int fontSize, String imagePath, int x, int y, float width, float height, GameContainer container) throws SlickException {
+	public Cell(String fontPath, int fontSize, String imagePath, int x, int y, float width, float height, GameContainer container) throws SlickException {
 		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.name = name;
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
-		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italic);
 		this.cellImage = new Image(imagePath);
 		this.imagePath = imagePath;
 		this.size = fontSize;
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
+		this.container = container;
 
 	}
 	
@@ -225,22 +189,20 @@ public class Cell extends CellListener{
 	 * @param height
 	 * @throws SlickException
 	 */
-	public Cell(String name, String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, float width, float height, GameContainer container) throws SlickException {
+	public Cell(String fontPath, int fontSize, boolean bold, boolean italics, int x, int y, float width, float height, GameContainer container) throws SlickException {
 		super(container, x + 1, y, width - (float)1, height - (float)1, false);
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
-		this.name = name;
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
-		this.cellFont = FontHelper.newFont(fontPath, size, bold, italics);
+		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italics);
 		this.size = fontSize;
 		this.bold = bold;
 		this.italic = italics;
 		this.cellX = x;
 		this.cellY = y;
-		this.cellWidth = width;
-		this.cellHeight = height;
+		this.container = container;
 	}
 	
 	/**
@@ -276,22 +238,22 @@ public class Cell extends CellListener{
 					cellImageDrawOffsetX = 1.0f;
 					cellImageDrawOffset = 1.0f;
 				}
-				if(autoAdjust == true){
+				if(autoAdjust == true){ // Add algorithm for increasing fontsize 
 					if(cellFont != null){
 						if(cellFont.getWidth(cellText) >= cell.getWidth()) {
 							float i = (float)cellFont.getWidth(cellText) / (float)size;
-							if(cellWidth > cellDrawOffsetX){
-								size = (int) ((cellWidth - cellDrawOffsetX) / i);			
+							if(cell.getWidth() > cellDrawOffsetX){
+								size = (int) ((cell.getWidth() - cellDrawOffsetX) / i);			
 							}else{
-								size = (int) (cellWidth / i);			
+								size = (int) (cell.getWidth() / i);			
 							}
 							cellFont = FontHelper.newFont(fontPath, size, bold, italic);
 						}else if(cellFont.getHeight(cellText) >= cell.getHeight()){
 							float i = (float)cellFont.getHeight(cellText) / (float)size;
-							if(cellHeight > cellDrawOffsetY){
-								size = (int) ((cellHeight - cellDrawOffsetY) / i);							
+							if(cell.getHeight() > cellDrawOffsetY){
+								size = (int) ((cell.getHeight() - cellDrawOffsetY) / i);							
 							}else{
-								size = (int) (cellHeight / i);							
+								size = (int) (cell.getHeight() / i);							
 							}
 							cellFont = FontHelper.newFont(fontPath, size, bold, italic);
 						}
@@ -299,7 +261,7 @@ public class Cell extends CellListener{
 				}
 				if(cellImage != null){
 					if(autoAdjustImage == true){
-						cellImage.draw(cell.getMinX() + cellImageDrawOffsetX, cell.getMinY(), cellWidth - cellImageDrawOffset, cellHeight - cellImageDrawOffset);
+						cellImage.draw(cell.getMinX() + cellImageDrawOffsetX, cell.getMinY(), cell.getWidth() - cellImageDrawOffset, cell.getHeight() - cellImageDrawOffset);
 					}else{
 						cellImage.draw(cell.getMinX() + cellImageDrawOffsetX, cell.getMinY());
 
@@ -323,12 +285,15 @@ public class Cell extends CellListener{
 						cellFont.drawString(cell.getMaxX() - cellFont.getWidth(cellText) - 1.0f , cell.getCenterY() - cellFont.getHeight(cellText)/2.0f, cellText, fontColor);
 					}
 				}
+				
 			}
+			container.getGraphics().setColor(Color.white);
 		}else{
 			return;
 		}
 	}
 	
+	//TODO: Delete or add functionality
 	public void updateCell(){
 		/*if(this.getState() == MOUSE_OVER && highlighted == false){
 			highlighted = true;
@@ -528,28 +493,28 @@ public class Cell extends CellListener{
 	 * @return the width
 	 */
 	public float getWidth() {
-		return cellWidth;
+		return this.cell.getWidth();
 	}
 
 	/**
 	 * @param width the width to set
 	 */
-	public void setWidth(int width) {
-		this.cellWidth = width;
+	public void setWidth(float width) {
+		this.cell.setWidth(width * this.cellScale);
 	}
 
 	/**
 	 * @return the height
 	 */
 	public float getHeight() {
-		return cellHeight;
+		return this.cell.getHeight();
 	}
 
 	/**
 	 * @param height the height to set
 	 */
-	public void setHeight(int height) {
-		this.cellHeight = height;
+	public void setHeight(float height) {
+		this.cell.setHeight(height * this.cellScale);
 	}
 
 	/**
@@ -766,34 +731,6 @@ public class Cell extends CellListener{
 	}
 
 	/**
-	 * @return the cellWidth
-	 */
-	public float getCellWidth() {
-		return cellWidth;
-	}
-
-	/**
-	 * @param cellWidth the cellWidth to set
-	 */
-	public void setCellWidth(float cellWidth) {
-		this.cellWidth = cellWidth;
-	}
-
-	/**
-	 * @return the cellHeight
-	 */
-	public float getCellHeight() {
-		return cellHeight;
-	}
-
-	/**
-	 * @param cellHeight the cellHeight to set
-	 */
-	public void setCellHeight(float cellHeight) {
-		this.cellHeight = cellHeight;
-	}
-
-	/**
 	 * @return the cellScale
 	 */
 	public float getCellScale() {
@@ -803,7 +740,7 @@ public class Cell extends CellListener{
 	/**
 	 * @param cellScale the cellScale to set
 	 */
-	public void setCellScale(float cellScale) { //TODO: Add functionality
+	public void setCellScale(float cellScale) {
 		this.cellScale = cellScale;
 	}
 
@@ -878,20 +815,6 @@ public class Cell extends CellListener{
 	}
 
 	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
 	 * @return the autoAdjustImage
 	 */
 	public boolean isAutoAdjustImage() {
@@ -917,6 +840,34 @@ public class Cell extends CellListener{
 	 */
 	public void setClickable(boolean clickable) {
 		this.clickable = clickable;
+	}
+	
+	/**
+	 * Returns the width of the current cell text.
+	 * @return cell text width the cell text width
+	 */
+	public int getCellTextWidth(){
+		return this.cellFont.getWidth(this.cellText);
+		
+	}
+	
+	/**
+	 * Returns the height of the current cell text.
+	 * @return cell text height the cell text height
+	 */
+	public int getCellTextHeight(){
+		return this.cellFont.getHeight(this.cellText);
+		
+	}
+	
+	/**
+	 * Returns the width and height of the current cell text.
+	 * @return cell text dimensions the cell texts width and height
+	 */
+	public int[] getCellTextDimensions(){
+		int[] wh = {this.cellFont.getWidth(this.cellText),this.cellFont.getHeight(this.cellText)};
+		return wh;
+		
 	}
 	
 }
