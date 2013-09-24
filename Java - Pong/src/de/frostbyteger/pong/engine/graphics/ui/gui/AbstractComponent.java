@@ -1,4 +1,4 @@
-package de.frostbyteger.pong.engine.graphics.ui;
+package de.frostbyteger.pong.engine.graphics.ui.gui;
 
 import java.util.HashSet;
 import java.util.Iterator;

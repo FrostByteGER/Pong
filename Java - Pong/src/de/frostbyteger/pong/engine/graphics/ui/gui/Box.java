@@ -1,4 +1,4 @@
-package de.frostbyteger.pong.engine.graphics.ui;
+package de.frostbyteger.pong.engine.graphics.ui.gui;
 
 import java.util.ArrayList;
 
@@ -11,9 +11,9 @@ import org.newdawn.slick.geom.Rectangle;
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 /**
+ * 
  * @author Kevin
- * TODO: Add all functionalities
- *
+ * @version 1.00
  */
 public class Box{
 	
@@ -24,12 +24,6 @@ public class Box{
 	private ArrayList<Cell> sources;
 	private Cell header        = null;
 	private Rectangle edgedBox = null;
-	
-	
-	
-	
-	
-	//TODO: Add X/Y Coordinates for KeyListener
 	private int[] boxKeyCoordinates = new int[2];
 	
 	
@@ -152,28 +146,18 @@ public class Box{
 
 	}
 	
-	
-	public static int showOptionBox(Rectangle overlay, Box box,GameContainer container, String message, BoxOptionSelection boxOS) throws SlickException{
-		container.getGraphics().setColor(Color.darkGray);
-		box.setHeaderActive(true);
-		box.setHeaderEdging(true);
-		box.setHeaderActive(true);
-		box.setHeaderClickable(false);
-		box.setHeaderTitle(message);
-		container.getGraphics().fill(overlay);
-		if(boxOS == BoxOptionSelection.YES_NO_CANCEL_BOX){
-			box.getSources().get(0).setCellText("Yes");
-			box.getSources().get(1).setCellText("No");
-			box.getSources().get(2).setCellText("Cancel");
-			box.render();
-		}else if(boxOS == BoxOptionSelection.YES_NO_BOX){
-			box.render();
+	//TODO: Add functionality
+	public static int showOptionBox(String message, BoxOptionSelection boxOS) throws SlickException{
+		if(boxOS == BoxOptionSelection.YES_NO_BOX){
+			
+		}else if(boxOS == BoxOptionSelection.YES_NO_CANCEL_BOX){
+			
 		}
-
 		return 0;
 	}
 	
-	public static int showMessageBox(GameContainer container, String message, BoxOptionSelection boxOS){
+	//TODO: Add functionality
+	public static int showMessageBox( String message, BoxOptionSelection boxOS){
 		if(boxOS == BoxOptionSelection.OK_CANCEL_BOX){
 			
 		}else if(boxOS == BoxOptionSelection.OK_BOX){

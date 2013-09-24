@@ -1,4 +1,4 @@
-package de.frostbyteger.pong.engine.graphics.ui;
+package de.frostbyteger.pong.engine.graphics.ui.gui;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -23,7 +23,7 @@ import org.newdawn.slick.geom.Shape;
  * @author Kevin Kuegler
  *
  */
-public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.AbstractComponent{
+public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent{
 	
 	// Input constants
 	private static final int MOUSE_NONE = 1;

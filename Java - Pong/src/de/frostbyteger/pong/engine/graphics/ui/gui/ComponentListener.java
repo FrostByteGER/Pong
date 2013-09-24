@@ -1,4 +1,5 @@
-package de.frostbyteger.pong.engine.graphics.ui;
+package de.frostbyteger.pong.engine.graphics.ui.gui;
+
 
 /**
  * Original Class by kevglass from Slick Devteam.

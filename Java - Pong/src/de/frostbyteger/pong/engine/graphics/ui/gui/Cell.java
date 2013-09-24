@@ -1,4 +1,4 @@
-package de.frostbyteger.pong.engine.graphics.ui;
+package de.frostbyteger.pong.engine.graphics.ui.gui;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;

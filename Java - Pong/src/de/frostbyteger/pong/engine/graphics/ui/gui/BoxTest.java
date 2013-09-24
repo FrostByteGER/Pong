@@ -1,4 +1,4 @@
-package de.frostbyteger.pong.engine.graphics.ui;
+package de.frostbyteger.pong.engine.graphics.ui.gui;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -41,24 +41,46 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		box = new Box(2, 4, 100, 100,"data/Alexis.ttf", 40, 200, 50, container);
 		box.setHeaderTitle("Box_01");
 		box.setHeaderActive(true);
+		int x = 1;
 		for(int i = 0; i < box.getSources().size();i++){
+			box.getSources().get(i).setCellText("Button_0" + x);
 			box.getSources().get(i).setActionCommand("TEST" + i);
 			box.getSources().get(i).addListener(this);
 			box.getSources().get(i).setKeysActive(true);
+			x++;
 		}
 		box3 = new Box(2, 4, 500, 100,"data/Alexis.ttf", 40, 200, 50, container);
 		box3.setHeaderTitle("Box_02");
 		box3.setHeaderActive(true);
 		for(int i = 0; i < box3.getSources().size();i++){
+			box3.getSources().get(i).setCellText("Button_" + x);
 			box3.getSources().get(i).addListener(this);
 			box3.getSources().get(i).setClickable(true);
+			x++;
 		}
+		box3.setFocus(false);
+		box.setFocus(true);
+		box.setKeyInput(true);
+		box.setBoxKeyCoordinates(new int[] {1,1});
 	}
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
+		if(box.isFocused()){
+			g.drawString("Focused", 225, 25);
+		}else if(box3.isFocused()){
+			g.drawString("Focused", 725, 25);
+		}
 		box.render();
 		box3.render();
+		g.drawString("Press TABULATOR to switch boxes", 350, 350);
+		g.drawString("Controls for Box 1:", 225, 400);
+		g.drawString("Bewege die Pfeiltasten", 200, 425);
+		g.drawString("und drücke ENTER zum bestätigen", 200, 450);
+		g.drawString("Controls for Box 2:", 600, 400);
+		g.drawString("Bewege die Pfeiltasten", 575, 425);
+		g.drawString("und drücke ENTER zum bestätigen", 550, 450);
+		g.drawString("Oder nutze die Maus!", 550, 475);
 		//Box.showOptionBox(overlay, box2,container, "Continue?", BoxOptionSelection.YES_NO_BOX);
 		
 	}
@@ -114,6 +136,7 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		}else if(key == Input.KEY_TAB && box.isFocused() == true){
 			box.setFocus(false);
 			box3.setFocus(true);
+			box3.setBoxKeyCoordinates(new int[] {1,1});
 			//box3.setKeyInput(true);
 			//box3.setBoxKeyCoordinates(new int[] {1,1});
 		}
