@@ -20,6 +20,7 @@ import de.frostbyteger.pong.engine.OptionState;
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
+import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
 import de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener;
 import de.frostbyteger.pong.start.Pong;
 
@@ -38,10 +39,10 @@ public class Options extends BasicGameState implements ComponentListener{
 	private final String[] MENU_OPTIONS_CONTROLS_ARRAY = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","Save","Back"};
 	private final String[] MENU_OPTIONS_NETWORK_ARRAY  = {"IP","Port","PLACEHOLDER","Save","Back"};
 	
-	private final String[] COMMANDS_MENU_OPTIONS_MAIN = {"audiovisual","controls","network","return"};
+	private final String[] COMMANDS_MENU_OPTIONS_MAIN     = {"audiovisual","controls","network","return"};
 	private final String[] COMMANDS_MENU_OPTIONS_GRAPHICS = {"resolution","","volume","debug","save","return"};
 	private final String[] COMMANDS_MENU_OPTIONS_CONTROLS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","save","return"};
-	private final String[] COMMANDS_MENU_OPTIONS_NETWORK = {"ip","port","PLACEHOLDER","save","return"};
+	private final String[] COMMANDS_MENU_OPTIONS_NETWORK  = {"ip","port","PLACEHOLDER","save","return"};
 	
 	private final String PONG    = "Pong";
 	private final String OPTIONS = "Options";
@@ -67,6 +68,8 @@ public class Options extends BasicGameState implements ComponentListener{
 	private Box optionBoxGraphics;
 	private Box optionBoxControls;
 	private Box optionBoxNetwork;
+	private Cell optionHeader;
+	private Cell mainHeader;
 		
 	/**
 	 * 
@@ -77,7 +80,18 @@ public class Options extends BasicGameState implements ComponentListener{
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
-		optionBoxMain = new Box(1, MENU_OPTIONS_MAIN_ARRAY.length, OFFSET_X, Pong.S_resY/2, Pong.FONT, 40, 200, 50, container);
+		
+		mainHeader = new Cell(Pong.FONT, 120, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
+		mainHeader.setCellText(PONG);
+		mainHeader.setClickable(false);
+		
+		optionHeader = new Cell(Pong.FONT, 64, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
+		optionHeader.setLeft();
+		optionHeader.setCellText(OPTIONS);
+		optionHeader.setFontColor(Color.cyan);
+		optionHeader.setClickable(false);
+		
+		optionBoxMain = new Box(1, MENU_OPTIONS_MAIN_ARRAY.length, OFFSET_X, Pong.S_resY/2 - 75, Pong.FONT, 40, 200, 50, container);
 		optionBoxMain.setAllAutoAdjust(false);
 		optionBoxMain.setBoxLeft();
 		optionBoxMain.setEdged(false);
@@ -88,19 +102,26 @@ public class Options extends BasicGameState implements ComponentListener{
 		optionBoxMain.setAllActionCommands(COMMANDS_MENU_OPTIONS_MAIN);
 		optionBoxMain.addBoxListener(this);
 		optionBoxMain.setAutoAdjustBox(true);
+		
+
 		//Ensures that the displayed resolution in the optionsmenu equals the actual gamewindow resolution when
 		//starting the game
 		for(int i = 0; i < RES_ARRAY.length;i++){
 			if(Pong.S_resX == RES_ARRAY[i][0]){
 				resolutionselection = i;
 			}
-		}
+		} 
 		
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		optionBoxMain.render();
+		mainHeader.drawCell();
+		if(ostate == OptionState.Main){
+			optionHeader.drawCell();
+			optionBoxMain.render();
+		}
+
 		/*
 		FontHelper.bigfont.drawString(Pong.S_resX/2 - FontHelper.bigfont.getWidth(PONG)/2, 20 + FontHelper.bigfont.getHeight(PONG), PONG, Color.white);	
 		
@@ -157,7 +178,16 @@ public class Options extends BasicGameState implements ComponentListener{
 	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		optionBoxMain.update();
+		if(ostate == OptionState.Main){
+			optionBoxMain.update();	
+		}else if(ostate == OptionState.Graphics){
+			
+		}else if(ostate == OptionState.Controls){
+			
+		}else if(ostate == OptionState.Network){
+			
+		}
+
 		/*
 		System.out.println(networkconfigselection);
 
@@ -507,10 +537,30 @@ public class Options extends BasicGameState implements ComponentListener{
 	public int getID() {
 		return ID;
 	}
-
+	
+	//TODO: Fix keyControlBug
 	@Override
 	public void componentActivated(AbstractComponent source) {
-		// TODO Auto-generated method stub
+		if(ostate == OptionState.Main){
+			if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[0])){
+				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
+				ostate = OptionState.Graphics;
+			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[1])){
+				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
+			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[2])){
+				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
+			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[3])){
+				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
+				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+			}
+		}else if(ostate == OptionState.Graphics){
+			
+		}else if(ostate == OptionState.Controls){
+			
+		}else if(ostate == OptionState.Network){
+			
+		}
+
 		
 	}
 

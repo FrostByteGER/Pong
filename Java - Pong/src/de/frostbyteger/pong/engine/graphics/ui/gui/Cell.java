@@ -1,11 +1,14 @@
 package de.frostbyteger.pong.engine.graphics.ui.gui;
 
+import java.util.Iterator;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.geom.Rectangle;
+
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 
 /**
@@ -270,6 +273,7 @@ public class Cell extends CellListener{
 				if(clickable == true){
 					if(highlighted == true && isFocused() == false){
 						setFocused(true);
+						highlighted = false;
 					}else if(highlighted == false && isFocused() == true){
 						setFocused(false);
 					}

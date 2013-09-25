@@ -14,6 +14,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
@@ -101,14 +102,18 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	}
 
 	@Override
-	public void componentActivated(de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent source) {
+	public void componentActivated(AbstractComponent source) {
 		if(source.getActionCommand().equals(COMMANDS[0])){
+			menuBox.setBoxKeyCoordinates(new int[] {1,1});	
 			game.enterState(Game.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 		}else if(source.getActionCommand().equals(COMMANDS[1])){
+			menuBox.setBoxKeyCoordinates(new int[] {1,1});	
 			//game.enterState(Lan.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 		}else if(source.getActionCommand().equals(COMMANDS[2])){
+			menuBox.setBoxKeyCoordinates(new int[] {1,1});	
 			game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 		}else if(source.getActionCommand().equals(COMMANDS[3])){
+			menuBox.setBoxKeyCoordinates(new int[] {1,1});	
 			game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 		}else if(source.getActionCommand().equals(COMMANDS[4])){
 			Pong.S_container.exit();

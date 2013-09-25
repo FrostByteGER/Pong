@@ -242,6 +242,7 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 				state = MOUSE_NONE;
 				mouseUp = false;
 			} else {
+				//System.out.println(keyPressed);
 				if (keyPressed) {
 					if ((state != MOUSE_DOWN) && (mouseUp)) {
 						if (mouseDownSound != null) {
@@ -254,6 +255,7 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 						
 					}
 					keyPressed = false;
+					focused = false;
 					return;
 				} else {
 					mouseUp = true;
