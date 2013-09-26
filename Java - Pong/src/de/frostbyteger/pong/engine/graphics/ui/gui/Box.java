@@ -464,6 +464,8 @@ public class Box{
 		return boxKeyCoordinates[0];
 	}
 	
+
+	
 	/**
 	 * 
 	 * @param x
@@ -641,6 +643,26 @@ public class Box{
 	}
 	
 	/**
+	 * Sets a columns orientation.
+	 * 1 = left
+	 * 2 = centered
+	 * 3 = right
+	 * @param orientation
+	 */ //TODO: Change orientation to a enum
+	public void setColumnOrientation(int column, int orientation){
+		for(int i = 0; i < this.cells.get(column).size();i++){
+			if(orientation == 1){
+				this.cells.get(column).get(i).setLeft();
+			}else if(orientation == 2){
+				this.cells.get(column).get(i).setCentered();
+			}else if(orientation == 3){
+				this.cells.get(column).get(i).setRight();
+			}
+
+		}
+	}
+	
+	/**
 	 * Sets the action commands of every cell in the box to
 	 * the given list content.
 	 * @param actionCommands the action commands you want to set
@@ -754,8 +776,22 @@ public class Box{
 			}
 			Arrays.sort(width);
 			for(int i = 0;i < sources.size();i++){
-				sources.get(i).setWidth(width[width.length - 1] + sources.get(i).getCellDrawOffsetX());
+				sources.get(i).setWidth(width[width.length - 1] + sources.get(0).getCellDrawOffsetX());
 				sources.get(i).setAreaWidth(width[width.length - 1] + sources.get(i).getCellDrawOffsetX());
+			}
+			cellWidth = width[width.length - 1] + sources.get(0).getCellDrawOffsetX();
+
+			int cellX = boxX;
+			//int cellY = boxY;
+			for(int i = 0;i < cells.size();i++){
+				for(int j = 0; j < cells.get(i).size();j++){
+					cells.get(i).get(j).setWholeCellX(cellX);
+					//cells.get(i).get(j).setCellY(cellY);
+					//cellY += cellHeight;
+				}
+				cellX += width[width.length - 1] + sources.get(0).getCellDrawOffsetX();
+				//System.out.println(cellX);
+				//cellY -= cellHeight * boxHeight;
 			}
 			/*// TODO: Fix bugs
 			for(int i = 0;i < sources.size();i++){

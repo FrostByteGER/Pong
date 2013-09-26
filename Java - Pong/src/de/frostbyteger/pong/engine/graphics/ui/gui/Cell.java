@@ -241,7 +241,7 @@ public class Cell extends CellListener{
 					cellImageDrawOffsetX = 1.0f;
 					cellImageDrawOffset = 1.0f;
 				}
-				if(autoAdjust == true){ // Add algorithm for increasing fontsize 
+				if(autoAdjust == true){ //TODO: Add algorithm for increasing fontsize 
 					if(cellFont != null){
 						if(cellFont.getWidth(cellText) >= cell.getWidth()) {
 							float i = (float)cellFont.getWidth(cellText) / (float)size;
@@ -505,6 +505,7 @@ public class Cell extends CellListener{
 	 */
 	public void setWidth(float width) {
 		this.cell.setWidth(width * this.cellScale);
+		this.cellBorder.setWidth(width * this.cellScale + 1);
 	}
 
 	/**
@@ -533,6 +534,7 @@ public class Cell extends CellListener{
 	 */
 	public void setCellX(int cellX) {
 		this.cellX = cellX;
+		this.cell.setX(cellX);
 	}
 
 	/**
@@ -547,6 +549,40 @@ public class Cell extends CellListener{
 	 */
 	public void setCellY(int cellY) {
 		this.cellY = cellY;
+		this.cell.setY(cellY);
+	}
+	
+	/**
+	 * @param cellX the cellX to set
+	 */
+	public void setCellBorderX(int cellBorderX) {
+		this.cellBorder.setX(cellBorderX);
+	}
+	
+	public float getCellBorderX() {
+		return this.cellBorder.getX();
+	}
+	
+
+	public void setCellBorderY(int cellBorderY) {
+		this.cellBorder.setY(cellBorderY);
+	}
+	
+	public float getCellBorderY() {
+		return this.cellBorder.getY();
+	}
+	
+	public void setWholeCellX(int cellX){
+		this.cellX = cellX;
+		this.cell.setX(cellX);
+		this.cellBorder.setX(cellX);
+		this.setX(cellX + 1);
+	}
+	
+	public void setWholeCellY(int cellY){
+		this.cellY = cellY;
+		this.cell.setY(cellY);
+		this.cellBorder.setY(cellY);
 	}
 
 	/**

@@ -50,7 +50,8 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
-		header = new Cell(Pong.FONT, 120, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
+		header = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
+		header.setAutoAdjust(false);
 		header.setCellText("PONG");
 		header.setClickable(false);
 		menuBox = new Box(1, MENU_ARRAY.length, Pong.S_resX/2 - 200/2, Pong.S_resY/2 - (5*30)/2, Pong.FONT, 30, 200, 30, container);
