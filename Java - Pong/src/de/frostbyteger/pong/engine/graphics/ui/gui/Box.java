@@ -282,6 +282,15 @@ public class Box{
 	 */
 	public void setBoxY(int boxY) {
 		this.boxY = boxY;
+		int cellY = boxY;
+		
+		for(int i = 0;i < boxWidth;i++){
+			for(int j = 0; j < boxHeight;j++){
+				cells.get(i).get(j).setWholeCellY(cellY);
+				cellY += cellHeight;
+			}
+			cellY -= cellHeight * boxHeight;
+		}
 	}
 
 	/**
@@ -790,7 +799,7 @@ public class Box{
 				sources.get(i).setAreaWidth(width[width.length - 1] + sources.get(i).getCellDrawOffsetX());
 			}
 			cellWidth = width[width.length - 1] + sources.get(0).getCellDrawOffsetX();
-
+			edgedBox.setWidth(cellWidth * boxWidth + 1);
 			int cellX = boxX;
 			//int cellY = boxY;
 			for(int i = 0;i < cells.size();i++){

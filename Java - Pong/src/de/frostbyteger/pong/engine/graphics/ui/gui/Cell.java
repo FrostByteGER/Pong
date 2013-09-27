@@ -583,6 +583,7 @@ public class Cell extends CellListener{
 		this.cellY = cellY;
 		this.cell.setY(cellY);
 		this.cellBorder.setY(cellY);
+		this.setY(cellY + 1);
 	}
 
 	/**
