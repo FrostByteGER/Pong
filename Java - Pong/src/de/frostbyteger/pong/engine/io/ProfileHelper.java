@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  * It saves and loads an instance of the actual class and saves it
  * to the xml format. 
  * @author Kevin Kuegler
- * @version 1.0
+ * @version 1.1
  */
 @XmlRootElement(name = "Profile")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -217,6 +217,38 @@ public class ProfileHelper{
 			return null;
 		}
 
+	}
+	
+	/**
+	 * Deletes the actual profile 
+	 * @return true if the file has been successfully deleted,
+	 * otherwise it will return false
+	 */
+	public boolean deleteProfile(){
+		File file = new File(profilepath + profilename + fileextension);
+		boolean check = file.delete();
+		if(check){
+			return true;			
+		}else{
+			return false;
+		}
+
+	}
+	
+	/**
+	 * Deletes a specific profile
+	 * @param profilePath the profilepath to the profile
+	 * @return true if the file has been successfully deleted,
+	 * otherwise it will return false
+	 */
+	public static boolean deleteProfile(String profilePath){
+		File file = new File(profilePath);
+		boolean check = file.delete();
+		if(check){
+			return true;			
+		}else{
+			return false;
+		}
 	}
 	
 	/**

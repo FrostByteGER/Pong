@@ -32,7 +32,6 @@ public class ConfigHelper {
 	 */
 	@SuppressWarnings("unused")
 	private ConfigHelper(){
-		
 	}
 	
 	/**

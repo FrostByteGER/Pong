@@ -98,11 +98,6 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	}
 
 	@Override
-	public int getID() {
-		return ID;
-	}
-
-	@Override
 	public void componentActivated(AbstractComponent source) {
 		if(source.getActionCommand().equals(COMMANDS[0])){
 			menuBox.setBoxKeyCoordinates(new int[] {1,1});	
@@ -121,6 +116,10 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 		}
 		
 	}
-
+	
+	@Override
+	public int getID() {
+		return ID;
+	}
 
 }

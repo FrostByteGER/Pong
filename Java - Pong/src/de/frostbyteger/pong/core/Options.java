@@ -25,6 +25,7 @@ import de.frostbyteger.pong.start.Pong;
 
 /**
  * @author Kevin
+ * TODO: Fix resolution bug - wrong coordinates for some cells and boxes when changing resolution
  */
 public class Options extends BasicGameState implements ComponentListener{
 
@@ -45,7 +46,7 @@ public class Options extends BasicGameState implements ComponentListener{
 	private final String PONG    = "Pong";
 	private final String OPTIONS = "Options";
 	
-	private static final int[][] RESOLUTIONS = {{640,480},{800,600},{1024,768},{1280,960},{1280,1024}};
+	private static final int[][] RESOLUTIONS = {{800,600},{1024,768},{1280,960}};
 	private static final int OFFSET_X        = 100;
 	
 	private int resolutionselection     = 0;
@@ -432,14 +433,6 @@ public class Options extends BasicGameState implements ComponentListener{
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	@Override
-	public int getID() {
-		return ID;
-	}
-	
 	@Override
 	public void componentActivated(AbstractComponent source) {
 		if(ostate == OptionState.Main){
@@ -516,8 +509,11 @@ public class Options extends BasicGameState implements ComponentListener{
 				ostate = OptionState.Main;
 			}
 		}
-
-		
+	}
+	
+	@Override
+	public int getID() {
+		return ID;
 	}
 
 }
