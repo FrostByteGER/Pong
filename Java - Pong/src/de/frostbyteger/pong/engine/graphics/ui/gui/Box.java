@@ -740,6 +740,16 @@ public class Box{
 	}
 	
 	/**
+	 * 
+	 * @param x the x axis of the box
+	 * @param y the y axis of the box
+	 * @return the focus if cell is focused
+	 */
+	public boolean getCellFocus(int x, int y){
+		return cells.get(x).get(y).isFocused();
+	}
+	
+	/**
 	 * Sets the auto adjust ability of every cell in the box to
 	 * true or false.
 	 * @param activated set auto ajust to true or false

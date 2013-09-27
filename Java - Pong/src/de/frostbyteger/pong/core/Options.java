@@ -35,12 +35,12 @@ public class Options extends BasicGameState implements ComponentListener{
 	private StateBasedGame game;
 
 	private final String[] MENU_OPTIONS_MAIN     = {"Graphics/Sound","Controls","Network","Back"};	
-	private final String[] MENU_OPTIONS_GRAPHICS = {"Resolution: ","Volume: ","Music","DEBUG MODE","Save","Back"};
+	private final String[] MENU_OPTIONS_GRAPHICS = {"Resolution: ","Volume: ","Music:","Save","Back"};
 	private final String[] MENU_OPTIONS_CONTROLS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","Save","Back"};
 	private final String[] MENU_OPTIONS_NETWORK  = {"IP","Port","PLACEHOLDER","Save","Back"};
 	
 	private final String[] COMMANDS_MENU_OPTIONS_MAIN     = {"audiovisual","controls","network","return"};
-	private final String[] COMMANDS_MENU_OPTIONS_GRAPHICS = {"resolution","","volume","debug","save","return"};
+	private final String[] COMMANDS_MENU_OPTIONS_GRAPHICS = {"resolution","volume","sound","save","return"};
 	private final String[] COMMANDS_MENU_OPTIONS_CONTROLS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","save","return"};
 	private final String[] COMMANDS_MENU_OPTIONS_NETWORK  = {"ip","port","PLACEHOLDER","save","return"};
 	
@@ -66,13 +66,16 @@ public class Options extends BasicGameState implements ComponentListener{
 	
 	private Box optionBoxMain;
 	private Box optionBoxGraphics;
+	private Box optionBoxVariables;
 	private Box optionBoxControls;
 	private Box optionBoxNetwork;
+	private Box optionBoxSaveReturn;
 	private Cell mainHeader;
 	private Cell optionHeader;
 	private Cell graphicsHeader;
 	private Cell controlHeader;
 	private Cell netWorkHeader;
+	private Cell saveCell;
 	
 	
 		
@@ -114,6 +117,26 @@ public class Options extends BasicGameState implements ComponentListener{
 		graphicsHeader.setFontColor(Color.cyan);
 		graphicsHeader.setClickable(false);
 		
+		saveCell = new Cell("data/alexis.ttf", 30, OFFSET_X, Pong.S_resY/2 + 125, 100, 30, container);
+		saveCell.setAutoAdjust(false);
+		saveCell.setLeft();
+		saveCell.setCellText("Options saved!");
+		saveCell.setFontColor(Color.green);
+		saveCell.setClickable(false);
+		
+		optionBoxSaveReturn = new Box(2, 1, OFFSET_X, Pong.S_resY/2 + 50, Pong.FONT, 30, 100, 30, container);
+		optionBoxSaveReturn.setAllAutoAdjust(false);
+		optionBoxSaveReturn.setBoxLeft();
+		optionBoxSaveReturn.setEdged(false);
+		optionBoxSaveReturn.setKeyInput(true);
+		optionBoxSaveReturn.setFocus(false);
+		optionBoxSaveReturn.setBoxKeyCoordinates(new int[] {1,1});
+		optionBoxSaveReturn.getCells().get(0).get(0).setCellText(MENU_OPTIONS_GRAPHICS[3]);
+		optionBoxSaveReturn.getCells().get(1).get(0).setCellText(MENU_OPTIONS_GRAPHICS[4]);
+		optionBoxSaveReturn.getCells().get(0).get(0).setActionCommand(COMMANDS_MENU_OPTIONS_GRAPHICS[3]);
+		optionBoxSaveReturn.getCells().get(1).get(0).setActionCommand(COMMANDS_MENU_OPTIONS_GRAPHICS[4]);
+		optionBoxSaveReturn.addBoxListener(this);
+		
 		// Options
 		optionBoxMain = new Box(1, MENU_OPTIONS_MAIN.length, OFFSET_X, Pong.S_resY/2 - 75, Pong.FONT, 40, 200, 50, container);
 		optionBoxMain.setAllAutoAdjust(false);
@@ -127,19 +150,38 @@ public class Options extends BasicGameState implements ComponentListener{
 		optionBoxMain.addBoxListener(this);
 		optionBoxMain.setAutoAdjustBox(true);
 
-		optionBoxGraphics = new Box(2, MENU_OPTIONS_GRAPHICS.length, OFFSET_X, Pong.S_resY/2 - 75, Pong.FONT, 30, 200, 40, container);
+		optionBoxGraphics = new Box(1, MENU_OPTIONS_GRAPHICS.length - 2, OFFSET_X, Pong.S_resY/2 - 75, Pong.FONT, 30, 200, 40, container);
 		optionBoxGraphics.setAllAutoAdjust(false);
 		optionBoxGraphics.setBoxLeft();
 		optionBoxGraphics.setEdged(false);
 		optionBoxGraphics.setKeyInput(true);
 		optionBoxGraphics.setFocus(true);
 		optionBoxGraphics.setBoxKeyCoordinates(new int[] {1,1});
-		optionBoxGraphics.setAllCellTitles(MENU_OPTIONS_GRAPHICS);
-		optionBoxGraphics.getCells().get(1).get(0).setCellText(RESOLUTIONS[resolutionselection][0] + "x" + RESOLUTIONS[resolutionselection][1]);
-		optionBoxGraphics.setAllActionCommands(COMMANDS_MENU_OPTIONS_GRAPHICS);
+		for(int i = 0; i < MENU_OPTIONS_GRAPHICS.length - 2;i++){
+			optionBoxGraphics.getCells().get(0).get(i).setCellText(MENU_OPTIONS_GRAPHICS[i]);
+			optionBoxGraphics.getCells().get(0).get(i).setActionCommand(COMMANDS_MENU_OPTIONS_GRAPHICS[i]);
+		}
 		optionBoxGraphics.addBoxListener(this);
 		optionBoxGraphics.setAutoAdjustBox(true);
 		
+
+		optionBoxVariables = new Box(1, MENU_OPTIONS_GRAPHICS.length - 2, OFFSET_X * 3 + 10, Pong.S_resY/2 - 75, Pong.FONT, 30, 200, 40, container);
+		optionBoxVariables.setAllAutoAdjust(false);
+		optionBoxVariables.setBoxLeft();
+		optionBoxVariables.setEdged(false);
+		optionBoxVariables.setKeyInput(true);
+		optionBoxVariables.setFocus(false);
+		optionBoxVariables.setBoxKeyCoordinates(new int[] {1,1});
+		optionBoxVariables.getCells().get(0).get(0).setCellText(RESOLUTIONS[resolutionselection][0] + "x" + RESOLUTIONS[resolutionselection][1]);
+		optionBoxVariables.getCells().get(0).get(1).setCellText((Integer.toString((int)(container.getMusicVolume()*100.0f))));
+		if(container.isMusicOn()){
+			optionBoxVariables.getCells().get(0).get(2).setCellText("on");
+		}else{
+			optionBoxVariables.getCells().get(0).get(2).setCellText("off");
+		}
+		
+		optionBoxVariables.setAutoAdjustBox(true);
+
 
 
 		
@@ -147,7 +189,6 @@ public class Options extends BasicGameState implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-
 		mainHeader.drawCell();
 		if(ostate == OptionState.Main){
 			optionHeader.drawCell();
@@ -155,6 +196,13 @@ public class Options extends BasicGameState implements ComponentListener{
 		}else if(ostate == OptionState.Graphics){
 			graphicsHeader.drawCell();
 			optionBoxGraphics.render();
+			optionBoxVariables.render();
+			optionBoxSaveReturn.render();
+			if(savebool == true && savetimer <= 2000){
+				saveCell.drawCell();
+			}else{
+				savebool = false;
+			}
 		}else if(ostate == OptionState.Controls){
 			
 		}else if(ostate == OptionState.Network){
@@ -162,32 +210,7 @@ public class Options extends BasicGameState implements ComponentListener{
 		}
 
 		/*
-		FontHelper.bigfont.drawString(Pong.S_resX/2 - FontHelper.bigfont.getWidth(PONG)/2, 20 + FontHelper.bigfont.getHeight(PONG), PONG, Color.white);	
-		
-		FontHelper.mediumfont.drawString(OFFSET_X, Pong.S_resY/2 - 30, OPTIONS, Color.cyan);	
-
-		else if(ostate == OptionState.Graphics){
-			FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2, MENU_OPTIONS_GRAPHICS[0],optionArray.get(0));
-			FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS[0]), Pong.S_resY/2, RESOLUTIONS[resolutionselection][0] + "x" + RESOLUTIONS[resolutionselection][1], optionArray.get(0));
-			
-			FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + 20, MENU_OPTIONS_GRAPHICS[1],optionArray.get(1));
-			FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS[1]), Pong.S_resY/2 + 20, (Integer.toString((int)(container.getMusicVolume()*100.0f))), optionArray.get(1));
-			
-			FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + 40, MENU_OPTIONS_GRAPHICS[2],optionArray.get(2));
-			if(container.isMusicOn() == true){
-				FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS[2]) + OFFSET_SPACE, Pong.S_resY/2 + 40, "on", optionArray.get(2));
-			}else{
-				FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS[2]) + OFFSET_SPACE, Pong.S_resY/2 + 40, "off", optionArray.get(2));	
-			}
-			if(Pong.S_debug == true){
-				FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + 60, MENU_OPTIONS_GRAPHICS[3],optionArray.get(5));
-				FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS[3]) + OFFSET_SPACE, Pong.S_resY/2 + 60, Boolean.toString(Game.S_Debug_AI),optionArray.get(5));
-			}
-			
-			FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + 90, MENU_OPTIONS_GRAPHICS[4],optionArray.get(3));
-			FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_GRAPHICS[4]) + 40, Pong.S_resY/2 + 90, MENU_OPTIONS_GRAPHICS[5],optionArray.get(4));
-		
-		} else if(ostate == OptionState.Controls){
+		else if(ostate == OptionState.Controls){
 			for(int i = 0,localoffset = 0; i < 4; i++){
 				FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + localoffset, MENU_OPTIONS_CONTROLS[i],optionArray.get(i));
 				localoffset += 20;
@@ -221,15 +244,20 @@ public class Options extends BasicGameState implements ComponentListener{
 			optionBoxMain.update();	
 		}else if(ostate == OptionState.Graphics){
 			optionBoxGraphics.update();
+			optionBoxSaveReturn.update();
+			optionBoxVariables.update();
+			optionBoxVariables.getCells().get(0).get(0).setCellText(RESOLUTIONS[resolutionselection][0] + "x" + RESOLUTIONS[resolutionselection][1]);
+			optionBoxVariables.getCells().get(0).get(1).setCellText((Integer.toString((int)(container.getMusicVolume()*100.0f))));
+			if(container.isMusicOn()){
+				optionBoxVariables.getCells().get(0).get(2).setCellText("on");
+			}else{
+				optionBoxVariables.getCells().get(0).get(2).setCellText("off");
+			}
 		}else if(ostate == OptionState.Controls){
 			
 		}else if(ostate == OptionState.Network){
 			
 		}
-
-		/*
-		System.out.println(networkconfigselection);
-
 		//Timer for savemessage
 		if(savebool == true){
 			savetimer += delta;
@@ -237,8 +265,8 @@ public class Options extends BasicGameState implements ComponentListener{
 			savetimer = 0;
 			
 		}
-		*/
 	}
+	
 	
 	public void keyPressed(int key, char c) {
 		if(ostate == OptionState.Main){
@@ -252,86 +280,63 @@ public class Options extends BasicGameState implements ComponentListener{
 				optionBoxMain.setBoxKeyX(optionBoxMain.getBoxKeyX() - 1);
 			}
 		}else if(ostate == OptionState.Graphics){
-			if(key == Input.KEY_UP && optionBoxGraphics.getBoxKeyY() > 1){
-				optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxKeyY() - 1);
-			}else if(key == Input.KEY_DOWN && optionBoxGraphics.getBoxKeyY() < optionBoxGraphics.getBoxHeight()){
-				optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxKeyY() + 1);
-			}else if(key == Input.KEY_RIGHT && optionBoxGraphics.getBoxKeyX() < optionBoxGraphics.getBoxWidth()){
-				optionBoxGraphics.setBoxKeyX(optionBoxGraphics.getBoxKeyX() + 1);
-			}else if(key == Input.KEY_LEFT && optionBoxGraphics.getBoxKeyX() > 1){
-				optionBoxGraphics.setBoxKeyX(optionBoxGraphics.getBoxKeyX() - 1);
+			if(key == Input.KEY_UP){
+				if((optionBoxGraphics.getBoxKeyY() > 1) && optionBoxGraphics.isFocused()){
+					optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxKeyY() - 1);
+				}else if((optionBoxSaveReturn.getBoxKeyY() == optionBoxSaveReturn.getBoxHeight()) && optionBoxSaveReturn.isFocused()){
+					optionBoxGraphics.setFocus(true);
+					optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxHeight());
+					optionBoxSaveReturn.setFocus(false);
+				}
+
+			}else if(key == Input.KEY_DOWN){
+				if(optionBoxGraphics.getBoxKeyY() < optionBoxGraphics.getBoxHeight()){
+					optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxKeyY() + 1);
+				}else if(optionBoxGraphics.getBoxKeyY() == optionBoxGraphics.getBoxHeight()){
+					optionBoxGraphics.setFocus(false);
+					optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxHeight());
+					optionBoxSaveReturn.setFocus(true);
+				}
+
+			}else if(key == Input.KEY_RIGHT){
+				if(optionBoxGraphics.getCellFocus(0, 0)){
+					if(resolutionselection < RESOLUTIONS.length - 1){
+						resolutionselection += 1;
+					}
+				}else if(optionBoxGraphics.getCellFocus(0, 1)){
+					if(Pong.S_container.getMusicVolume() < 100){
+							Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()+0.01f);
+					}
+				}else if(optionBoxGraphics.getCellFocus(0, 2)){
+					if(Pong.S_container.isMusicOn()){
+						Pong.S_container.setMusicOn(false);
+					}			
+				}else if((optionBoxSaveReturn.getBoxKeyX() < optionBoxSaveReturn.getBoxWidth()) && optionBoxSaveReturn.isFocused()){
+					optionBoxSaveReturn.setBoxKeyX(optionBoxSaveReturn.getBoxKeyX() + 1);
+				}
+			}else if(key == Input.KEY_LEFT){
+				if(optionBoxGraphics.getCellFocus(0, 0)){
+					if(resolutionselection > 0){
+						resolutionselection -= 1;
+					}
+				}else if(optionBoxGraphics.getCellFocus(0, 1)){
+					if(Pong.S_container.getMusicVolume() > 0){
+						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()-0.01f);
+					}
+				}else if(optionBoxGraphics.getCellFocus(0, 2)){
+					if(!Pong.S_container.isMusicOn()){
+						Pong.S_container.setMusicOn(true);
+					}
+				}else if((optionBoxSaveReturn.getBoxKeyX() > 1) && optionBoxSaveReturn.isFocused()){
+					optionBoxSaveReturn.setBoxKeyX(optionBoxSaveReturn.getBoxKeyX() - 1);
+				}
 			}
 		}else if(ostate == OptionState.Controls){
 		}else if(ostate == OptionState.Network){
 		}
 	}
 	
-
-	/**
-	 * 
-	 * @param game
-	 */
 	/*
-	private void mainHelper(int key){
-		if(key == Input.KEY_UP && mainconfigselection > 0){
-			mainconfigselection -= 1;
-		}else if(key == Input.KEY_DOWN && mainconfigselection < MENU_OPTIONS_MAIN.length - 1){
-			mainconfigselection += 1;
-		}
-		if(mainconfigselection == 0){
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(0, Color.white);
-			if(key == Input.KEY_ENTER){
-				for(int e = 0;e < optionArray.size();e++){
-					optionArray.set(e, Color.gray);
-				}
-				ostate = OptionState.Graphics;
-				mainconfigselection = 0;
-				return;
-			}
-		}else if(mainconfigselection == 1){
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(1, Color.white);
-			if(key == Input.KEY_ENTER){
-				for(int e = 0;e < optionArray.size();e++){
-					optionArray.set(e, Color.gray);
-				}
-				ostate = OptionState.Controls;
-				mainconfigselection = 0;
-				return;
-			}
-		}else if(mainconfigselection == 2){
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(2, Color.white);
-			if(key == Input.KEY_ENTER){
-				for(int e = 0;e < optionArray.size();e++){
-					optionArray.set(e, Color.gray);
-				}
-				ostate = OptionState.Network;
-				mainconfigselection = 0;
-				return;
-			}
-		}else if(mainconfigselection == 3){
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(3, Color.white);
-			if(key == Input.KEY_ENTER){
-				ostate = OptionState.Main;
-				mainconfigselection = 0;
-				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-				return;
-			}
-		}
-
-	}
-	
 	private void controlHelper(int key){
 		if(key == Input.KEY_UP && controlconfigselection > 0){
 			controlconfigselection -= 1;
@@ -432,147 +437,6 @@ public class Options extends BasicGameState implements ComponentListener{
 			}
 		}
 	}
-	
-	private void graphicsHelper(int key){
-		if(key == Input.KEY_UP && graphicsconfigselection > 0){
-			if(graphicsconfigselection == 4 && Pong.S_debug == false){
-				graphicsconfigselection -= 2;
-			}else{
-				graphicsconfigselection -= 1;
-			}
-		}else if(key == Input.KEY_DOWN && graphicsconfigselection < MENU_OPTIONS_GRAPHICS.length - 1){
-			if(graphicsconfigselection == 2 && Pong.S_debug == false){
-				graphicsconfigselection += 2;
-			}else{
-				graphicsconfigselection += 1;
-			}
-		}
-
-	
-		if(graphicsconfigselection == 0){
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(0, Color.white);
-			if(key == Input.KEY_LEFT && resolutionselection > 0){
-				resolutionselection -= 1;
-			}
-			if(key == Input.KEY_RIGHT && resolutionselection < RESOLUTIONS.length - 1){
-				resolutionselection += 1;
-			}
-		
-		}else if(graphicsconfigselection == 1){
-				if(key == Input.KEY_LEFT && Pong.S_container.getMusicVolume() > 0){
-					if(press <= 4 && presstimer == 35){
-						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()-0.01f);
-						presstimer = 0;
-						press += 1;
-					}else if(press > 4 && presstimer == 10){
-						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()-0.01f);
-						presstimer = 0;
-					}else{
-						presstimer += 5;
-					}
-					
-				}else if(key == Input.KEY_RIGHT && Pong.S_container.getMusicVolume() < 100){
-				
-					if(press <= 4 && presstimer == 35){
-						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()+0.01f);
-						presstimer = 0;
-						press += 1;
-					}else if(press > 4 && presstimer == 10){
-						Pong.S_container.setMusicVolume(Pong.S_container.getMusicVolume()+0.01f);
-						presstimer = 0;
-					}else{
-						presstimer += 5;
-					}
-					
-				}else{
-					press = 0;
-				}
-				
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(1, Color.white);
-		
-		}else if(graphicsconfigselection == 2){
-			if(key == Input.KEY_RIGHT && Pong.S_container.isMusicOn() == true){
-				Pong.S_container.setMusicOn(false);
-			}
-			if(key == Input.KEY_LEFT && Pong.S_container.isMusicOn() == false){
-				Pong.S_container.setMusicOn(true);
-			}
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(2, Color.white);
-		
-		}else if(graphicsconfigselection == 3){
-			if(key == Input.KEY_RIGHT && Game.S_Debug_AI == true ||  Game.S_Debug_AI == true &&  key == Input.KEY_ENTER){
-				Game.S_Debug_AI = false;
-			}
-			if(key == Input.KEY_LEFT && Game.S_Debug_AI == false ||  Game.S_Debug_AI == false && key == Input.KEY_ENTER){
-				Game.S_Debug_AI = true;
-			}
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(5, Color.white);
-		
-		}else if(graphicsconfigselection == 4){
-			if(Pong.S_debug == false){
-				for(int e = 0;e < optionArray.size();e++){
-					optionArray.set(e, Color.gray);
-				}
-				optionArray.set(2, Color.white);
-			}else{
-				for(int e = 0;e < optionArray.size();e++){
-					optionArray.set(e, Color.gray);
-				}
-				optionArray.set(5, Color.white);
-			}
-			
-			if(key == Input.KEY_ENTER){
-				try{
-					Pong.S_resX = RESOLUTIONS[resolutionselection][0];
-					Pong.S_resY = RESOLUTIONS[resolutionselection][1];
-					LinkedHashMap<String, String> options = new LinkedHashMap<>();
-					options.put("resX", Integer.toString(Pong.S_resX));
-					options.put("resY", Integer.toString(Pong.S_resY));
-					options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
-					options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
-					options.put("debug", Boolean.toString(Pong.S_debug));
-					options.put("show_fps", Boolean.toString(Pong.S_showFPS));
-					MainMenu.ch.setOptions(options);
-					MainMenu.ch.createConfigFile();
-					savebool = true;
-				}catch(NumberFormatException nfe){
-					nfe.printStackTrace();
-				}
-				try {
-					Pong.S_container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
-				} catch (SlickException e) {
-					e.printStackTrace();
-				}
-			}
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(3, Color.white);
-			
-		}else if(graphicsconfigselection == 5){
-			for(int e = 0;e < optionArray.size();e++){
-				optionArray.set(e, Color.gray);
-			}
-			optionArray.set(4, Color.white);
-			if(key == Input.KEY_ENTER){
-				ostate = OptionState.Main;	
-				graphicsconfigselection = 0;
-				return;
-			}
-		}
-	}
 	*/
 	
 	/**
@@ -601,7 +465,42 @@ public class Options extends BasicGameState implements ComponentListener{
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 			}
 		}else if(ostate == OptionState.Graphics){
-			
+			if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[2])){
+				if(!Pong.S_container.isMusicOn()){
+					Pong.S_container.setMusicOn(true);
+				}else if(Pong.S_container.isMusicOn()){
+					Pong.S_container.setMusicOn(false);
+				}
+			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[3])){
+				try{
+					Pong.S_resX = RESOLUTIONS[resolutionselection][0];
+					Pong.S_resY = RESOLUTIONS[resolutionselection][1];
+					LinkedHashMap<String, String> options = new LinkedHashMap<>();
+					options.put("resX", Integer.toString(Pong.S_resX));
+					options.put("resY", Integer.toString(Pong.S_resY));
+					options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
+					options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
+					options.put("debug", Boolean.toString(Pong.S_debug));
+					options.put("show_fps", Boolean.toString(Pong.S_showFPS));
+					MainMenu.ch.setOptions(options);
+					MainMenu.ch.createConfigFile();
+					savebool = true;
+				}catch(NumberFormatException nfe){
+					nfe.printStackTrace();
+				}
+				try {
+					Pong.S_container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
+			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[4])){
+				optionBoxGraphics.setFocus(true);
+				optionBoxGraphics.setBoxKeyCoordinates(new int[] {1,1});
+				optionBoxSaveReturn.setFocus(false);
+				optionBoxSaveReturn.setBoxKeyCoordinates(new int[] {1,1});
+				ostate = OptionState.Main;
+			}
+
 		}else if(ostate == OptionState.Controls){
 			
 		}else if(ostate == OptionState.Network){
