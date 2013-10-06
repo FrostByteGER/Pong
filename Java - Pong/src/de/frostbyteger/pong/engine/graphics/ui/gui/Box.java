@@ -141,8 +141,8 @@ public class Box{
 	}
 	
 	public void update(){
-		if(focused == true && keyInput == true){
-			if((boxKeyCoordinates[0] > 0 && boxKeyCoordinates[1] > 0) && cells.get(boxKeyCoordinates[0] - 1).get(boxKeyCoordinates[1] - 1).isHighlighted() == false){
+		if(focused && keyInput){
+			if((boxKeyCoordinates[0] > 0 && boxKeyCoordinates[1] > 0) && !cells.get(boxKeyCoordinates[0] - 1).get(boxKeyCoordinates[1] - 1).isHighlighted()){
 				for(int i = 0;i < sources.size();i++){
 					sources.get(i).setHighlighted(false);
 				}
@@ -150,7 +150,7 @@ public class Box{
 			}else if(boxKeyCoordinates[0] <= 0 || boxKeyCoordinates[1] <= 0){
 				throw new BoxIndexOutOfBoundsException("BoxKeyCoordinates 0 or negative");
 			}
-		}else if(focused == false){
+		}else if(!focused){
 			for(int i = 0;i < sources.size();i++){
 				sources.get(i).setHighlighted(false);
 			}
@@ -333,6 +333,9 @@ public class Box{
 	 */
 	public void setClickable(boolean clickable) {
 		this.clickable = clickable;
+		for(int i = 0;i < sources.size();i++){
+			sources.get(i).setClickable(clickable);
+		}
 	}
 
 	/**
@@ -831,6 +834,50 @@ public class Box{
 				sources.get(i).setHeight(cellHeight);
 				sources.get(i).setAreaHeight(cellHeight);
 			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param row
+	 * @param titles
+	 */
+	public void setRowTitles(int row, String[] titles){
+		for(int i = 0;i < cells.size();i++){				//TODO: Add while loop for titles to prevent exceptions
+			cells.get(i).get(row).setCellText(titles[i]);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param row
+	 * @param actionCommands
+	 */
+	public void setRowActionCommands(int row, String[] actionCommands){
+		for(int i = 0;i < cells.size();i++){				//TODO: Add while loop for actionCommands to prevent exceptions
+			cells.get(i).get(row).setCellText(actionCommands[i]);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param column
+	 * @param titles
+	 */
+	public void setColumnTitles(int column, String[] titles){
+		for(int i = 0;i < cells.get(column).size();i++){				//TODO: Add while loop for titles to prevent exceptions
+			cells.get(column).get(i).setCellText(titles[i]);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param column
+	 * @param actionCommands
+	 */
+	public void setColumnActionCommands(int column, String[] actionCommands){
+		for(int i = 0;i < cells.get(column).size();i++){				//TODO: Add while loop for actionCommands to prevent exceptions
+			cells.get(column).get(i).setCellText(actionCommands[i]);
 		}
 	}
 	

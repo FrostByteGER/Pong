@@ -36,6 +36,7 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 	private boolean focused = false;
 	private boolean keyPressed = false;
 	private boolean keysActive = false;
+	private boolean inputActive = true;
 	
 	// Input keySet
 	private int[] keySet = {Input.KEY_ENTER};
@@ -739,6 +740,20 @@ public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.Ab
 	 */
 	public void setKeySet(int[] keySet) {
 		this.keySet = keySet;
+	}
+
+	/**
+	 * @return the inputActive
+	 */
+	public boolean isInputActive() {
+		return inputActive;
+	}
+
+	/**
+	 * @param inputActive the inputActive to set
+	 */
+	public void setInputActive(boolean inputActive) {
+		this.inputActive = inputActive;
 	}
 
 

@@ -1,7 +1,5 @@
 package de.frostbyteger.pong.engine.graphics.ui.gui;
 
-import java.util.Iterator;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
@@ -50,34 +48,6 @@ public class Cell extends CellListener{
 	private boolean active        = true;
 	private boolean visible	      = true;
 	private boolean autoAdjust    = true;
-	/**
-	 * @return the bold
-	 */
-	public boolean isBold() {
-		return bold;
-	}
-
-	/**
-	 * @param bold the bold to set
-	 */
-	public void setBold(boolean bold) {
-		this.bold = bold;
-	}
-
-	/**
-	 * @return the italics
-	 */
-	public boolean isItalics() {
-		return italics;
-	}
-
-	/**
-	 * @param italics the italics to set
-	 */
-	public void setItalics(boolean italics) {
-		this.italics = italics;
-	}
-
 	private boolean clickable     = true;
 	private boolean selected      = false;
 	private boolean highlighted   = false;
@@ -882,6 +852,7 @@ public class Cell extends CellListener{
 	 */
 	public void setClickable(boolean clickable) {
 		this.clickable = clickable;
+		setInputActive(clickable);
 	}
 	
 	/**
@@ -910,6 +881,34 @@ public class Cell extends CellListener{
 		int[] wh = {this.cellFont.getWidth(this.cellText),this.cellFont.getHeight(this.cellText)};
 		return wh;
 		
+	}
+	
+	/**
+	 * @return the bold
+	 */
+	public boolean isBold() {
+		return bold;
+	}
+
+	/**
+	 * @param bold the bold to set
+	 */
+	public void setBold(boolean bold) {
+		this.bold = bold;
+	}
+
+	/**
+	 * @return the italics
+	 */
+	public boolean isItalics() {
+		return italics;
+	}
+
+	/**
+	 * @param italics the italics to set
+	 */
+	public void setItalics(boolean italics) {
+		this.italics = italics;
 	}
 	
 }

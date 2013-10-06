@@ -43,11 +43,10 @@ public class Options extends BasicGameState implements ComponentListener{
 	private final String[] COMMANDS_MENU_OPTIONS_CONTROLS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","save","return"};
 	private final String[] COMMANDS_MENU_OPTIONS_NETWORK  = {"ip","port","PLACEHOLDER","save","return"};
 	
-	private final String PONG    = "Pong";
 	private final String OPTIONS = "Options";
 	
 	private static final int[][] RESOLUTIONS = {{800,600},{1024,768},{1280,960}};
-	private static final int OFFSET_X        = 100;
+	private final int OFFSET_X        = 100;
 	
 	private int resolutionselection     = 0;
 	private int savetimer               = 0;
@@ -98,7 +97,7 @@ public class Options extends BasicGameState implements ComponentListener{
 		// Global Header
 		mainHeader = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
 		mainHeader.setAutoAdjust(false);
-		mainHeader.setCellText(PONG);
+		mainHeader.setCellText(Pong.TITLE);
 		mainHeader.setClickable(false);
 		
 		// Local Headers
