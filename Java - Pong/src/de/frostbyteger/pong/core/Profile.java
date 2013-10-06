@@ -3,6 +3,8 @@
  */
 package de.frostbyteger.pong.core;
 
+import java.util.LinkedHashMap;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -12,6 +14,8 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import de.frostbyteger.pong.engine.ProfileState;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
+import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
+import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
 import de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener;
 import de.frostbyteger.pong.engine.io.ProfileHelper;
 
@@ -23,11 +27,23 @@ public class Profile extends BasicGameState implements ComponentListener{
 	
 	protected static final int ID = 004;
 	
-	private ProfileState pstate = ProfileState.None;
+	private LinkedHashMap<String, String> profileData;
+	private LinkedHashMap<String, String> achievementData;
+	
+	private ProfileState pState = ProfileState.None;
 	
 	private ProfileHelper profileHelper;
 	
 	private TextField profileCreation;
+	
+	private Box profileInfos;
+	private Box profileAchievements;
+	private Box profileChooser;
+	private Box profileDeleter;
+	private Box profileSaveReturn;
+	
+	private Cell profileName;
+	private Cell profileAchievementHeader;
 
 	/**
 	 * 
@@ -38,7 +54,7 @@ public class Profile extends BasicGameState implements ComponentListener{
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-
+		//profileInfos = new Box(, boxHeight, boxX, boxY, boxFontPath, boxFontSize, cellWidth, cellHeight, container)
 	}
 
 	@Override
@@ -62,21 +78,37 @@ public class Profile extends BasicGameState implements ComponentListener{
 	public int getID() {
 		return ID;
 	}
+	
+	public void createProfile(){
+		
+	}
+	
+	public void saveProfile(){
+		
+	}
+	
+	public void loadProfile(){
+		
+	}
+	
+	public static void deleteProfile(){
+		
+	}
 
 
 	/**
 	 * @return the pstate
 	 */
 	public ProfileState getPstate() {
-		return pstate;
+		return pState;
 	}
 
 
 	/**
 	 * @param pstate the pstate to set
 	 */
-	public void setPstate(ProfileState pstate) {
-		this.pstate = pstate;
+	public void setPstate(ProfileState pState) {
+		this.pState = pState;
 	}
 
 }

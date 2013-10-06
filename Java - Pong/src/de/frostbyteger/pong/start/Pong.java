@@ -29,13 +29,13 @@ public class Pong extends StateBasedGame{
 	
 	// Version info
 	public static final String TITLE          = "Pong";
-	public static final String VERSION        = "v1.30";
+	public static final String VERSION        = "v1.31";
 	public static final String VERSION_STATUS = "INTERNAL";
 	
 	// MD5 checksums
-	public static final String MD5_FONT  = "d060b8b0afa1753bf21d5fa3d3b14493";
-	public static final String MD5_LEFT  = "42a88f1b4fa5de64c17bb8f8ca300234";
-	public static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
+	private static final String MD5_FONT  = "d060b8b0afa1753bf21d5fa3d3b14493";
+	private static final String MD5_LEFT  = "42a88f1b4fa5de64c17bb8f8ca300234";
+	private static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
 	
 	// Additional
 	public static final String FONT = "data/alexis.ttf";
@@ -58,26 +58,26 @@ public class Pong extends StateBasedGame{
 	}
 	
 	//TODO: Find better try/catch and if algorithm
-	public int initGameSubRoutines(){
+	private int initGameSubRoutines(){
 		MD5Loader md5 = new MD5Loader("data/Alexis.ttf");
 		try{
 
 			md5.createChecksum();
-			if(md5.getChecksum().equals("d060b8b0afa1753bf21d5fa3d3b14493")){
+			if(md5.getChecksum().equals(MD5_FONT)){
 			}else{
 				JOptionPane.showMessageDialog(null,"File" + " data/Alexis.ttf" + " is corrupt. \n\nGame exits!");
 				return -1;
 			}
 			md5.setFilename("data/arrow_left.png");
 			md5.createChecksum();
-			if(md5.getChecksum().equals("42a88f1b4fa5de64c17bb8f8ca300234")){
+			if(md5.getChecksum().equals(MD5_LEFT)){
 			}else{
 				JOptionPane.showMessageDialog(null,"File" + " data/arrow_left.png" + " is corrupt. \n\nGame exits!");
 				return -1;
 			}
 			md5.setFilename("data/arrow_right.png");
 			md5.createChecksum();
-			if(md5.getChecksum().equals("1c5d1ecec440191de3b71f080f93eb51")){
+			if(md5.getChecksum().equals(MD5_RIGHT)){
 			}else{
 				JOptionPane.showMessageDialog(null,"File" + " data/arrow_right.png" + " is corrupt. \n\nGame exits!");
 				return -1;

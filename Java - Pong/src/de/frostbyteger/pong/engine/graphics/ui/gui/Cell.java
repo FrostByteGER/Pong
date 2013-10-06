@@ -37,7 +37,7 @@ public class Cell extends CellListener{
 	private boolean left     = false;
 	private boolean right    = false;
 	private boolean bold     = false;
-	private boolean italic   = false;
+	private boolean italics  = false;
 	private int size;
 	
 	// Image options
@@ -50,6 +50,34 @@ public class Cell extends CellListener{
 	private boolean active        = true;
 	private boolean visible	      = true;
 	private boolean autoAdjust    = true;
+	/**
+	 * @return the bold
+	 */
+	public boolean isBold() {
+		return bold;
+	}
+
+	/**
+	 * @param bold the bold to set
+	 */
+	public void setBold(boolean bold) {
+		this.bold = bold;
+	}
+
+	/**
+	 * @return the italics
+	 */
+	public boolean isItalics() {
+		return italics;
+	}
+
+	/**
+	 * @param italics the italics to set
+	 */
+	public void setItalics(boolean italics) {
+		this.italics = italics;
+	}
+
 	private boolean clickable     = true;
 	private boolean selected      = false;
 	private boolean highlighted   = false;
@@ -143,9 +171,10 @@ public class Cell extends CellListener{
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
+		this.fontPath = fontPath;
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
-		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italic);
+		this.cellFont = FontHelper.newFont(fontPath, fontSize, false, false);
 		this.size = fontSize;
 		this.cellX = x;
 		this.cellY = y;
@@ -170,8 +199,9 @@ public class Cell extends CellListener{
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
-		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italic);
+		this.cellFont = FontHelper.newFont(fontPath, fontSize, false, false);
 		this.cellImage = new Image(imagePath);
+		this.fontPath = fontPath;
 		this.imagePath = imagePath;
 		this.size = fontSize;
 		this.cellX = x;
@@ -197,12 +227,11 @@ public class Cell extends CellListener{
 		super.setAreaFilled(true);
 		super.setNormalColor(new Color(1,1,1,0.0f));
 		super.setMouseOverColor(new Color(1,1,1,0.7f));
+		this.fontPath = fontPath;
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italics);
 		this.size = fontSize;
-		this.bold = bold;
-		this.italic = italics;
 		this.cellX = x;
 		this.cellY = y;
 		this.container = container;
@@ -250,7 +279,7 @@ public class Cell extends CellListener{
 							}else{
 								size = (int) (cell.getWidth() / i);			
 							}
-							cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+							cellFont = FontHelper.newFont(fontPath, size, bold, italics);
 						}else if(cellFont.getHeight(cellText) >= cell.getHeight()){
 							float i = (float)cellFont.getHeight(cellText) / (float)size;
 							if(cell.getHeight() > cellDrawOffsetY){
@@ -258,7 +287,7 @@ public class Cell extends CellListener{
 							}else{
 								size = (int) (cell.getHeight() / i);							
 							}
-							cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+							cellFont = FontHelper.newFont(fontPath, size, bold, italics);
 						}
 					}
 				}
@@ -319,7 +348,7 @@ public class Cell extends CellListener{
 	 * @throws SlickException
 	 */
 	public void createNewFont() throws SlickException{
-		this.cellFont = FontHelper.newFont(fontPath, size, bold, italic);
+		this.cellFont = FontHelper.newFont(fontPath, size, bold, italics);
 	}
 	
 	/**
@@ -435,34 +464,6 @@ public class Cell extends CellListener{
 		}else{
 			return;
 		}
-	}
-
-	/**
-	 * @return the bold
-	 */
-	public boolean isBold() {
-		return bold;
-	}
-
-	/**
-	 * @param bold the bold to set
-	 */
-	public void setBold(boolean bold) {
-		this.bold = bold;
-	}
-
-	/**
-	 * @return the italic
-	 */
-	public boolean isItalic() {
-		return italic;
-	}
-
-	/**
-	 * @param italic the italic to set
-	 */
-	public void setItalic(boolean italic) {
-		this.italic = italic;
 	}
 
 	/**

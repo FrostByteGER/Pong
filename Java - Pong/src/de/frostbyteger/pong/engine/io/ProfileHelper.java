@@ -18,14 +18,15 @@ import javax.xml.bind.annotation.XmlType;
  * It saves and loads an instance of the actual class and saves it
  * to the xml format. 
  * @author Kevin Kuegler
- * @version 1.1
+ * @version 1.2
  */
 @XmlRootElement(name = "Profile")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"profilename", "profilepath", "profileinfos"})
+@XmlType(propOrder = {"profilename", "profilepath", "profileData","profileAchievements"})
 public class ProfileHelper{
 	
-	private LinkedHashMap<String, String> profileinfos = new LinkedHashMap<>();
+	private LinkedHashMap<String, String> profileData        = new LinkedHashMap<>();
+	private LinkedHashMap<String, String> profileAchievements = new LinkedHashMap<>();
 	
 	private String profilepath; 
 	private String profilename = "standard";
@@ -52,12 +53,26 @@ public class ProfileHelper{
 	 * Creates a new ProfileHelper object with a specified filepath, name and data.
 	 * @param path the path of the xml file
 	 * @param name the name of the xml file
-	 * @param map the LinkedHashMap with profiledata
+	 * @param data the LinkedHashMap with profiledata
 	 */
-	public ProfileHelper(String path, String name, LinkedHashMap<String, String> map) {
+	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data) {
 		this.profilepath = path;
 		this.profilename = name;
-		this.profileinfos = map;
+		this.profileData = data;
+	}
+	
+	/**
+	 * Creates a new ProfileHelper object with a specified filepath, name and data.
+	 * @param path the path of the xml file
+	 * @param name the name of the xml file
+	 * @param data the LinkedHashMap with profiledata
+	 * @param achievements the LinkedHashMap with profileachievements
+	 */
+	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data,LinkedHashMap<String, String> achievements) {
+		this.profilepath = path;
+		this.profilename = name;
+		this.profileData = data;
+		this.profileAchievements = achievements;
 	}
 	
 	/**
@@ -252,17 +267,32 @@ public class ProfileHelper{
 	}
 	
 	/**
-	 * @return the profileinfos
+	 * @return the profiledata
 	 */
-	public LinkedHashMap<String, String> getProfileinfos() {
-		return profileinfos;
+	public LinkedHashMap<String, String> getProfileData() {
+		return profileData;
 	}
 
 	/**
-	 * @param profileinfos the profileinfos to set
+	 * @param profileData the profiledata to set
 	 */
-	public void setProfileinfos(LinkedHashMap<String, String> profileinfos) {
-		this.profileinfos = profileinfos;
+	public void setProfileinfos(LinkedHashMap<String, String> profileData) {
+		this.profileData = profileData;
+	}
+
+	/**
+	 * @return the profileAchievements
+	 */
+	public LinkedHashMap<String, String> getProfileAchievements() {
+		return profileAchievements;
+	}
+
+	/**
+	 * @param profileAchievements the profileAchievements to set
+	 */
+	public void setProfileAchievements(
+			LinkedHashMap<String, String> profileAchievements) {
+		this.profileAchievements = profileAchievements;
 	}
 
 	/**

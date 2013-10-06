@@ -25,7 +25,7 @@ import de.frostbyteger.pong.start.Pong;
 
 /**
  * @author Kevin
- * TODO: Fix resolution bug - wrong coordinates for some cells and boxes when changing resolution
+ * TODO: Fix resolution bug - wrong coordinates for some cells and boxes when changing resolution or force user to restart game
  */
 public class Options extends BasicGameState implements ComponentListener{
 
@@ -52,7 +52,7 @@ public class Options extends BasicGameState implements ComponentListener{
 	private int resolutionselection     = 0;
 	private int savetimer               = 0;
 	
-	private OptionState ostate = OptionState.Main;
+	private OptionState oState = OptionState.Main;
 	
 	private boolean savebool = false;
 	
@@ -62,6 +62,7 @@ public class Options extends BasicGameState implements ComponentListener{
 	private Box optionBoxControls;
 	private Box optionBoxNetwork;
 	private Box optionBoxSaveReturn;
+	
 	private Cell mainHeader;
 	private Cell optionHeader;
 	private Cell graphicsHeader;
@@ -107,28 +108,28 @@ public class Options extends BasicGameState implements ComponentListener{
 		optionHeader.setFontColor(Color.cyan);
 		optionHeader.setClickable(false);
 		
-		graphicsHeader = new Cell("data/alexis.ttf", 60, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
+		graphicsHeader = new Cell(Pong.FONT, 60, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
 		graphicsHeader.setAutoAdjust(false);
 		graphicsHeader.setLeft();
 		graphicsHeader.setCellText(MENU_OPTIONS_MAIN[0]);
 		graphicsHeader.setFontColor(Color.cyan);
 		graphicsHeader.setClickable(false);
 		
-		controlHeader = new Cell("data/alexis.ttf", 60, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
+		controlHeader = new Cell(Pong.FONT, 60, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
 		controlHeader.setAutoAdjust(false);
 		controlHeader.setLeft();
 		controlHeader.setCellText(MENU_OPTIONS_MAIN[1]);
 		controlHeader.setFontColor(Color.cyan);
 		controlHeader.setClickable(false);
 		
-		networkHeader = new Cell("data/alexis.ttf", 60, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
+		networkHeader = new Cell(Pong.FONT, 60, OFFSET_X, Pong.S_resY/2 - 100, 250, 100, container);
 		networkHeader.setAutoAdjust(false);
 		networkHeader.setLeft();
 		networkHeader.setCellText(MENU_OPTIONS_MAIN[2]);
 		networkHeader.setFontColor(Color.cyan);
 		networkHeader.setClickable(false);
 		
-		saveCell = new Cell("data/alexis.ttf", 30, OFFSET_X, Pong.S_resY/2 + 125, 100, 30, container);
+		saveCell = new Cell(Pong.FONT, 30, OFFSET_X, Pong.S_resY/2 + 125, 100, 30, container);
 		saveCell.setAutoAdjust(false);
 		saveCell.setLeft();
 		saveCell.setCellText("Options saved!");
@@ -227,10 +228,10 @@ public class Options extends BasicGameState implements ComponentListener{
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		mainHeader.drawCell();
-		if(ostate == OptionState.Main){
+		if(oState == OptionState.Main){
 			optionHeader.drawCell();
 			optionBoxMain.render();
-		}else if(ostate == OptionState.Graphics){
+		}else if(oState == OptionState.Graphics){
 			graphicsHeader.drawCell();
 			optionBoxGraphics.render();
 			optionBoxVariables.render();
@@ -240,7 +241,7 @@ public class Options extends BasicGameState implements ComponentListener{
 			}else{
 				savebool = false;
 			}
-		}else if(ostate == OptionState.Controls){
+		}else if(oState == OptionState.Controls){
 			controlHeader.drawCell();
 			optionBoxControls.render();
 			optionBoxSaveReturn.render();
@@ -249,7 +250,8 @@ public class Options extends BasicGameState implements ComponentListener{
 			}else{
 				savebool = false;
 			}
-		}else if(ostate == OptionState.Network){
+		}else if(oState == OptionState.Network){
+			networkHeader.drawCell();
 			optionBoxNetwork.render();
 			optionBoxSaveReturn.render();
 			if(savebool == true && savetimer <= 2000){
@@ -258,22 +260,6 @@ public class Options extends BasicGameState implements ComponentListener{
 				savebool = false;
 			}
 		}
-
-		/*else if(ostate == OptionState.Network){
-			for(int i = 0,localoffset = 0; i < 3; i++){
-				FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + localoffset, MENU_OPTIONS_NETWORK[i],optionArray.get(i));
-				localoffset += 20;
-			}
-			FontHelper.normalfont.drawString(OFFSET_X, Pong.S_resY/2 + 70, MENU_OPTIONS_NETWORK[3],optionArray.get(3));
-			FontHelper.normalfont.drawString(OFFSET_X + FontHelper.normalfont.getWidth(MENU_OPTIONS_NETWORK[3]) + 40, Pong.S_resY/2 + 70, MENU_OPTIONS_NETWORK[4],optionArray.get(4));
-		}
-		
-		if(savebool == true && savetimer <= 2000){
-				FontHelper.normalfont.drawString(Pong.S_resX/2 - FontHelper.normalfont.getWidth("Options saved!")/2,Pong.S_resY/2 + Pong.S_resY/4 + FontHelper.normalfont.getHeight("Options saved!"),"Options saved!");		
-		}else{
-			savebool = false;
-		}
-	*/
 	}
 	
 	/**
@@ -281,9 +267,9 @@ public class Options extends BasicGameState implements ComponentListener{
 	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		if(ostate == OptionState.Main){
+		if(oState == OptionState.Main){
 			optionBoxMain.update();	
-		}else if(ostate == OptionState.Graphics){
+		}else if(oState == OptionState.Graphics){
 			optionBoxGraphics.update();
 			optionBoxSaveReturn.update();
 			optionBoxVariables.update();
@@ -294,10 +280,10 @@ public class Options extends BasicGameState implements ComponentListener{
 			}else{
 				optionBoxVariables.getCells().get(0).get(2).setCellText("off");
 			}
-		}else if(ostate == OptionState.Controls){
+		}else if(oState == OptionState.Controls){
 			optionBoxControls.update();
 			optionBoxSaveReturn.update();
-		}else if(ostate == OptionState.Network){
+		}else if(oState == OptionState.Network){
 			optionBoxNetwork.update();
 			optionBoxSaveReturn.update();
 		}
@@ -312,13 +298,13 @@ public class Options extends BasicGameState implements ComponentListener{
 	
 	
 	public void keyPressed(int key, char c) {
-		if(ostate == OptionState.Main){
+		if(oState == OptionState.Main){
 			if(key == Input.KEY_UP && optionBoxMain.getBoxKeyY() > 1){
 				optionBoxMain.setBoxKeyY(optionBoxMain.getBoxKeyY() - 1);
 			}else if(key == Input.KEY_DOWN && optionBoxMain.getBoxKeyY() < optionBoxMain.getBoxHeight()){
 				optionBoxMain.setBoxKeyY(optionBoxMain.getBoxKeyY() + 1);
 			}
-		}else if(ostate == OptionState.Graphics){
+		}else if(oState == OptionState.Graphics){
 			if(key == Input.KEY_UP){
 				if((optionBoxGraphics.getBoxKeyY() > 1) && optionBoxGraphics.isFocused()){
 					optionBoxGraphics.setBoxKeyY(optionBoxGraphics.getBoxKeyY() - 1);
@@ -370,7 +356,7 @@ public class Options extends BasicGameState implements ComponentListener{
 					optionBoxSaveReturn.setBoxKeyX(optionBoxSaveReturn.getBoxKeyX() - 1);
 				}
 			}
-		}else if(ostate == OptionState.Controls){
+		}else if(oState == OptionState.Controls){
 			if(key == Input.KEY_UP){
 				if((optionBoxControls.getBoxKeyY() > 1) && optionBoxControls.isFocused()){
 					optionBoxControls.setBoxKeyY(optionBoxControls.getBoxKeyY() - 1);
@@ -400,7 +386,7 @@ public class Options extends BasicGameState implements ComponentListener{
 					optionBoxSaveReturn.setBoxKeyX(optionBoxSaveReturn.getBoxKeyX() - 1);
 				}
 			}
-		}else if(ostate == OptionState.Network){
+		}else if(oState == OptionState.Network){
 			if(key == Input.KEY_UP){
 				if((optionBoxNetwork.getBoxKeyY() > 1) && optionBoxNetwork.isFocused()){
 					optionBoxNetwork.setBoxKeyY(optionBoxNetwork.getBoxKeyY() - 1);
@@ -435,25 +421,25 @@ public class Options extends BasicGameState implements ComponentListener{
 	
 	@Override
 	public void componentActivated(AbstractComponent source) {
-		if(ostate == OptionState.Main){
+		if(oState == OptionState.Main){
 			if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[0])){
 				optionBoxSaveReturn.setBoxY(Pong.S_resY/2 + 125);
 				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
-				ostate = OptionState.Graphics;
+				oState = OptionState.Graphics;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[1])){
 				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
 				optionBoxSaveReturn.setBoxY(Pong.S_resY/2 + 150);
-				ostate = OptionState.Controls;
+				oState = OptionState.Controls;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[2])){
 				optionBoxSaveReturn.setBoxY(Pong.S_resY/2 + 125);
 				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
-				ostate = OptionState.Network;
+				oState = OptionState.Network;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_MAIN[3])){
 				optionBoxMain.setBoxKeyCoordinates(new int[] {1,1});
-				ostate = OptionState.Main;
+				oState = OptionState.Main;
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 			}
-		}else if(ostate == OptionState.Graphics){
+		}else if(oState == OptionState.Graphics){
 			if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[2])){
 				if(!Pong.S_container.isMusicOn()){
 					Pong.S_container.setMusicOn(true);
@@ -487,26 +473,26 @@ public class Options extends BasicGameState implements ComponentListener{
 				optionBoxGraphics.setBoxKeyCoordinates(new int[] {1,1});
 				optionBoxSaveReturn.setFocus(false);
 				optionBoxSaveReturn.setBoxKeyCoordinates(new int[] {1,1});
-				ostate = OptionState.Main;
+				oState = OptionState.Main;
 			}
 
-		}else if(ostate == OptionState.Controls){
+		}else if(oState == OptionState.Controls){
 			if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[3])){ //TODO: add save command
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[4])){
 				optionBoxControls.setFocus(true);
 				optionBoxControls.setBoxKeyCoordinates(new int[] {1,1});
 				optionBoxSaveReturn.setFocus(false);
 				optionBoxSaveReturn.setBoxKeyCoordinates(new int[] {1,1});
-				ostate = OptionState.Main;
+				oState = OptionState.Main;
 			}
-		}else if(ostate == OptionState.Network){
+		}else if(oState == OptionState.Network){
 			if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[3])){ //TODO: Add save command
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_OPTIONS_GRAPHICS[4])){
 				optionBoxNetwork.setFocus(true);
 				optionBoxNetwork.setBoxKeyCoordinates(new int[] {1,1});
 				optionBoxSaveReturn.setFocus(false);
 				optionBoxSaveReturn.setBoxKeyCoordinates(new int[] {1,1});
-				ostate = OptionState.Main;
+				oState = OptionState.Main;
 			}
 		}
 	}
