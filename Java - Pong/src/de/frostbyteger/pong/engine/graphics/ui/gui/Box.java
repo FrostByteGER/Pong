@@ -824,29 +824,31 @@ public class Box{
 			cellWidth = width[width.length - 1] + sources.get(0).getCellDrawOffsetX();
 			edgedBox.setWidth(cellWidth * boxWidth + 1);
 			int cellX = boxX;
-			//int cellY = boxY;
 			for(int i = 0;i < cells.size();i++){
 				for(int j = 0; j < cells.get(i).size();j++){
 					cells.get(i).get(j).setWholeCellX(cellX);
-					//cells.get(i).get(j).setCellY(cellY);
-					//cellY += cellHeight;
 				}
 				cellX += width[width.length - 1] + sources.get(0).getCellDrawOffsetX();
-				//System.out.println(cellX);
-				//cellY -= cellHeight * boxHeight;
 			}
-			/*// TODO: Fix bugs
+			/*//TODO: Test if works
 			for(int i = 0;i < sources.size();i++){
 				height[i] = sources.get(i).getCellTextHeight();
 			}
 			Arrays.sort(height);
 			for(int i = 0;i < sources.size();i++){
-				sources.get(i).setHeight(height[height.length - 1] + sources.get(i).getCellDrawOffsetY());
-				System.out.println(width[i] + "|" + height[i]);
+				sources.get(i).setHeight(height[height.length - 1] + sources.get(0).getCellDrawOffsetY());
 				sources.get(i).setAreaHeight(height[height.length - 1] + sources.get(i).getCellDrawOffsetY());
 			}
+			cellHeight = height[height.length - 1] + sources.get(0).getCellDrawOffsetY();
+			edgedBox.setHeight(cellHeight * boxHeight + 1);
+			int cellY = boxY;
+			for(int i = 0;i < cells.size();i++){
+				for(int j = 0; j < cells.get(i).size();j++){
+					cells.get(i).get(j).setWholeCellY(cellY);
+				}
+				cellY += height[height.length - 1] + sources.get(0).getCellDrawOffsetY();
+			}
 			*/
-			
 		}else{
 			for(int i = 0;i < sources.size();i++){
 				sources.get(i).setWidth(cellWidth);
