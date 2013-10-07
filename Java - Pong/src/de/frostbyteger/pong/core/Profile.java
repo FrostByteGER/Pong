@@ -54,8 +54,6 @@ public class Profile extends BasicGameState implements ComponentListener{
 	private Box profileOptions;
 	
 	private Cell mainHeader;
-	private Cell profileNameHeader;
-	private Cell profileAchievementHeader;
 
 	/**
 	 * 
@@ -73,22 +71,30 @@ public class Profile extends BasicGameState implements ComponentListener{
 		mainHeader.setCellText(Pong.TITLE);
 		mainHeader.setClickable(false);
 		
-		// Local Header
-		profileNameHeader = new Cell(Pong.FONT, OFFSET_X, Pong.S_resY/2 - 200, 20, 100, 50, container);
-		profileNameHeader.setAutoAdjust(true);
-		//profileNameHeader.setCellText("");
-		profileNameHeader.setClickable(false);
-		
+		// Boxes
 		profileInfos = new Box(2, PROFILE_DESC_DATA.length, OFFSET_X, Pong.S_resY/2 - 150, Pong.FONT, 40, 300, 25, container);
-		profileInfos.setAllAutoAdjust(true);
+		profileInfos.setHeaderTitle("Profile:" + " " + "Kevin");
+		profileInfos.getHeader().setLeft();
+		profileInfos.setHeaderEdging(false);
+		profileInfos.setHeaderActive(true);
 		profileInfos.setBoxLeft();
 		profileInfos.setEdged(true);
 		profileInfos.setKeyInput(false);
 		profileInfos.setFocus(false);
 		profileInfos.setClickable(false);
-		//profileInfos.setBoxKeyCoordinates(new int[] {1,1});
 		profileInfos.setColumnTitles(0, PROFILE_DESC_DATA);
-		//profileInfos.setAutoAdjustBox(true);
+		
+		profileAchievements = new Box(1, PROFILE_DESC_ACHIEVEMENTS.length, OFFSET_X + (int)(profileInfos.getBoxWidth() * profileInfos.getBoxCellWidth()), Pong.S_resY/2 - 150, Pong.FONT, 40, 375, 25, container);
+		profileAchievements.setHeaderTitle("Achievements");
+		profileAchievements.getHeader().setLeft();
+		profileAchievements.setHeaderEdging(false);
+		profileAchievements.setHeaderActive(true);
+		profileAchievements.setBoxLeft();
+		profileAchievements.setEdged(true);
+		profileAchievements.setKeyInput(false);
+		profileAchievements.setFocus(false);
+		profileAchievements.setClickable(false);
+		profileAchievements.setColumnTitles(0, PROFILE_DESC_ACHIEVEMENTS);
 		
 		profileOptions = new Box(4, 1, OFFSET_X, Pong.S_resY/2 + 300, Pong.FONT, 30, 100, 30, container);
 		profileOptions.setAllAutoAdjust(false);
@@ -110,8 +116,8 @@ public class Profile extends BasicGameState implements ComponentListener{
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		if(pState == ProfileState.Show){
 			mainHeader.drawCell();
-			profileNameHeader.drawCell();
 			profileInfos.render();
+			profileAchievements.render();
 		}else if(pState == ProfileState.Create){
 			
 		}else if(pState == ProfileState.Delete){

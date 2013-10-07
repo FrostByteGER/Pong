@@ -22,7 +22,7 @@ import org.newdawn.slick.geom.Rectangle;
  * @author Kevin Kuegler
  *
  */
-public class CellListener extends de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent{
+public class CellListener extends AbstractComponent{
 	
 	// Input constants
 	private static final int MOUSE_NONE = 1;

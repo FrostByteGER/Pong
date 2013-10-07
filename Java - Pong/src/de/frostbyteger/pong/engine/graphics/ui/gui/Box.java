@@ -121,8 +121,11 @@ public class Box{
 		
 	}
 	
+	/**
+	 * 
+	 * @throws SlickException
+	 */
 	public void render() throws SlickException{
-
 		for(int i = 0; i < cells.size();i++){
 			for(int j = 0; j < cells.get(i).size();j++){
 					cells.get(i).get(j).drawCell();
@@ -140,6 +143,9 @@ public class Box{
 		parentContainer.getGraphics().setColor(Color.white);
 	}
 	
+	/**
+	 * 
+	 */
 	public void update(){
 		if(focused && keyInput){
 			if((boxKeyCoordinates[0] > 0 && boxKeyCoordinates[1] > 0) && !cells.get(boxKeyCoordinates[0] - 1).get(boxKeyCoordinates[1] - 1).isHighlighted()){
@@ -254,6 +260,20 @@ public class Box{
 	 */
 	public void setBoxHeight(int boxHeight) {
 		this.boxHeight = boxHeight;
+	}
+
+	/**
+	 * @return the cellWidth
+	 */
+	public float getBoxCellWidth() {
+		return cellWidth;
+	}
+
+	/**
+	 * @return the cellHeight
+	 */
+	public float getBoxCellHeight() {
+		return cellHeight;
 	}
 
 	/**
@@ -747,7 +767,7 @@ public class Box{
 	 */
 	public void removeAllListeners(ComponentListener listener){
 		for(int i = 0;i < sources.size();i++){
-			sources.get(i).removeListener(listener);;
+			sources.get(i).removeListener(listener);
 		}
 	}
 	

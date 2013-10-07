@@ -191,6 +191,7 @@ public class Options extends BasicGameState implements ComponentListener{
 		}
 		optionBoxVariables.setAutoAdjustBox(true);
 		
+		
 		optionBoxControls = new Box(4, MENU_OPTIONS_CONTROLS.length - 2, OFFSET_X, Pong.S_resY/2 - 75, Pong.FONT, 30, 200, 40, container);
 		optionBoxControls.setAllAutoAdjust(false);
 		optionBoxControls.setBoxLeft();
