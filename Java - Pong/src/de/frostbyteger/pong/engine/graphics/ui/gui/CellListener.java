@@ -204,72 +204,74 @@ public class CellListener extends AbstractComponent{
 	 * 
 	 */
 	public void update() {
-		if(!keysActive){
-			if (!mouseOver) {
-				currentColor = normalColor;
-				state = MOUSE_NONE;
-				mouseUp = false;
-			} else {
-				if (mouseDown) {
-					if ((state != MOUSE_DOWN) && (mouseUp)) {
-						if (mouseDownSound != null) {
-							mouseDownSound.play();
-						}
-						currentColor = mouseDownColor;
-						state = MOUSE_DOWN;
-						
-						notifyListeners();
-						mouseUp = false;
-					}
-					
-					return;
+		if(inputActive){
+			if(!keysActive){
+				if (!mouseOver) {
+					currentColor = normalColor;
+					state = MOUSE_NONE;
+					mouseUp = false;
 				} else {
-					mouseUp = true;
-					if (state != MOUSE_OVER) {
-						if (mouseOverSound != null) {
-							mouseOverSound.play();
+					if (mouseDown) {
+						if ((state != MOUSE_DOWN) && (mouseUp)) {
+							if (mouseDownSound != null) {
+								mouseDownSound.play();
+							}
+							currentColor = mouseDownColor;
+							state = MOUSE_DOWN;
+							
+							notifyListeners();
+							mouseUp = false;
 						}
-						currentColor = mouseOverColor;
-						state = MOUSE_OVER;
+						
+						return;
+					} else {
+						mouseUp = true;
+						if (state != MOUSE_OVER) {
+							if (mouseOverSound != null) {
+								mouseOverSound.play();
+							}
+							currentColor = mouseOverColor;
+							state = MOUSE_OVER;
+						}
 					}
 				}
-			}
-	
-			mouseDown = false;
-			state = MOUSE_NONE;
-		}else{
-			if (!focused) {
-				currentColor = normalColor;
+		
+				mouseDown = false;
 				state = MOUSE_NONE;
-				mouseUp = false;
-			} else {
-				//System.out.println(keyPressed);
-				if (keyPressed) {
-					if ((state != MOUSE_DOWN) && (mouseUp)) {
-						if (mouseDownSound != null) {
-							mouseDownSound.play();
-						}
-						currentColor = mouseDownColor;
-						state = MOUSE_DOWN;
-						notifyListeners();
-						mouseUp = false;
-						
-					}
-					keyPressed = false;
-					focused = false;
-					return;
+			}else{
+				if (!focused) {
+					currentColor = normalColor;
+					state = MOUSE_NONE;
+					mouseUp = false;
 				} else {
-					mouseUp = true;
-					if (state != MOUSE_OVER) {
-						if (mouseOverSound != null) {
-							mouseOverSound.play();
+					//System.out.println(keyPressed);
+					if (keyPressed) {
+						if ((state != MOUSE_DOWN) && (mouseUp)) {
+							if (mouseDownSound != null) {
+								mouseDownSound.play();
+							}
+							currentColor = mouseDownColor;
+							state = MOUSE_DOWN;
+							notifyListeners();
+							mouseUp = false;
+							
 						}
-						currentColor = mouseOverColor;
-						state = MOUSE_OVER;
+						keyPressed = false;
+						focused = false;
+						return;
+					} else {
+						mouseUp = true;
+						if (state != MOUSE_OVER) {
+							if (mouseOverSound != null) {
+								mouseOverSound.play();
+							}
+							currentColor = mouseOverColor;
+							state = MOUSE_OVER;
+						}
 					}
 				}
+				state = MOUSE_NONE;
 			}
-			state = MOUSE_NONE;
 		}
 	}
 	

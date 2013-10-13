@@ -684,17 +684,17 @@ public class Cell extends CellListener{
 	}
 
 	/**
-	 * @return the edging
+	 * @return the edged
 	 */
-	public boolean isEdging() {
+	public boolean isEdged() {
 		return edging;
 	}
 
 	/**
 	 * @param edging the edging to set
 	 */
-	public void setEdging(boolean edging) {
-		this.edging = edging;
+	public void setEdged(boolean edged) {
+		this.edging = edged;
 	}
 
 	/**

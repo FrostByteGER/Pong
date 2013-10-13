@@ -25,7 +25,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 		logger.getFrame().setAlwaysOnTop(true);
 		
 		cell = new Cell("Button1",100, 100, 200, 50, container);
-		cell.setEdging(false);
+		cell.setEdged(false);
 		//cell.setImagePath("data/test_button.png");
 		//cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
@@ -36,7 +36,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 		cell.setActionCommand("TEST");
 		
 		cell2 = new Cell("Button2",100, 175, 200, 50, container);
-		cell2.setEdging(true);
+		cell2.setEdged(true);
 		cell2.setFontPath("data/Alexis.ttf");
 		cell2.setSize(50);
 		cell2.createNewFont();

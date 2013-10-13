@@ -23,6 +23,7 @@ public class Box{
 	private ArrayList<ArrayList<Cell>> cells;
 	private GameContainer parentContainer;
 	private UnicodeFont boxFont;
+	private String boxFontPath;
 	private ArrayList<Cell> sources;
 	private Cell header        = null;
 	private Rectangle edgedBox = null;
@@ -87,13 +88,14 @@ public class Box{
 		int cellY = boxY;
 		this.boxFontSize = boxFontSize;
 		this.boxFont = FontHelper.newFont(boxFontPath, boxFontSize, false, false);
+		this.boxFontPath = boxFontPath;
 		this.cells = new ArrayList<ArrayList<Cell>>();
 		this.edgedBox = new Rectangle(cellX, cellY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
 		this.header = new Cell(cellX, cellY, cellWidth * boxWidth, this.boxHeaderHeight, container);
 		this.header.setFontPath(boxFontPath);
 		this.header.setSize(boxFontSize);
 		this.header.createNewFont();
-		this.header.setEdging(true);
+		this.header.setEdged(true);
 		this.header.setActive(false);
 		this.header.setClickable(false);
 
@@ -240,12 +242,60 @@ public class Box{
 	public int getBoxWidth() {
 		return boxWidth;
 	}
+	
 
 	/**
 	 * @param boxWidth the boxWidth to set
+	 * @throws SlickException 
 	 */
-	public void setBoxWidth(int boxWidth) {
-		this.boxWidth = boxWidth;
+	public void setBoxWidth(int boxWidth) throws SlickException {
+		if(boxWidth < this.boxWidth){
+			this.boxWidth = boxWidth;
+			for(int k = this.cells.size() - 1;k >= boxWidth;k--){
+				this.cells.remove(k);
+			}
+			boolean edging = header.isEdged();
+			boolean active = header.isActive();
+			boolean clickable = header.isClickable();
+			String text = header.getCellText();
+			this.edgedBox = new Rectangle(boxX, boxY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
+			this.header = new Cell(boxX, boxY, cellWidth * boxWidth, this.boxHeaderHeight, parentContainer);
+			this.header.setFontPath(boxFontPath);
+			this.header.setSize(boxFontSize);
+			this.header.createNewFont();
+			this.header.setCellText(text);
+			this.header.setEdged(edging);
+			this.header.setActive(active);
+			this.header.setClickable(clickable);
+		}else if(boxWidth > this.boxWidth){
+			this.boxWidth = boxWidth;
+		}else{
+			
+		}
+		/*
+		ArrayList<Cell> tempCell = new ArrayList<Cell>();
+		int cellX = boxX;
+		int cellY = boxY;
+		for(int i = 0;i < boxWidth;i++){
+			for(int j = 0; j < boxHeight;j++){
+				tempCell.add(new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, parentContainer));
+				cellY += cellHeight;
+			}
+			this.cells.add(tempCell);
+			tempCell = new ArrayList<Cell>();
+			cellX += cellWidth;
+			cellY -= cellHeight * boxHeight;
+		}
+		for(int k = 0; k < this.cells.size();k++){
+			for(int l = 0; l < this.cells.get(k).size();l++){
+				Cell temp = this.cells.get(k).get(l);
+				temp.setFontPath(boxFontPath);
+				temp.setSize(boxFontSize);
+				temp.createNewFont();
+				this.sources.add(temp);
+			}
+		}
+		*/
 	}
 
 	/**
@@ -258,9 +308,11 @@ public class Box{
 	/**
 	 * @param boxHeight the boxHeight to set
 	 */
+	/*
 	public void setBoxHeight(int boxHeight) {
 		this.boxHeight = boxHeight;
 	}
+	*/
 
 	/**
 	 * @return the cellWidth
@@ -437,7 +489,7 @@ public class Box{
 	 * @return
 	 */
 	public boolean isHeaderEdged(){
-		return this.header.isEdging();
+		return this.header.isEdged();
 	}
 	
 	/**
@@ -445,7 +497,7 @@ public class Box{
 	 * @param edging
 	 */
 	public void setHeaderEdging(boolean edging){
-		this.header.setEdging(edging);
+		this.header.setEdged(edging);
 	}
 	
 	/**

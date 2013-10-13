@@ -14,7 +14,7 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 	
 	public static MessageLogger logger;
 	
-	public Box box, box3;
+	public Box box, box3,box4;
 	
 	public Rectangle overlay;
 	public Box box2;
@@ -62,6 +62,17 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		box.setFocus(true);
 		box.setKeyInput(true);
 		box.setBoxKeyCoordinates(new int[] {1,1});
+		
+		box4 = new Box(4, 4, 100, 500,"data/Alexis.ttf", 40, 200, 50, container);
+		box4.setHeaderTitle("Box_03");
+		box4.setHeaderActive(true);
+		for(int i = 0; i < box4.getSources().size();i++){
+			box4.getSources().get(i).setCellText("Button_" + x);
+			box4.getSources().get(i).addListener(this);
+			box4.getSources().get(i).setClickable(true);
+			x++;
+		}
+		box4.setFocus(false);
 	}
 
 	@Override
@@ -73,6 +84,7 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		}
 		box.render();
 		box3.render();
+		box4.render();
 		g.drawString("Press TABULATOR to switch boxes", 350, 350);
 		g.drawString("Controls for Box 1:", 225, 400);
 		g.drawString("Bewege die Pfeiltasten", 200, 425);
@@ -133,6 +145,12 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 			box.setFocus(true);
 			box.setKeyInput(true);
 			box.setBoxKeyCoordinates(new int[] {1,1});
+			try {
+				box4.setBoxWidth(1);
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else if(key == Input.KEY_TAB && box.isFocused() == true){
 			box.setFocus(false);
 			box3.setFocus(true);

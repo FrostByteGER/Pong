@@ -77,27 +77,7 @@ public class ProfileHelper{
 		this.profileData = data;
 		this.profileAchievements = achievements;
 	}
-	
-	/**
-	 * This method creates a new profile.xml with the given path. It only creates a new file, 
-	 * if there's no file with the same name. If so, the program returns false.
-	 * 
-	 * @return returns true if file was created successfully. 
-	 * If false, the file already existed or the user had no write permission
-	 * @throws JAXBException 
-	 */
-	public boolean createProfile() throws JAXBException{
-		File checkfile = new File(profilePath);
-		if(checkfile.exists()){
-			return false;
-		}else{
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.marshal(this, checkfile);
-			return true;
-		}
-	}
+
 	
 	/**
 	 * This method creates a new profile.xml with the given path. It only creates a new file, 
@@ -114,34 +94,6 @@ public class ProfileHelper{
 	public boolean createProfile(boolean override) throws JAXBException{
 		File checkfile = new File(profilePath);
 		if(override == false && checkfile.exists() == true){
-			return false;
-		}else{
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.marshal(this, checkfile);
-			return true;
-		}
-	}
-	
-	/**
-	 * 
-	 * This method creates a new profile.xml with the given path. It only creates a new file, 
-	 * if there's no file with the same name. If so, the program returns false.
-	 * <p>The filename is structured like the following<p>
-	 * Structure: profilePath + profileName + .xml<p>
-	 * Example:   D:\\saves\  + standard    + .xml
-	 * 
-	 * @param profilePath a specified profilePath instead of class field. 
-	 * @param profileName a specified profileName instead of class field. The file will be 
-	 * named after this parameter 
-	 * @return returns true if file was created successfully. If false, the file already 
-	 * existed or the user had no write permission
-	 * @throws JAXBException 
-	 */
-	public boolean createProfile(String profilepath, String profilename) throws JAXBException{
-		File checkfile = new File(profilepath + profilename + fileExtension);
-		if(checkfile.exists()){
 			return false;
 		}else{
 			JAXBContext context = JAXBContext.newInstance(this.getClass());
