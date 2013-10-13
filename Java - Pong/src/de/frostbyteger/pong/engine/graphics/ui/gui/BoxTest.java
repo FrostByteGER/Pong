@@ -18,6 +18,8 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 	
 	public Rectangle overlay;
 	public Box box2;
+	
+	public int x = 1;
 
 	public BoxTest() {
 		super("Box Test");
@@ -41,7 +43,6 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		box = new Box(2, 4, 100, 100,"data/Alexis.ttf", 40, 200, 50, container);
 		box.setHeaderTitle("Box_01");
 		box.setHeaderActive(true);
-		int x = 1;
 		for(int i = 0; i < box.getSources().size();i++){
 			box.getSources().get(i).setCellText("Button_0" + x);
 			box.getSources().get(i).setActionCommand("TEST" + i);
@@ -63,15 +64,18 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 		box.setKeyInput(true);
 		box.setBoxKeyCoordinates(new int[] {1,1});
 		
-		box4 = new Box(4, 4, 100, 500,"data/Alexis.ttf", 40, 200, 50, container);
+		box4 = new Box(1, 4, 100, 500,"data/Alexis.ttf", 40, 200, 50, container);
 		box4.setHeaderTitle("Box_03");
 		box4.setHeaderActive(true);
+		int x2 = x;
 		for(int i = 0; i < box4.getSources().size();i++){
 			box4.getSources().get(i).setCellText("Button_" + x);
 			box4.getSources().get(i).addListener(this);
 			box4.getSources().get(i).setClickable(true);
 			x++;
+
 		}
+		x = x2;
 		box4.setFocus(false);
 	}
 
@@ -146,7 +150,16 @@ public class BoxTest extends BasicGame implements ComponentListener, Runnable{
 			box.setKeyInput(true);
 			box.setBoxKeyCoordinates(new int[] {1,1});
 			try {
-				box4.setBoxWidth(1);
+				box4.setBoxWidth(4);
+				box4.setBoxHeight(2);
+				for(int i = 0; i < box4.getCells().size();i++){
+					for(int j = 0; j < box4.getCells().get(i).size();j++){
+						box4.getCells().get(i).get(j).setCellText("Button_" + x);
+						box4.getCells().get(i).get(j).addListener(this);
+						box4.getCells().get(i).get(j).setClickable(true);
+						x++;
+					}
+				}
 			} catch (SlickException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -245,8 +245,16 @@ public class Box{
 	
 
 	/**
+	 * Adjusts the boxes width and deletes or
+	 * adds new cells. It also changes the header width 
+	 * and height. You probably have to re-set
+	 * cell-modifiers if you add new cells.
+	 * Calling this method is in version 1.00 
+	 * very resource expensive, use it only if 
+	 * absolutely necessary. 
 	 * @param boxWidth the boxWidth to set
-	 * @throws SlickException 
+	 * @throws SlickException Thrown if the font-creation
+	 * of the cell encountered an problem.
 	 */
 	public void setBoxWidth(int boxWidth) throws SlickException {
 		if(boxWidth < this.boxWidth){
@@ -267,35 +275,44 @@ public class Box{
 			this.header.setEdged(edging);
 			this.header.setActive(active);
 			this.header.setClickable(clickable);
+			return;
 		}else if(boxWidth > this.boxWidth){
+			int cellX = (int) (boxX + this.cellWidth * this.boxWidth);
+			int cellY = boxY;
 			this.boxWidth = boxWidth;
+			ArrayList<Cell> tempCell = new ArrayList<Cell>();
+
+			for(int i = cells.size();i < boxWidth;i++){
+				for(int j = 0; j < boxHeight;j++){
+					tempCell.add(new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, parentContainer));
+					Cell temp = tempCell.get(j);
+					temp.setFontPath(boxFontPath);
+					temp.setSize(boxFontSize);
+					temp.createNewFont();
+					cellY += cellHeight;
+				}
+				this.cells.add(tempCell);
+				tempCell = new ArrayList<Cell>();
+				cellX += cellWidth;
+				cellY -= cellHeight * boxHeight;
+			}
+			boolean edging = header.isEdged();
+			boolean active = header.isActive();
+			boolean clickable = header.isClickable();
+			String text = header.getCellText();
+			this.edgedBox = new Rectangle(boxX, boxY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
+			this.header = new Cell(boxX, boxY, cellWidth * boxWidth, this.boxHeaderHeight, parentContainer);
+			this.header.setFontPath(boxFontPath);
+			this.header.setSize(boxFontSize);
+			this.header.createNewFont();
+			this.header.setCellText(text);
+			this.header.setEdged(edging);
+			this.header.setActive(active);
+			this.header.setClickable(clickable);
+			return;
 		}else{
-			
+			return;
 		}
-		/*
-		ArrayList<Cell> tempCell = new ArrayList<Cell>();
-		int cellX = boxX;
-		int cellY = boxY;
-		for(int i = 0;i < boxWidth;i++){
-			for(int j = 0; j < boxHeight;j++){
-				tempCell.add(new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, parentContainer));
-				cellY += cellHeight;
-			}
-			this.cells.add(tempCell);
-			tempCell = new ArrayList<Cell>();
-			cellX += cellWidth;
-			cellY -= cellHeight * boxHeight;
-		}
-		for(int k = 0; k < this.cells.size();k++){
-			for(int l = 0; l < this.cells.get(k).size();l++){
-				Cell temp = this.cells.get(k).get(l);
-				temp.setFontPath(boxFontPath);
-				temp.setSize(boxFontSize);
-				temp.createNewFont();
-				this.sources.add(temp);
-			}
-		}
-		*/
 	}
 
 	/**
@@ -306,13 +323,46 @@ public class Box{
 	}
 
 	/**
+	 * Adjusts the boxes height and deletes or
+	 * adds new cells. You probably have to re-set
+	 * cell-modifiers if you add new cells.
+	 * Calling this method is in version 1.00 
+	 * very resource expensive, use it only if 
+	 * absolutely necessary. 
 	 * @param boxHeight the boxHeight to set
+	 * @throws SlickException Thrown if the font-creation
+	 * of the cell encountered an problem.
 	 */
-	/*
-	public void setBoxHeight(int boxHeight) {
-		this.boxHeight = boxHeight;
+	public void setBoxHeight(int boxHeight) throws SlickException {
+		if(boxHeight < this.boxHeight){
+			this.boxHeight = boxHeight;
+			for(int j = 0;j < cells.size();j++){
+				for(int k = this.cells.get(j).size() - 1;k >= boxHeight;k--){
+					this.cells.get(j).remove(k);
+				}
+			}
+			return;
+		}else if(boxHeight > this.boxHeight){
+			int cellX = boxX;
+			int cellY = (int) (boxY + this.cellHeight * this.boxHeight);
+			this.boxHeight = boxHeight;
+			for(int h = 0; h < cells.size();h++){
+				for(int i = cells.get(h).size();i < boxHeight;i++){
+					Cell temp = new Cell(cellX, cellY, cellWidth, cellHeight, parentContainer);
+					temp.setFontPath(boxFontPath);
+					temp.setSize(boxFontSize);
+					temp.createNewFont();
+					cellY += cellHeight;
+					this.cells.get(h).add(temp);
+				}
+				cellX += cellWidth;
+				cellY -= cellHeight * boxHeight;
+			}
+			return;
+		}else{
+			return;
+		}
 	}
-	*/
 
 	/**
 	 * @return the cellWidth
