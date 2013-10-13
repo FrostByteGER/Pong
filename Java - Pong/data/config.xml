@@ -21,11 +21,15 @@
         </entry>
         <entry>
             <key>debug</key>
-            <value>false</value>
+            <value>true</value>
         </entry>
         <entry>
             <key>show_fps</key>
-            <value>false</value>
+            <value>true</value>
+        </entry>
+        <entry>
+            <key>lastActiveProfile</key>
+            <value>FrostByte</value>
         </entry>
     </options>
 </Config>

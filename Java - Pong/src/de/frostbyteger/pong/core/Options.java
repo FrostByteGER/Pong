@@ -130,7 +130,7 @@ public class Options extends BasicGameState implements ComponentListener{
 		networkHeader.setFontColor(Color.cyan);
 		networkHeader.setClickable(false);
 		
-		saveCell = new Cell(Pong.FONT, 30, OFFSET_X, Pong.S_resY/2 + 125, 100, 30, container);
+		saveCell = new Cell(Pong.FONT, 30, OFFSET_X, Pong.S_resY/2 + 175, 100, 30, container);
 		saveCell.setAutoAdjust(false);
 		saveCell.setLeft();
 		saveCell.setCellText("Options saved!");
@@ -459,6 +459,7 @@ public class Options extends BasicGameState implements ComponentListener{
 					options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
 					options.put("debug", Boolean.toString(Pong.S_debug));
 					options.put("show_fps", Boolean.toString(Pong.S_showFPS));
+					options.put("lastActiveProfile", Pong.S_activeProfile);
 					MainMenu.ch.setOptions(options);
 					MainMenu.ch.createConfigFile();
 					savebool = true;

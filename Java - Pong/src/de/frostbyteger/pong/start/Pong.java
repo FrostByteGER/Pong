@@ -32,14 +32,15 @@ public class Pong extends StateBasedGame{
 	public static final int FPS     = 60;
 	
 	// Profiles Data
+	public static String S_activeProfile = "standard";
 	public static LinkedHashMap<String, Profile> S_profiles = new LinkedHashMap<String,Profile>();
 	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(12);
 	public static LinkedHashMap<String, String> S_achievementData;
-	public final String[] STATISTICS_KEYS = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
-											 "timePlayedChallenge","matchesPlayedOverall",
-											 "matchesPlayedCPU","matchesPlayedLAN",
-											 "matchesPlayedChallenge","matchesWonOverall",
-											 "matchesWonCPU","matchesWonLAN","matchesWonChallenge"};
+	public static final String[] STATISTICS_KEYS = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
+											 		"timePlayedChallenge","matchesPlayedOverall",
+											 		"matchesPlayedCPU","matchesPlayedLAN",
+											 		"matchesPlayedChallenge","matchesWonOverall",
+											 		"matchesWonCPU","matchesWonLAN","matchesWonChallenge"};
 	
 	// Statistics Data
 	public static int S_timePlayedOverall      = 0;
@@ -135,6 +136,7 @@ public class Pong extends StateBasedGame{
 			S_container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
 			Pong.S_debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
 			Pong.S_showFPS = Boolean.parseBoolean(ch2.getOptions().get("show_fps"));
+			S_activeProfile = ch2.getOptions().get("lastActiveProfile");
 		}catch(FileNotFoundException | JAXBException e){
 			//Creating a config-file with standard values
 			LinkedHashMap<String, String> options = new LinkedHashMap<>();
@@ -143,6 +145,7 @@ public class Pong extends StateBasedGame{
 			options.put("volume", Float.toString(1.0f));
 			options.put("vol_on", Boolean.toString(true));
 			options.put("show_fps", Boolean.toString(false));
+			options.put("lastActiveProfile", S_activeProfile);
 			S_configHelper.setOptions(options);
 			try {
 				S_configHelper.createConfigFile();
@@ -163,45 +166,63 @@ public class Pong extends StateBasedGame{
 		S_statisticsData.put(STATISTICS_KEYS[9], S_matchesWonCPU);
 		S_statisticsData.put(STATISTICS_KEYS[10], S_matchesWonLAN);
 		S_statisticsData.put(STATISTICS_KEYS[11], S_matchesWonChallenge);
-		
+		int validProfiles = 0;
 		try{ 
 			File f = new File("profiles");
-			if(f.exists()){
-				if(f.length() <= 0){
-					Profile standard = new Profile();
-					standard.setProfilePath("profiles/");
-					LinkedHashMap<String, String> temp = new LinkedHashMap<>(12);
-					for(int i = 0;i < S_statisticsData.size();i++){
-						temp.put(STATISTICS_KEYS[i], Integer.toString(S_statisticsData.get(STATISTICS_KEYS[i])));
-					}
-					standard.setProfileInfos(temp);
-					standard.createProfile(true);
-					temp = null;
-					S_profiles.put("standard", standard);
-				}else{
-					File[] temp = f.listFiles();
-					for(int i = 0;i < temp.length;i++){
-						String name = temp[i].getName();
-						int pos = name.lastIndexOf(".");
-						if (pos > 0) {
-						    name = name.substring(0, pos);
-						}
-						Profile tempP = new Profile("profiles/", name);
-						tempP.load();
-						S_profiles.put(tempP.getProfileName(), tempP);
-					}
-				}
-			}else{
+			if(!f.exists()){
 				f.mkdir();
 			}
-		}catch(JAXBException e){ //TODO: Change catch clause, so one corrupt profile won't kill the program
-			JOptionPane.showMessageDialog(null,e.toString() + "\n\nGame exits!");
-			return -1;
+			if(f.list().length == 0){
+				createStandardProfile();
+			}else{
+				File[] temp = f.listFiles();
+				for(int i = 0;i < temp.length;i++){
+					String name = temp[i].getName();
+					int pos = name.lastIndexOf(".");
+					if (pos > 0) {
+					    name = name.substring(0, pos);
+					}
+					Profile tempP = new Profile("profiles/", name);
+					try {
+						tempP.load();
+						S_profiles.put(tempP.getProfileName(), tempP);
+						validProfiles += 1;
+					} catch (JAXBException e) {
+						JOptionPane.showMessageDialog(null,e.toString() + "\n\nIt seems that one or more profiles are corrupted!");
+					}
+				}
+			}
+			if(validProfiles == 0){
+				createStandardProfile();
+			}
+
 		}catch(FileNotFoundException fnfe){
 			JOptionPane.showMessageDialog(null,fnfe.toString() + "\n\nGame exits!");
 			return -1;
 		}
+		Profile profile = S_profiles.get(S_activeProfile);
+		for(int i = 0;i < S_statisticsData.size();i++){
+			S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));
+		}
 		return 0;
+	}
+	
+	private void createStandardProfile(){
+		Profile standard = new Profile();
+		standard.setProfilePath("profiles/");
+		LinkedHashMap<String, String> temp = new LinkedHashMap<>(12);
+		for(int i = 0;i < S_statisticsData.size();i++){
+			temp.put(STATISTICS_KEYS[i], Integer.toString(S_statisticsData.get(STATISTICS_KEYS[i])));
+		}
+		standard.setProfileInfos(temp);
+		try {
+			standard.createProfile(true);
+		} catch (JAXBException e) {
+			JOptionPane.showMessageDialog(null,e.toString() + "\n\nCan't create standardprofile, please a new profile!");
+			e.printStackTrace(); //TODO: If exception is thrown here, change start to create new Profile.
+		}
+		temp = null;
+		S_profiles.put("standard", standard);
 	}
 
 	public static void main(String[] args) throws SlickException {

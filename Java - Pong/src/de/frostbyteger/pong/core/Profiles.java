@@ -8,18 +8,18 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import de.frostbyteger.pong.engine.ProfileState;
+import de.frostbyteger.pong.engine.graphics.FontHelper;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
 import de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener;
-import de.frostbyteger.pong.engine.io.ProfileHelper;
+import de.frostbyteger.pong.engine.graphics.ui.gui.TextField;
 import de.frostbyteger.pong.start.Pong;
 
 /**
@@ -32,7 +32,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	
 	private StateBasedGame game;
 	
-	private final String[] PROFILE_OPTIONS           = {"new","save","delete","change profile","back"};
+	private final String[] PROFILE_OPTIONS           = {"new","save","delete","change\nprofile","back"};
 	private final String[] PROFILE_DESC_ACHIEVEMENTS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER"};
 	private final String[] PROFILE_DESC_DATA         = {"Time played:","Time played in CPU-Mode:","Time played in LAN-Mode:",
 														"Time played in Challenge-Mode:","Matches played:","Matches played in CPU-Mode:",
@@ -53,6 +53,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	private Box profileOptions;
 	
 	private Cell mainHeader;
+	private Cell createProfileHeader;
 
 	/**
 	 * 
@@ -66,14 +67,29 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		this.game = game;
 		
 		// Global Header
-		mainHeader = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
+		mainHeader = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 175, 20, 350, 250, container);
 		mainHeader.setAutoAdjust(false);
 		mainHeader.setCellText(Pong.TITLE);
 		mainHeader.setClickable(false);
 		
+		// Local Header
+		createProfileHeader = new Cell(Pong.FONT, 50, Pong.S_resX/2 - 50, 250, 100, 50, container);
+		createProfileHeader.setFontColor(Color.cyan);
+		createProfileHeader.setAutoAdjust(false);
+		createProfileHeader.setCellText("Create new Profile");
+		createProfileHeader.setClickable(false);
+		
+		// Textfield
+		profileCreation = new TextField(container, FontHelper.newFont(Pong.FONT, 75, false, false), Pong.S_resX/2 - 125, 320, 250, 38,new ComponentListener() {
+			public void componentActivated(AbstractComponent source) {
+				System.out.println(profileCreation.getText());
+			}
+		});
+		
 		// Boxes
 		profileInfos = new Box(2, PROFILE_DESC_DATA.length, OFFSET_X, Pong.S_resY/2 - 150, Pong.FONT, 40, 300, 25, container);
-		profileInfos.setHeaderTitle("Profiles:" + " " + "Kevin");
+		profileInfos.setHeaderTitle("Profile:" + " " + Pong.S_profiles.get(Pong.S_activeProfile).getProfileName());
+		profileInfos.getHeader().setFontColor(Color.cyan);
 		profileInfos.getHeader().setLeft();
 		profileInfos.setHeaderEdging(false);
 		profileInfos.setHeaderActive(true);
@@ -83,6 +99,9 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileInfos.setFocus(false);
 		profileInfos.setClickable(false);
 		profileInfos.setColumnTitles(0, PROFILE_DESC_DATA);
+		for(int i = 0;i < profileInfos.getCells().get(1).size();i++){
+			profileInfos.getCells().get(1).get(i).setCellText(Integer.toString(Pong.S_statisticsData.get(Pong.STATISTICS_KEYS[i])));
+		}
 		
 		profileAchievements = new Box(1, PROFILE_DESC_ACHIEVEMENTS.length, OFFSET_X + (int)(profileInfos.getBoxWidth() * profileInfos.getBoxCellWidth()), Pong.S_resY/2 - 150, Pong.FONT, 40, 375, 25, container);
 		profileAchievements.setHeaderTitle("Achievements");
@@ -97,7 +116,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileAchievements.setColumnTitles(0, PROFILE_DESC_ACHIEVEMENTS);
 		
 		profileOptions = new Box(5, 1, Pong.S_resX/2 - 375, Pong.S_resY/2 + 200, Pong.FONT, 50, 150, 50, container);
-		//profileOptions.setBoxLeft();
 		profileOptions.setAllAutoAdjust(true);
 		profileOptions.setEdged(false);
 		profileOptions.setKeyInput(true);
@@ -114,13 +132,14 @@ public class Profiles extends BasicGameState implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		mainHeader.drawCell();
 		if(pState == ProfileState.Show){
-			mainHeader.drawCell();
 			profileInfos.render();
 			profileAchievements.render();
 			profileOptions.render();
 		}else if(pState == ProfileState.Create){
-			
+			createProfileHeader.drawCell();
+			profileCreation.render(container, g);
 		}else if(pState == ProfileState.Delete){
 			
 		}else if(pState == ProfileState.Load){
@@ -180,7 +199,8 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	public void componentActivated(AbstractComponent source) {
 		if(pState == ProfileState.Show){
 			if(source.getActionCommand().equals(PROFILE_OPTIONS[0])){
-
+				pState = ProfileState.Create;
+				profileCreation.setFocus(true);
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
 				
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[2])){
