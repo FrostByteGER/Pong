@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Config>
-    <configname>config</configname>
-    <configpath>data//config.xml</configpath>
+    <configName>config</configName>
+    <configPath>data//config.xml</configPath>
     <options>
         <entry>
             <key>resX</key>
-            <value>800</value>
+            <value>1024</value>
         </entry>
         <entry>
             <key>resY</key>
-            <value>600</value>
+            <value>768</value>
         </entry>
         <entry>
             <key>volume</key>
@@ -21,11 +21,11 @@
         </entry>
         <entry>
             <key>debug</key>
-            <value>true</value>
+            <value>false</value>
         </entry>
         <entry>
             <key>show_fps</key>
-            <value>true</value>
+            <value>false</value>
         </entry>
     </options>
 </Config>

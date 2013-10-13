@@ -71,8 +71,8 @@ public class Game extends BasicGameState {
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
 
-		arrow_left = new Image("data/arrow_left.png");
-		arrow_right = new Image("data/arrow_right.png");
+		//arrow_left = new Image("data/arrow_left.png");
+		//arrow_right = new Image("data/arrow_right.png");
 		lastcollision = Border.NONE;
 		lastpadcollision = Border.NONE;
 		//currentgamestate = GameState.Play;

@@ -16,22 +16,21 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "Config")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"configname", "configpath", "options"})
+@XmlType(propOrder = {"configName", "configPath", "options"})
 public class ConfigHelper {
 	
 	private LinkedHashMap<String, String> options = new LinkedHashMap<>();
 	
-	private String configpath; 
-	private String configname = "config";
+	private String configPath; 
+	private String configName = "config";
 	
 	@XmlTransient
-	private String fileextension = ".xml";
+	private String fileExtension = ".xml";
 	
 	/**
 	 * Used by JAXB to instantiate an object of the class when unmarshalling.
 	 */
-	@SuppressWarnings("unused")
-	private ConfigHelper(){
+	public ConfigHelper(){
 	}
 	
 	/**
@@ -40,8 +39,8 @@ public class ConfigHelper {
 	 * @param name
 	 */
 	public ConfigHelper(String path, String name){
-		this.configpath = path + name + fileextension;
-		this.configname = name;
+		this.configPath = path + name + fileExtension;
+		this.configName = name;
 	}
 	
 	/**
@@ -51,38 +50,28 @@ public class ConfigHelper {
 	 * @param extension
 	 */
 	public ConfigHelper(String path, String name, String extension){
-		this.configpath = path + name + extension;
-		this.configname = name;
-		this.fileextension = extension;
+		this.configPath = path + name + extension;
+		this.configName = name;
+		this.fileExtension = extension;
 	}
 	
 	/**
 	 * 
 	 * @return
+	 * @throws JAXBException 
 	 */
-	public boolean createConfigFile(){
-		try {
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.marshal(this, new File(configpath));
-			return true;
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			return false;
-		}
+	public void createConfigFile() throws JAXBException{
+		JAXBContext context = JAXBContext.newInstance(this.getClass());
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		m.marshal(this, new File(configPath));
 	}
 	
-	public ConfigHelper loadConfigFile() throws FileNotFoundException{
-		try {
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			//Specified class acces to prevent confusion with other classes
-			javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
-			return (ConfigHelper) um.unmarshal(new FileReader(configpath));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public ConfigHelper loadConfigFile() throws FileNotFoundException, JAXBException{
+		JAXBContext context = JAXBContext.newInstance(this.getClass());
+		//Specified class acces to prevent confusion with other classes
+		javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
+		return (ConfigHelper) um.unmarshal(new FileReader(configPath));
 	}
 
 	/**
@@ -100,45 +89,45 @@ public class ConfigHelper {
 	}
 
 	/**
-	 * @return the configpath
+	 * @return the configPath
 	 */
 	public String getConfigpath() {
-		return configpath;
+		return configPath;
 	}
 
 	/**
-	 * @param configpath the configpath to set
+	 * @param configPath the configPath to set
 	 */
 	public void setConfigpath(String configpath) {
-		this.configpath = configpath;
+		this.configPath = configpath + configName + fileExtension;
 	}
 
 	/**
-	 * @return the configname
+	 * @return the configName
 	 */
 	public String getConfigname() {
-		return configname;
+		return configName;
 	}
 
 	/**
-	 * @param configname the configname to set
+	 * @param configName the configName to set
 	 */
 	public void setConfigname(String configname) {
-		this.configname = configname;
+		this.configName = configname;
 	}
 
 	/**
 	 * @return the fileextension
 	 */
 	public String getFileextension() {
-		return fileextension;
+		return fileExtension;
 	}
 
 	/**
 	 * @param fileextension the fileextension to set
 	 */
 	public void setFileextension(String fileextension) {
-		this.fileextension = fileextension;
+		this.fileExtension = fileextension;
 	}
 
 }

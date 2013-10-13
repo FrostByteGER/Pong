@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedHashMap;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -22,21 +24,22 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "Profile")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"profilename", "profilepath", "profileData","profileAchievements"})
+@XmlType(propOrder = {"profileName", "profilePath", "profileData","profileAchievements"})
 public class ProfileHelper{
 	
-	private LinkedHashMap<String, String> profileData        = new LinkedHashMap<>();
+	private LinkedHashMap<String, String> profileData          = new LinkedHashMap<>();
 	private LinkedHashMap<String, String> profileAchievements = new LinkedHashMap<>();
 	
-	private String profilepath; 
-	private String profilename = "standard";
-	private String fileextension = ".xml";
+	private String profilePath; 
+	private String profileName = "standard";
+	
+	@XmlTransient
+	private String fileExtension = ".xml";
 	
 	/**
 	 * Used by JAXB to instantiate an object of the class when unmarshalling.
 	 */
-	@SuppressWarnings("unused")
-	private ProfileHelper(){
+	public ProfileHelper(){
 	}
 	
 	/**
@@ -45,8 +48,8 @@ public class ProfileHelper{
 	 * @param name the name of the xml file
 	 */
 	public ProfileHelper(String path, String name) {
-		this.profilepath = path;
-		this.profilename = name;
+		this.profilePath = path + name + fileExtension;
+		this.profileName = name;
 	}
 	
 	/**
@@ -56,8 +59,8 @@ public class ProfileHelper{
 	 * @param data the LinkedHashMap with profiledata
 	 */
 	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data) {
-		this.profilepath = path;
-		this.profilename = name;
+		this.profilePath = path + name + fileExtension;
+		this.profileName = name;
 		this.profileData = data;
 	}
 	
@@ -69,8 +72,8 @@ public class ProfileHelper{
 	 * @param achievements the LinkedHashMap with profileachievements
 	 */
 	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data,LinkedHashMap<String, String> achievements) {
-		this.profilepath = path;
-		this.profilename = name;
+		this.profilePath = path + name + fileExtension;
+		this.profileName = name;
 		this.profileData = data;
 		this.profileAchievements = achievements;
 	}
@@ -81,20 +84,17 @@ public class ProfileHelper{
 	 * 
 	 * @return returns true if file was created successfully. 
 	 * If false, the file already existed or the user had no write permission
+	 * @throws JAXBException 
 	 */
-	public boolean createProfile(){
-		File checkfile = new File(profilepath);
+	public boolean createProfile() throws JAXBException{
+		File checkfile = new File(profilePath);
 		if(checkfile.exists()){
 			return false;
 		}else{
-			try {
-				JAXBContext context = JAXBContext.newInstance(this.getClass());
-				Marshaller m = context.createMarshaller();
-				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-				m.marshal(this, checkfile);
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
+			JAXBContext context = JAXBContext.newInstance(this.getClass());
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			m.marshal(this, checkfile);
 			return true;
 		}
 	}
@@ -109,20 +109,17 @@ public class ProfileHelper{
 	 * @param override If set to true, the method will not check if the file already existed
 	 * @return returns true if file was created successfully. If false, the file already existed or the 
 	 * user had no write permission
+	 * @throws JAXBException 
 	 */
-	public boolean createProfile(boolean override){
-		File checkfile = new File(profilepath);
+	public boolean createProfile(boolean override) throws JAXBException{
+		File checkfile = new File(profilePath);
 		if(override == false && checkfile.exists() == true){
 			return false;
 		}else{
-			try {
-				JAXBContext context = JAXBContext.newInstance(this.getClass());
-				Marshaller m = context.createMarshaller();
-				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-				m.marshal(this, checkfile);
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
+			JAXBContext context = JAXBContext.newInstance(this.getClass());
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			m.marshal(this, checkfile);
 			return true;
 		}
 	}
@@ -132,28 +129,25 @@ public class ProfileHelper{
 	 * This method creates a new profile.xml with the given path. It only creates a new file, 
 	 * if there's no file with the same name. If so, the program returns false.
 	 * <p>The filename is structured like the following<p>
-	 * Structure: profilepath + profilename + .xml<p>
+	 * Structure: profilePath + profileName + .xml<p>
 	 * Example:   D:\\saves\  + standard    + .xml
 	 * 
-	 * @param profilepath a specified profilepath instead of class field. 
-	 * @param profilename a specified profilename instead of class field. The file will be 
+	 * @param profilePath a specified profilePath instead of class field. 
+	 * @param profileName a specified profileName instead of class field. The file will be 
 	 * named after this parameter 
 	 * @return returns true if file was created successfully. If false, the file already 
 	 * existed or the user had no write permission
+	 * @throws JAXBException 
 	 */
-	public boolean createProfile(String profilepath, String profilename){
-		File checkfile = new File(profilepath + profilename + fileextension);
+	public boolean createProfile(String profilepath, String profilename) throws JAXBException{
+		File checkfile = new File(profilepath + profilename + fileExtension);
 		if(checkfile.exists()){
 			return false;
 		}else{
-			try {
-				JAXBContext context = JAXBContext.newInstance(this.getClass());
-				Marshaller m = context.createMarshaller();
-				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-				m.marshal(this, checkfile);
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
+			JAXBContext context = JAXBContext.newInstance(this.getClass());
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			m.marshal(this, checkfile);
 			return true;
 		}
 	}
@@ -167,28 +161,25 @@ public class ProfileHelper{
 	 * or any other program.
 	 * 
 	 * <p>The filename is structured like the following<p>
-	 * Structure: profilepath + profilename + .xml<p>
+	 * Structure: profilePath + profileName + .xml<p>
 	 * Example:   D:\\saves\  + standard    + .xml
 	 * 
-	 * @param profilepath a specified profilepath instead of class field. 
-	 * @param profilename a specified profilename instead of class field.
+	 * @param profilePath a specified profilePath instead of class field. 
+	 * @param profileName a specified profileName instead of class field.
 	 * @param override If set to true, the method will not check if the file already existed
 	 * @return returns true if file was created successfully. 
 	 * If false, the file already existed or the user had no write permission
+	 * @throws JAXBException 
 	 */
-	public boolean createProfile(String profilepath, String profilename, boolean override){
-		File checkfile = new File(profilepath + profilename + fileextension);
+	public boolean createProfile(String profilepath, String profilename, boolean override) throws JAXBException{
+		File checkfile = new File(profilepath);
 		if(override == false && checkfile.exists()){
 			return false;
 		}else{
-			try {
-				JAXBContext context = JAXBContext.newInstance(this.getClass());
-				Marshaller m = context.createMarshaller();
-				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-				m.marshal(this, checkfile);
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
+			JAXBContext context = JAXBContext.newInstance(this.getClass());
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			m.marshal(this, checkfile);
 			return true;
 		}
 	}
@@ -199,38 +190,45 @@ public class ProfileHelper{
 	 * If the file was not found or any other interruptions occured, 
 	 * the method will return null
 	 */
-	public ProfileHelper loadProfile(){
-		try {
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			//Specified class acces to prevent confusion with other classes
-			javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
-			return (ProfileHelper) um.unmarshal(new FileReader(profilepath));
-		} catch (JAXBException | FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public ProfileHelper loadProfile() throws JAXBException, FileNotFoundException{
+		JAXBContext context = JAXBContext.newInstance(this.getClass());
+		//Specified class acces to prevent confusion with other classes
+		javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
+		return (ProfileHelper) um.unmarshal(new FileReader(profilePath));
 
 	}
 	
 	/**
 	 * This method loads a specific profile and returns the loaded object.
-	 * @param profilepath a specified profilepath instead of class field. 
-	 * @param profilename a specified profilename instead of class field.
+	 * @param profilePath a specified profilePath instead of class field. 
+	 * @param profileName a specified profileName instead of class field.
 	 * @return Returns the stored instance of a ProfileHelper object. 
 	 * If the file was not found or any other interruptions occured, 
 	 * the method will return null
 	 */
-	public ProfileHelper loadProfile(String profilepath, String profilename){
+	public ProfileHelper loadProfile(String profilepath, String profilename) throws JAXBException, FileNotFoundException{
 		JAXBContext context;
-		try {
-			context = JAXBContext.newInstance(this.getClass());
-			//Specified class access to prevent confusion with other classes
-			javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
-			return (ProfileHelper) um.unmarshal(new FileReader(profilepath + profilename + fileextension));
-		} catch (JAXBException | FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+		context = JAXBContext.newInstance(this.getClass());
+		//Specified class access to prevent confusion with other classes
+		javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
+		return (ProfileHelper) um.unmarshal(new FileReader(profilepath + profilename + fileExtension));
+
+
+	}
+	
+	/**
+	 * This method loads a specific profile and returns the loaded object.
+	 * @param profilePath a specified profilePath instead of class field. 
+	 * @return Returns the stored instance of a ProfileHelper object. 
+	 * @throws JAXBException 
+	 * @throws FileNotFoundException 
+	 */
+	public ProfileHelper loadProfile(String profilepath) throws JAXBException, FileNotFoundException{
+		JAXBContext context;
+		context = JAXBContext.newInstance(this.getClass());
+		//Specified class access to prevent confusion with other classes
+		javax.xml.bind.Unmarshaller um = context.createUnmarshaller(); 
+		return (ProfileHelper) um.unmarshal(new FileReader(profilepath));
 
 	}
 	
@@ -240,7 +238,7 @@ public class ProfileHelper{
 	 * otherwise it will return false
 	 */
 	public boolean deleteProfile(){
-		File file = new File(profilepath + profilename + fileextension);
+		File file = new File(profilePath + profileName + fileExtension);
 		boolean check = file.delete();
 		if(check){
 			return true;			
@@ -252,7 +250,7 @@ public class ProfileHelper{
 	
 	/**
 	 * Deletes a specific profile
-	 * @param profilePath the profilepath to the profile
+	 * @param profilePath the profilePath to the profile
 	 * @return true if the file has been successfully deleted,
 	 * otherwise it will return false
 	 */
@@ -276,7 +274,7 @@ public class ProfileHelper{
 	/**
 	 * @param profileData the profiledata to set
 	 */
-	public void setProfileinfos(LinkedHashMap<String, String> profileData) {
+	public void setProfileInfos(LinkedHashMap<String, String> profileData) {
 		this.profileData = profileData;
 	}
 
@@ -296,45 +294,45 @@ public class ProfileHelper{
 	}
 
 	/**
-	 * @return the profilepath
+	 * @return the profilePath
 	 */
-	public String getProfilepath() {
-		return profilepath;
+	public String getProfilePath() {
+		return profilePath;
 	}
 
 	/**
-	 * @param profilepath the profilepath to set
+	 * @param profilePath the profilePath to set
 	 */
-	public void setProfilepath(String profilepath) {
-		this.profilepath = profilepath;
+	public void setProfilePath(String profilepath) {
+		this.profilePath = profilepath + profileName + fileExtension;
 	}
 
 	/**
-	 * @return the profilename
+	 * @return the profileName
 	 */
-	public String getProfilename() {
-		return profilename;
+	public String getProfileName() {
+		return profileName;
 	}
 
 	/**
-	 * @param profilename the profilename to set
+	 * @param profileName the profileName to set
 	 */
-	public void setProfilename(String profilename) {
-		this.profilename = profilename;
+	public void setProfileName(String profilename) {
+		this.profileName = profilename;
 	}
 
 	/**
-	 * @return the fileextension
+	 * @return the fileExtension
 	 */
 	public String getFileExtension() {
-		return fileextension;
+		return fileExtension;
 	}
 
 	/**
-	 * @param fileextension the fileextension to set
+	 * @param fileExtension the fileExtension to set
 	 */
 	public void setFileExtension(String filextension) {
-		this.fileextension = filextension;
+		this.fileExtension = filextension;
 	}
 
 }

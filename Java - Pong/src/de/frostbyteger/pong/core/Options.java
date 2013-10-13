@@ -5,6 +5,8 @@ package de.frostbyteger.pong.core;
 
 import java.util.LinkedHashMap;
 
+import javax.xml.bind.JAXBException;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -460,8 +462,8 @@ public class Options extends BasicGameState implements ComponentListener{
 					MainMenu.ch.setOptions(options);
 					MainMenu.ch.createConfigFile();
 					savebool = true;
-				}catch(NumberFormatException nfe){
-					nfe.printStackTrace();
+				}catch(NumberFormatException | JAXBException nfe){
+					nfe.printStackTrace(); //TODO: Change to message to gamescreen
 				}
 				try {
 					Pong.S_container.setDisplayMode(Pong.S_resX, Pong.S_resY, false);

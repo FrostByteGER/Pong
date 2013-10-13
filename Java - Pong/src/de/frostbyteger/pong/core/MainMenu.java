@@ -29,7 +29,7 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	protected static final int ID = 001;
 	
 	private final String[] COMMANDS   = {"game","lan","options","profile","exit"};
-	private final String[] MENU_ARRAY = {"New Game", "LAN-Mode", "Options", "Profile", "Quit Game"};
+	private final String[] MENU_ARRAY = {"New Game", "LAN-Mode", "Options", "Profiles", "Quit Game"};
 	
 	private StateBasedGame game;
 	
@@ -110,7 +110,7 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 			game.enterState(Options.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 		}else if(source.getActionCommand().equals(COMMANDS[3])){
 			menuBox.setBoxKeyCoordinates(new int[] {1,1});	
-			game.enterState(Profile.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+			game.enterState(Profiles.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 		}else if(source.getActionCommand().equals(COMMANDS[4])){
 			Pong.S_container.exit();
 		}

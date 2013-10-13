@@ -5,7 +5,7 @@ package de.frostbyteger.pong.engine;
 
 /**
  * @author Kevin
- *
+ * @version 1.00
  */
 public class Achievement {
 
@@ -61,6 +61,10 @@ public class Achievement {
 		this.achievementDescription = description;
 		this.unlocked = unlocked;
 		this.active = active;
+	}
+	
+	public void showUnlockMessage(){
+		
 	}
 
 	/**

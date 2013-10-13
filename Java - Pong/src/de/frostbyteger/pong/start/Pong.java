@@ -1,9 +1,11 @@
 package de.frostbyteger.pong.start;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 
 import javax.swing.JOptionPane;
+import javax.xml.bind.JAXBException;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -14,7 +16,9 @@ import de.frostbyteger.pong.core.Game;
 import de.frostbyteger.pong.core.Lan;
 import de.frostbyteger.pong.core.MainMenu;
 import de.frostbyteger.pong.core.Options;
-import de.frostbyteger.pong.core.Profile;
+import de.frostbyteger.pong.core.Profiles;
+import de.frostbyteger.pong.engine.Achievement;
+import de.frostbyteger.pong.engine.Profile;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
 import de.frostbyteger.pong.engine.io.MD5Loader;
 
@@ -27,21 +31,50 @@ public class Pong extends StateBasedGame{
 	public static boolean S_showFPS = true;
 	public static final int FPS     = 60;
 	
+	// Profiles Data
+	public static LinkedHashMap<String, Profile> S_profiles = new LinkedHashMap<String,Profile>();
+	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(12);
+	public static LinkedHashMap<String, String> S_achievementData;
+	public final String[] STATISTICS_KEYS = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
+											 "timePlayedChallenge","matchesPlayedOverall",
+											 "matchesPlayedCPU","matchesPlayedLAN",
+											 "matchesPlayedChallenge","matchesWonOverall",
+											 "matchesWonCPU","matchesWonLAN","matchesWonChallenge"};
+	
+	// Statistics Data
+	public static int S_timePlayedOverall      = 0;
+	public static int S_timePlayedCPU          = 0;	
+	public static int S_timePlayedLAN          = 0;	
+	public static int S_timePlayedChallenge    = 0;	
+	public static int S_matchesPlayedOverall   = 0;	
+	public static int S_matchesPlayedCPU       = 0;
+	public static int S_matchesPlayedLAN       = 0;
+	public static int S_matchesPlayedChallenge = 0;
+	public static int S_matchesWonOverall      = 0;
+	public static int S_matchesWonCPU          = 0;
+	public static int S_matchesWonLAN          = 0;
+	public static int S_matchesWonChallenge    = 0;
+	
+	//Achievement Data
+	public static Achievement test;
+	
 	// Version info
 	public static final String TITLE          = "Pong";
-	public static final String VERSION        = "v1.31";
+	public static final String VERSION        = "v1.32";
 	public static final String VERSION_STATUS = "INTERNAL";
 	
 	// MD5 checksums
 	private static final String MD5_FONT  = "d060b8b0afa1753bf21d5fa3d3b14493";
-	private static final String MD5_LEFT  = "42a88f1b4fa5de64c17bb8f8ca300234";
-	private static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
+	//private static final String MD5_LEFT  = "42a88f1b4fa5de64c17bb8f8ca300234";
+	//private static final String MD5_RIGHT = "1c5d1ecec440191de3b71f080f93eb51";
 	
 	// Additional
 	public static final String FONT = "data/alexis.ttf";
 	
 	public static AppGameContainer S_container;
-	public static ConfigHelper ch = new ConfigHelper("data/", "config",".xml");
+	//public static ProfileHelper S_profileHelper = new ProfileHelper();
+	public static ConfigHelper S_configHelper = new ConfigHelper("data/", "config",".xml");
+	
 
 	public Pong(String name) {
 		super(name);
@@ -53,21 +86,27 @@ public class Pong extends StateBasedGame{
 		addState(new Options());
 		addState(new Lan());
 		addState(new Game());
-		addState(new Profile());
-		
+		addState(new Profiles());		
 	}
 	
 	//TODO: Find better try/catch and if algorithm
+	/**
+	 * Inits games subroutines. Checks if all
+	 * files are existing and loads config-file
+	 * and the profiles. It also creates a standard-configfile
+	 * and/or standard-profile if the config file does not exist
+	 * and/or no valid profile is found.
+	 * @return returns an errorcode if something went wrong
+	 */
 	private int initGameSubRoutines(){
 		MD5Loader md5 = new MD5Loader("data/Alexis.ttf");
 		try{
-
 			md5.createChecksum();
-			if(md5.getChecksum().equals(MD5_FONT)){
-			}else{
+			if(!md5.getChecksum().equals(MD5_FONT)){
 				JOptionPane.showMessageDialog(null,"File" + " data/Alexis.ttf" + " is corrupt. \n\nGame exits!");
 				return -1;
 			}
+			/*
 			md5.setFilename("data/arrow_left.png");
 			md5.createChecksum();
 			if(md5.getChecksum().equals(MD5_LEFT)){
@@ -82,20 +121,21 @@ public class Pong extends StateBasedGame{
 				JOptionPane.showMessageDialog(null,"File" + " data/arrow_right.png" + " is corrupt. \n\nGame exits!");
 				return -1;
 			}
+			*/
 		}catch(Exception e){
 			JOptionPane.showMessageDialog(null,e.toString() + "\n\nGame exits!");
 			return -1;
 		}
 		
 		try{
-			ConfigHelper ch2 = ch.loadConfigFile();
+			ConfigHelper ch2 = S_configHelper.loadConfigFile();
 			Pong.S_resX = Integer.parseInt(ch2.getOptions().get("resX"));
 			Pong.S_resY = Integer.parseInt(ch2.getOptions().get("resY"));
 			S_container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
 			S_container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
 			Pong.S_debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
 			Pong.S_showFPS = Boolean.parseBoolean(ch2.getOptions().get("show_fps"));
-		}catch(FileNotFoundException fnfe){
+		}catch(FileNotFoundException | JAXBException e){
 			//Creating a config-file with standard values
 			LinkedHashMap<String, String> options = new LinkedHashMap<>();
 			options.put("resX", Integer.toString(Pong.S_resX));
@@ -103,8 +143,63 @@ public class Pong extends StateBasedGame{
 			options.put("volume", Float.toString(1.0f));
 			options.put("vol_on", Boolean.toString(true));
 			options.put("show_fps", Boolean.toString(false));
-			ch.setOptions(options);
-			ch.createConfigFile();
+			S_configHelper.setOptions(options);
+			try {
+				S_configHelper.createConfigFile();
+			} catch (JAXBException jaxbe) {
+				JOptionPane.showMessageDialog(null,jaxbe.toString() + "\n\nGame exits!");
+				return -1;
+			}
+		}		
+		S_statisticsData.put(STATISTICS_KEYS[0], S_timePlayedOverall);
+		S_statisticsData.put(STATISTICS_KEYS[1], S_timePlayedCPU);
+		S_statisticsData.put(STATISTICS_KEYS[2], S_timePlayedLAN);
+		S_statisticsData.put(STATISTICS_KEYS[3], S_timePlayedChallenge);
+		S_statisticsData.put(STATISTICS_KEYS[4], S_matchesPlayedOverall);
+		S_statisticsData.put(STATISTICS_KEYS[5], S_matchesPlayedCPU);
+		S_statisticsData.put(STATISTICS_KEYS[6], S_matchesPlayedLAN);
+		S_statisticsData.put(STATISTICS_KEYS[7], S_matchesPlayedChallenge);
+		S_statisticsData.put(STATISTICS_KEYS[8], S_matchesWonOverall);
+		S_statisticsData.put(STATISTICS_KEYS[9], S_matchesWonCPU);
+		S_statisticsData.put(STATISTICS_KEYS[10], S_matchesWonLAN);
+		S_statisticsData.put(STATISTICS_KEYS[11], S_matchesWonChallenge);
+		
+		try{ 
+			File f = new File("profiles");
+			if(f.exists()){
+				if(f.length() <= 0){
+					Profile standard = new Profile();
+					standard.setProfilePath("profiles/");
+					LinkedHashMap<String, String> temp = new LinkedHashMap<>(12);
+					for(int i = 0;i < S_statisticsData.size();i++){
+						temp.put(STATISTICS_KEYS[i], Integer.toString(S_statisticsData.get(STATISTICS_KEYS[i])));
+					}
+					standard.setProfileInfos(temp);
+					standard.createProfile(true);
+					temp = null;
+					S_profiles.put("standard", standard);
+				}else{
+					File[] temp = f.listFiles();
+					for(int i = 0;i < temp.length;i++){
+						String name = temp[i].getName();
+						int pos = name.lastIndexOf(".");
+						if (pos > 0) {
+						    name = name.substring(0, pos);
+						}
+						Profile tempP = new Profile("profiles/", name);
+						tempP.load();
+						S_profiles.put(tempP.getProfileName(), tempP);
+					}
+				}
+			}else{
+				f.mkdir();
+			}
+		}catch(JAXBException e){ //TODO: Change catch clause, so one corrupt profile won't kill the program
+			JOptionPane.showMessageDialog(null,e.toString() + "\n\nGame exits!");
+			return -1;
+		}catch(FileNotFoundException fnfe){
+			JOptionPane.showMessageDialog(null,fnfe.toString() + "\n\nGame exits!");
+			return -1;
 		}
 		return 0;
 	}
