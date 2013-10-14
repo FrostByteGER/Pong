@@ -49,7 +49,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 														"Matches won in Challenge-Mode:"};
 	private final int OFFSET_X = 25;
 	
-	private ProfileState pState = ProfileState.Show; //TODO: Change to none
+	private ProfileState pState = ProfileState.Show;
 	
 	private Profile saveProfile = null;
 		
@@ -205,7 +205,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			profileOptionText.drawCell();
 			profileDeleter.render();
 		}else if(pState == ProfileState.Load){
-			profileOptionHeader.drawCell(); //TODO: Add loading functionality
+			profileOptionHeader.drawCell();
 			profileOptionText.drawCell();
 			profileChooser.render();
 		}
@@ -456,8 +456,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
 				return;
 			}
-		}else if(pState == ProfileState.None){
-			
 		}
 	}
 	

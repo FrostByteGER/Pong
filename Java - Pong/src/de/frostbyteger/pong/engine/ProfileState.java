@@ -8,5 +8,5 @@ package de.frostbyteger.pong.engine;
  *
  */
 public enum ProfileState {
-	Load, Create, Delete, Show, None
+	Load, Create, Delete, Show
 }
