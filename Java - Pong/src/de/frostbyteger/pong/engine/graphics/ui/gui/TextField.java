@@ -75,6 +75,8 @@ public class TextField extends AbstractComponent {
 	/** True if events should be consumed by the field */
 	private boolean consume = true;
 	
+	private boolean allowWhitespaces = true;
+	
 	/**
 	 * Create a new text field
 	 * 
@@ -393,6 +395,9 @@ public class TextField extends AbstractComponent {
 				if (input.isKeyDown(Input.KEY_LALT) || input.isKeyDown(Input.KEY_RALT)) {
 					return;
 				}
+				if(input.isKeyDown(Input.KEY_SPACE) && !allowWhitespaces){
+					return;
+				}
 			}
 			
 			if (lastKey != key) {
@@ -471,5 +476,19 @@ public class TextField extends AbstractComponent {
 		lastKey = -1;
 		
 		super.setFocus(focus);
+	}
+
+	/**
+	 * @return the allowWhitespaces
+	 */
+	public boolean isAllowWhitespaces() {
+		return allowWhitespaces;
+	}
+
+	/**
+	 * @param allowWhitespaces the allowWhitespaces to set
+	 */
+	public void setAllowWhitespaces(boolean allowWhitespaces) {
+		this.allowWhitespaces = allowWhitespaces;
 	}
 }

@@ -190,7 +190,7 @@ public class ProfileHelper{
 	 * otherwise it will return false
 	 */
 	public boolean deleteProfile(){
-		File file = new File(profilePath + profileName + fileExtension);
+		File file = new File(profilePath);
 		boolean check = file.delete();
 		if(check){
 			return true;			

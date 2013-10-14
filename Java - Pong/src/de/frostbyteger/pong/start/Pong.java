@@ -62,7 +62,7 @@ public class Pong extends StateBasedGame{
 	
 	// Version info
 	public static final String TITLE          = "Pong";
-	public static final String VERSION        = "v1.32";
+	public static final String VERSION        = "v1.34";
 	public static final String VERSION_STATUS = "INTERNAL";
 	
 	// MD5 checksums
@@ -74,7 +74,6 @@ public class Pong extends StateBasedGame{
 	public static final String FONT = "data/alexis.ttf";
 	
 	public static AppGameContainer S_container;
-	//public static ProfileHelper S_profileHelper = new ProfileHelper();
 	public static ConfigHelper S_configHelper = new ConfigHelper("data/", "config",".xml");
 	
 
@@ -151,7 +150,7 @@ public class Pong extends StateBasedGame{
 			try {
 				S_configHelper.createConfigFile();
 			} catch (JAXBException jaxbe) {
-				JOptionPane.showMessageDialog(null,jaxbe.toString() + "\n\nGame exits!");
+				JOptionPane.showMessageDialog(null,jaxbe.toString() + "\n\nThe game encountered a serious Error. Game exits!");
 				return -1;
 			}
 		}		
@@ -208,7 +207,11 @@ public class Pong extends StateBasedGame{
 			}
 		}catch(NullPointerException npe){
 			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, loading standardprofile");
-			S_activeProfile = "standard";
+			if(S_profiles.get("standard") == null){
+				createStandardProfile();
+			}else{
+				S_activeProfile = "standard";
+			}
 			Profile profile = S_profiles.get(S_activeProfile);
 			for(int i = 0;i < S_statisticsData.size();i++){
 				S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));

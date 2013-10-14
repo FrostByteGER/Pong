@@ -53,16 +53,8 @@ public class Profile extends ProfileHelper{
 		this.setProfileAchievements(helper.getProfileAchievements());
 	}
 	
-	public void save() throws JAXBException{
-		this.create();
-	}
-	
 	public void delete(){
-	}
-	
-	@Override
-	protected void finalize(){
-		
+		this.deleteProfile();
 	}
 
 }

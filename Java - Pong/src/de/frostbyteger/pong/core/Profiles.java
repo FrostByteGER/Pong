@@ -3,6 +3,8 @@
  */
 package de.frostbyteger.pong.core;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import javax.swing.JOptionPane;
@@ -38,7 +40,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	
 	private StateBasedGame game;
 	
-	private final String[] PROFILE_OPTIONS           = {"new","save","delete","change\nprofile","back"};
+	private final String[] PROFILE_OPTIONS           = {"new","delete","change\nprofile","back"};
 	private final String[] PROFILE_DESC_ACHIEVEMENTS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER"};
 	private final String[] PROFILE_DESC_DATA         = {"Time played:","Time played in CPU-Mode:","Time played in LAN-Mode:",
 														"Time played in Challenge-Mode:","Matches played:","Matches played in CPU-Mode:",
@@ -61,8 +63,8 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	private Box profileOptions;
 	
 	private Cell mainHeader;
-	private Cell createProfileHeader;
-	private Cell createText;
+	private Cell profileOptionHeader;
+	private Cell profileOptionText;
 	
 	private boolean overwriteCheck = true;
 	private int saveTimer = -1;
@@ -85,21 +87,22 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		mainHeader.setClickable(false);
 		
 		// Local Header
-		createProfileHeader = new Cell(Pong.FONT, 50, Pong.S_resX/2 - 50, 250, 100, 50, container);
-		createProfileHeader.setFontColor(Color.cyan);
-		createProfileHeader.setAutoAdjust(false);
-		createProfileHeader.setCellText("Create new Profile");
-		createProfileHeader.setClickable(false);
+		profileOptionHeader = new Cell(Pong.FONT, 50, Pong.S_resX/2 - 50, 250, 100, 50, container);
+		profileOptionHeader.setFontColor(Color.cyan);
+		profileOptionHeader.setAutoAdjust(false);
+		profileOptionHeader.setCellText("Create new Profile");
+		profileOptionHeader.setClickable(false);
 		
-		createText = new Cell(Pong.FONT, 30, Pong.S_resX/2 - 50, 300, 100, 50, container);
-		createText.setCentered();
-		createText.setAutoAdjust(false);
-		createText.setCellText("Please enter a profilename\nand press ENTER to confirm");
-		createText.setClickable(false);
+		profileOptionText = new Cell(Pong.FONT, 30, Pong.S_resX/2 - 50, 300, 100, 50, container);
+		profileOptionText.setCentered();
+		profileOptionText.setAutoAdjust(false);
+		profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+		profileOptionText.setClickable(false);
 		
 		// Textfield
-		profileCreation = new TextField(container, FontHelper.newFont(Pong.FONT, 75, false, false), Pong.S_resX/2 - 125, 370, 250, 38, this);
+		profileCreation = new TextField(container, FontHelper.newFont(Pong.FONT, 75, false, false), Pong.S_resX/2 - 200, 370, 400, 38, this);
 		profileCreation.setActionCommand("enter");
+		profileCreation.setAllowWhitespaces(false);
 		
 		// Boxes
 		profileInfos = new Box(2, PROFILE_DESC_DATA.length, OFFSET_X, Pong.S_resY/2 - 150, Pong.FONT, 40, 300, 25, container);
@@ -130,12 +133,12 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileAchievements.setClickable(false);
 		profileAchievements.setColumnTitles(0, PROFILE_DESC_ACHIEVEMENTS);
 		
-		profileOptions = new Box(5, 1, Pong.S_resX/2 - 375, Pong.S_resY/2 + 200, Pong.FONT, 50, 150, 50, container);
+		profileOptions = new Box(PROFILE_OPTIONS.length, 1, Pong.S_resX/2 - (PROFILE_OPTIONS.length*150)/2, Pong.S_resY/2 + 200, Pong.FONT, 50, 150, 50, container);
 		profileOptions.setAllAutoAdjust(true);
 		profileOptions.setEdged(false);
 		profileOptions.setKeyInput(true);
 		profileOptions.setFocus(true);
-		profileOptions.setBoxKeyCoordinates(new int[] {1,1});
+		profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
 		for(int i = 0; i < profileOptions.getCells().size();i++){
 			for(int j = 0; j < profileOptions.getCells().get(i).size();j++){
 				profileOptions.getCells().get(i).get(0).setCellText(PROFILE_OPTIONS[i]);
@@ -143,6 +146,33 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			}
 		}
 		profileOptions.addBoxListener(this);
+		
+		profileDeleter = new Box(2, 1, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 100, 50, container);
+		profileDeleter.setAllAutoAdjust(true);
+		profileDeleter.setEdged(true);
+		profileDeleter.setKeyInput(true);
+		profileDeleter.setFocus(true);
+		profileDeleter.setBoxKeyCoordinates(new int[] {1,1});
+		profileDeleter.getCells().get(0).get(0).setCellText("Yes");
+		profileDeleter.getCells().get(0).get(0).setActionCommand(PROFILE_OPTIONS[1]);
+		profileDeleter.getCells().get(1).get(0).setCellText("No");
+		profileDeleter.getCells().get(1).get(0).setActionCommand(PROFILE_OPTIONS[3]);
+		profileDeleter.addBoxListener(this);
+		
+		profileChooser = new Box(1, Pong.S_profiles.size(), Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 200, 50, container);
+		profileChooser.setAllAutoAdjust(true);
+		profileChooser.setEdged(false);
+		profileChooser.setKeyInput(true);
+		profileChooser.setFocus(true);
+		profileChooser.setBoxKeyCoordinates(new int[] {1,1});
+		Collection<Profile> c = Pong.S_profiles.values();
+		Iterator<Profile> itr = c.iterator();
+		for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
+			String temp = itr.next().getProfileName();
+			profileChooser.getCells().get(0).get(i).setCellText(temp);
+			profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());
+		}
+		profileChooser.addBoxListener(this);
 	}
 
 	@Override
@@ -153,17 +183,17 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			profileAchievements.render();
 			profileOptions.render();
 		}else if(pState == ProfileState.Create){
-			createProfileHeader.drawCell();
-			createText.drawCell();
+			profileOptionHeader.drawCell();
+			profileOptionText.drawCell();
 			profileCreation.render(container, g);
 		}else if(pState == ProfileState.Delete){
-			
+			profileOptionHeader.drawCell();
+			profileOptionText.drawCell();
+			profileDeleter.render();
 		}else if(pState == ProfileState.Load){
-			/*for(int i = 0; i < PROFILE_DATA_COMMANDS.length;i++){ //TODO: Change place
-				profileInfos.getCells().get(1).get(i).setCellText(Pong.S_profileData.get(PROFILE_DATA_COMMANDS[i]));
-			}*/
-		}else if(pState == ProfileState.Save){
-			
+			profileOptionHeader.drawCell(); //TODO: Add loading functionality
+			profileOptionText.drawCell();
+			profileChooser.render();
 		}else if(pState == ProfileState.None){
 			
 		}
@@ -185,11 +215,26 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				}
 			}
 		}else if(pState == ProfileState.Delete){
-			
+			profileDeleter.update();
+			if(saveTimer > -1){
+				if(saveTimer <= 2000){
+					saveTimer += delta;
+				}else if(saveTimer >= 2000){
+					saveTimer = -1;
+					if(!Pong.S_profiles.isEmpty()){
+						profileOptionHeader.setCellText("Load Profile");
+						profileOptionText.setCellText("Please choose a profile and continue with ENTER.");
+						pState = ProfileState.Load;
+					}else{
+						profileOptionHeader.setCellText("Create new Profile");
+						profileOptionText.setCellText("You deleted your last profile.\nPlease enter a profilename\nand press ENTER to confirm");
+						profileCreation.setFocus(true);
+						pState = ProfileState.Create;
+					}					
+				}
+			}
 		}else if(pState == ProfileState.Load){
-
-		}else if(pState == ProfileState.Save){
-			
+			profileChooser.update();
 		}else if(pState == ProfileState.None){
 			
 		}
@@ -206,34 +251,36 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() - 1);
 			}
 		}
-		}else if(pState == ProfileState.Create){
-			
 		}else if(pState == ProfileState.Delete){
-			
+			if(key == Input.KEY_RIGHT){
+				if(profileDeleter.getBoxKeyX() < profileDeleter.getBoxWidth()){
+					profileDeleter.setBoxKeyX(profileDeleter.getBoxKeyX() + 1);
+				}
+			}else if(key == Input.KEY_LEFT){
+				if(profileDeleter.getBoxKeyX() > 1){
+					profileDeleter.setBoxKeyX(profileDeleter.getBoxKeyX() - 1);
+				}
+			}
 		}else if(pState == ProfileState.Load){
 
-		}else if(pState == ProfileState.Save){
-			
 		}else if(pState == ProfileState.None){
 			
 		}
-
 	}
 
 	@Override
 	public void componentActivated(AbstractComponent source) {
 		if(pState == ProfileState.Show){
 			if(source.getActionCommand().equals(PROFILE_OPTIONS[0])){
-				System.out.println("TEST");
 				pState = ProfileState.Create;
 				profileCreation.setFocus(true);
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
-				
+				pState = ProfileState.Delete;
+				profileOptionHeader.setCellText("Delete Profile");
+				profileOptionText.setCellText("Do you really wanna delete your profile?");
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[2])){
 				
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[3])){
-				
-			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[4])){
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 			}
 		}else if(pState == ProfileState.Create){
@@ -253,11 +300,12 @@ public class Profiles extends BasicGameState implements ComponentListener{
 							overwriteCheck = saveProfile.createProfile(true);
 						}
 						if(!overwriteCheck){
-							createText.setCellText("The profile already exists, do you wanna overwrite it?\n Press ENTER to continue, ESCAPE to abort");
+							profileOptionText.setCellText("The profile already exists, do you wanna overwrite it?\n Press ENTER to continue, ESCAPE to abort");
 							return;
 						}else{
 							saveTimer = 0;
-							createText.setCellText("Profile successfully created");
+							Pong.S_profiles.put(saveProfile.getProfileName().toLowerCase(), saveProfile);
+							profileOptionText.setCellText("Profile successfully created");
 							Pong.S_activeProfile = saveProfile.getProfileName().toLowerCase();
 							profileInfos.setHeaderTitle("Profile:" + " " + saveProfile.getProfileName());
 							LinkedHashMap<String, String> options = new LinkedHashMap<>();
@@ -270,6 +318,20 @@ public class Profiles extends BasicGameState implements ComponentListener{
 							options.put("lastActiveProfile", Pong.S_activeProfile);
 							MainMenu.ch.setOptions(options);
 							MainMenu.ch.createConfigFile();
+							profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
+							profileCreation.setText("");
+							Collection<Profile> c = Pong.S_profiles.values();
+							Iterator<Profile> itr = c.iterator();
+							try {
+								profileChooser.setBoxHeight(Pong.S_profiles.size());
+							} catch (SlickException e) {
+								e.printStackTrace(); //TODO: Add catch
+							}
+							for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
+								String temp = itr.next().getProfileName();
+								profileChooser.getCells().get(0).get(i).setCellText(temp);
+								profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());
+							}
 							return;
 						}
 					} catch (JAXBException e) {
@@ -278,11 +340,34 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				}
 			}
 		}else if(pState == ProfileState.Delete){
-			
+			if(saveTimer == -1){
+				if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
+					Pong.S_profiles.get(Pong.S_activeProfile).delete();
+					Pong.S_profiles.remove(Pong.S_activeProfile);
+					Collection<Profile> c = Pong.S_profiles.values();
+					Iterator<Profile> itr = c.iterator();
+					try {
+						profileChooser.setBoxHeight(Pong.S_profiles.size());
+					} catch (SlickException e) {
+						e.printStackTrace(); //TODO: Add catch
+					}
+					for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
+						String temp = itr.next().getProfileName();
+						profileChooser.getCells().get(0).get(i).setCellText(temp);
+						profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());
+					}
+					saveTimer = 0;
+					profileOptionText.setCellText("Profile successfully deleted");
+					return;
+				}else if(source.getActionCommand().equals(PROFILE_OPTIONS[3])){
+					profileOptionHeader.setCellText("Create new Profile");
+					profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+					pState = ProfileState.Show;
+					return;
+				}
+			}
 		}else if(pState == ProfileState.Load){
 
-		}else if(pState == ProfileState.Save){
-			
 		}else if(pState == ProfileState.None){
 			
 		}
