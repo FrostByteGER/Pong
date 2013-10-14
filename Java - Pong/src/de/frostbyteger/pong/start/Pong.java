@@ -34,14 +34,15 @@ public class Pong extends StateBasedGame{
 	// Profiles Data
 	public static final String PROFILE_PATH = "profiles/";
 	public static String S_activeProfile = "standard";
-	public static LinkedHashMap<String, Profile> S_profiles = new LinkedHashMap<String,Profile>();
+	public static LinkedHashMap<String, Profile> S_profiles       = new LinkedHashMap<String,Profile>();
 	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(12);
 	public static LinkedHashMap<String, String> S_achievementData = new LinkedHashMap<String, String>(6);
-	public static final String[] STATISTICS_KEYS = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
-											 		"timePlayedChallenge","matchesPlayedOverall",
-											 		"matchesPlayedCPU","matchesPlayedLAN",
-											 		"matchesPlayedChallenge","matchesWonOverall",
-											 		"matchesWonCPU","matchesWonLAN","matchesWonChallenge"};
+	public static final String[] KEYS_STATISTICS   = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
+													  "timePlayedChallenge","matchesPlayedOverall",
+													  "matchesPlayedCPU","matchesPlayedLAN",
+													  "matchesPlayedChallenge","matchesWonOverall",
+													  "matchesWonCPU","matchesWonLAN","matchesWonChallenge"};
+	public static final String[] KEYS_ACHIEVEMENTS = {};
 	
 	// Statistics Data
 	public static int S_timePlayedOverall      = 0;
@@ -154,18 +155,18 @@ public class Pong extends StateBasedGame{
 				return -1;
 			}
 		}		
-		S_statisticsData.put(STATISTICS_KEYS[0], S_timePlayedOverall);
-		S_statisticsData.put(STATISTICS_KEYS[1], S_timePlayedCPU);
-		S_statisticsData.put(STATISTICS_KEYS[2], S_timePlayedLAN);
-		S_statisticsData.put(STATISTICS_KEYS[3], S_timePlayedChallenge);
-		S_statisticsData.put(STATISTICS_KEYS[4], S_matchesPlayedOverall);
-		S_statisticsData.put(STATISTICS_KEYS[5], S_matchesPlayedCPU);
-		S_statisticsData.put(STATISTICS_KEYS[6], S_matchesPlayedLAN);
-		S_statisticsData.put(STATISTICS_KEYS[7], S_matchesPlayedChallenge);
-		S_statisticsData.put(STATISTICS_KEYS[8], S_matchesWonOverall);
-		S_statisticsData.put(STATISTICS_KEYS[9], S_matchesWonCPU);
-		S_statisticsData.put(STATISTICS_KEYS[10], S_matchesWonLAN);
-		S_statisticsData.put(STATISTICS_KEYS[11], S_matchesWonChallenge);
+		S_statisticsData.put(KEYS_STATISTICS[0], S_timePlayedOverall);
+		S_statisticsData.put(KEYS_STATISTICS[1], S_timePlayedCPU);
+		S_statisticsData.put(KEYS_STATISTICS[2], S_timePlayedLAN);
+		S_statisticsData.put(KEYS_STATISTICS[3], S_timePlayedChallenge);
+		S_statisticsData.put(KEYS_STATISTICS[4], S_matchesPlayedOverall);
+		S_statisticsData.put(KEYS_STATISTICS[5], S_matchesPlayedCPU);
+		S_statisticsData.put(KEYS_STATISTICS[6], S_matchesPlayedLAN);
+		S_statisticsData.put(KEYS_STATISTICS[7], S_matchesPlayedChallenge);
+		S_statisticsData.put(KEYS_STATISTICS[8], S_matchesWonOverall);
+		S_statisticsData.put(KEYS_STATISTICS[9], S_matchesWonCPU);
+		S_statisticsData.put(KEYS_STATISTICS[10], S_matchesWonLAN);
+		S_statisticsData.put(KEYS_STATISTICS[11], S_matchesWonChallenge);
 		int validProfiles = 0;
 		try{ 
 			File f = new File("profiles");
@@ -203,7 +204,7 @@ public class Pong extends StateBasedGame{
 		try{
 			Profile profile = S_profiles.get(S_activeProfile);
 			for(int i = 0;i < S_statisticsData.size();i++){
-				S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));
+				S_statisticsData.put(KEYS_STATISTICS[i], Integer.parseInt(profile.getProfileData().get(KEYS_STATISTICS[i])));
 			}
 		}catch(NullPointerException npe){
 			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, loading standardprofile");
@@ -214,7 +215,7 @@ public class Pong extends StateBasedGame{
 			}
 			Profile profile = S_profiles.get(S_activeProfile);
 			for(int i = 0;i < S_statisticsData.size();i++){
-				S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));
+				S_statisticsData.put(KEYS_STATISTICS[i], Integer.parseInt(profile.getProfileData().get(KEYS_STATISTICS[i])));
 			}
 		}
 
@@ -226,7 +227,7 @@ public class Pong extends StateBasedGame{
 		standard.setProfilePath(PROFILE_PATH);
 		LinkedHashMap<String, String> temp = new LinkedHashMap<>(12);
 		for(int i = 0;i < S_statisticsData.size();i++){
-			temp.put(STATISTICS_KEYS[i], Integer.toString(S_statisticsData.get(STATISTICS_KEYS[i])));
+			temp.put(KEYS_STATISTICS[i], Integer.toString(S_statisticsData.get(KEYS_STATISTICS[i])));
 		}
 		standard.setProfileInfos(temp);
 		try {
