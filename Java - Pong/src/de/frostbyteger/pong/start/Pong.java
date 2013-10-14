@@ -32,10 +32,11 @@ public class Pong extends StateBasedGame{
 	public static final int FPS     = 60;
 	
 	// Profiles Data
+	public static final String PROFILE_PATH = "profiles/";
 	public static String S_activeProfile = "standard";
 	public static LinkedHashMap<String, Profile> S_profiles = new LinkedHashMap<String,Profile>();
 	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(12);
-	public static LinkedHashMap<String, String> S_achievementData;
+	public static LinkedHashMap<String, String> S_achievementData = new LinkedHashMap<String, String>(6);
 	public static final String[] STATISTICS_KEYS = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
 											 		"timePlayedChallenge","matchesPlayedOverall",
 											 		"matchesPlayedCPU","matchesPlayedLAN",
@@ -182,10 +183,10 @@ public class Pong extends StateBasedGame{
 					if (pos > 0) {
 					    name = name.substring(0, pos);
 					}
-					Profile tempP = new Profile("profiles/", name);
+					Profile tempP = new Profile(PROFILE_PATH, name);
 					try {
 						tempP.load();
-						S_profiles.put(tempP.getProfileName(), tempP);
+						S_profiles.put(tempP.getProfileName().toLowerCase(), tempP);
 						validProfiles += 1;
 					} catch (JAXBException e) {
 						JOptionPane.showMessageDialog(null,e.toString() + "\n\nIt seems that one or more profiles are corrupted!");
@@ -200,16 +201,26 @@ public class Pong extends StateBasedGame{
 			JOptionPane.showMessageDialog(null,fnfe.toString() + "\n\nGame exits!");
 			return -1;
 		}
-		Profile profile = S_profiles.get(S_activeProfile);
-		for(int i = 0;i < S_statisticsData.size();i++){
-			S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));
+		try{
+			Profile profile = S_profiles.get(S_activeProfile);
+			for(int i = 0;i < S_statisticsData.size();i++){
+				S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));
+			}
+		}catch(NullPointerException npe){
+			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, loading standardprofile");
+			S_activeProfile = "standard";
+			Profile profile = S_profiles.get(S_activeProfile);
+			for(int i = 0;i < S_statisticsData.size();i++){
+				S_statisticsData.put(STATISTICS_KEYS[i], Integer.parseInt(profile.getProfileData().get(STATISTICS_KEYS[i])));
+			}
 		}
+
 		return 0;
 	}
 	
 	private void createStandardProfile(){
 		Profile standard = new Profile();
-		standard.setProfilePath("profiles/");
+		standard.setProfilePath(PROFILE_PATH);
 		LinkedHashMap<String, String> temp = new LinkedHashMap<>(12);
 		for(int i = 0;i < S_statisticsData.size();i++){
 			temp.put(STATISTICS_KEYS[i], Integer.toString(S_statisticsData.get(STATISTICS_KEYS[i])));
@@ -218,11 +229,12 @@ public class Pong extends StateBasedGame{
 		try {
 			standard.createProfile(true);
 		} catch (JAXBException e) {
-			JOptionPane.showMessageDialog(null,e.toString() + "\n\nCan't create standardprofile, please a new profile!");
+			JOptionPane.showMessageDialog(null,e.toString() + "\n\nCan't create standardprofile, please create a new profile!");
 			e.printStackTrace(); //TODO: If exception is thrown here, change start to create new Profile.
 		}
 		temp = null;
 		S_profiles.put("standard", standard);
+		S_activeProfile = "standard";
 	}
 
 	public static void main(String[] args) throws SlickException {

@@ -3,6 +3,11 @@
  */
 package de.frostbyteger.pong.core;
 
+import java.util.LinkedHashMap;
+
+import javax.swing.JOptionPane;
+import javax.xml.bind.JAXBException;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -13,6 +18,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import de.frostbyteger.pong.engine.Profile;
 import de.frostbyteger.pong.engine.ProfileState;
 import de.frostbyteger.pong.engine.graphics.FontHelper;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
@@ -43,6 +49,8 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	private final int OFFSET_X = 25;
 	
 	private ProfileState pState = ProfileState.Show; //TODO: Change to none
+	
+	private Profile saveProfile = null;
 		
 	private TextField profileCreation;
 	
@@ -54,6 +62,10 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	
 	private Cell mainHeader;
 	private Cell createProfileHeader;
+	private Cell createText;
+	
+	private boolean overwriteCheck = true;
+	private int saveTimer = -1;
 
 	/**
 	 * 
@@ -79,12 +91,15 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		createProfileHeader.setCellText("Create new Profile");
 		createProfileHeader.setClickable(false);
 		
+		createText = new Cell(Pong.FONT, 30, Pong.S_resX/2 - 50, 300, 100, 50, container);
+		createText.setCentered();
+		createText.setAutoAdjust(false);
+		createText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+		createText.setClickable(false);
+		
 		// Textfield
-		profileCreation = new TextField(container, FontHelper.newFont(Pong.FONT, 75, false, false), Pong.S_resX/2 - 125, 320, 250, 38,new ComponentListener() {
-			public void componentActivated(AbstractComponent source) {
-				System.out.println(profileCreation.getText());
-			}
-		});
+		profileCreation = new TextField(container, FontHelper.newFont(Pong.FONT, 75, false, false), Pong.S_resX/2 - 125, 370, 250, 38, this);
+		profileCreation.setActionCommand("enter");
 		
 		// Boxes
 		profileInfos = new Box(2, PROFILE_DESC_DATA.length, OFFSET_X, Pong.S_resY/2 - 150, Pong.FONT, 40, 300, 25, container);
@@ -139,6 +154,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			profileOptions.render();
 		}else if(pState == ProfileState.Create){
 			createProfileHeader.drawCell();
+			createText.drawCell();
 			profileCreation.render(container, g);
 		}else if(pState == ProfileState.Delete){
 			
@@ -158,7 +174,16 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		if(pState == ProfileState.Show){
 			profileOptions.update();
 		}else if(pState == ProfileState.Create){
-			
+			if(overwriteCheck && saveTimer > -1){
+				if(saveTimer <= 2000){
+					saveTimer += delta;
+				}else if(saveTimer >= 2000){
+					saveTimer = -1;
+					profileCreation.setFocus(false);
+					pState = ProfileState.Show;	
+					
+				}
+			}
 		}else if(pState == ProfileState.Delete){
 			
 		}else if(pState == ProfileState.Load){
@@ -199,6 +224,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	public void componentActivated(AbstractComponent source) {
 		if(pState == ProfileState.Show){
 			if(source.getActionCommand().equals(PROFILE_OPTIONS[0])){
+				System.out.println("TEST");
 				pState = ProfileState.Create;
 				profileCreation.setFocus(true);
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
@@ -211,7 +237,46 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 			}
 		}else if(pState == ProfileState.Create){
-			
+			if(source.getActionCommand().equals("enter")){
+				if(saveTimer == -1){
+					if(overwriteCheck == true){
+						LinkedHashMap<String, String> temp = new LinkedHashMap<>(Pong.S_statisticsData.size());
+						for(int i = 0;i < Pong.S_statisticsData.size();i++){
+							temp.put(Pong.STATISTICS_KEYS[i],Integer.toString(Pong.S_statisticsData.get(Pong.STATISTICS_KEYS[i])));
+						}
+						saveProfile = new Profile(Pong.PROFILE_PATH, profileCreation.getText(), temp, Pong.S_achievementData);
+					}
+					try {
+						if(overwriteCheck){
+							overwriteCheck = saveProfile.createProfile(false);
+						}else{
+							overwriteCheck = saveProfile.createProfile(true);
+						}
+						if(!overwriteCheck){
+							createText.setCellText("The profile already exists, do you wanna overwrite it?\n Press ENTER to continue, ESCAPE to abort");
+							return;
+						}else{
+							saveTimer = 0;
+							createText.setCellText("Profile successfully created");
+							Pong.S_activeProfile = saveProfile.getProfileName().toLowerCase();
+							profileInfos.setHeaderTitle("Profile:" + " " + saveProfile.getProfileName());
+							LinkedHashMap<String, String> options = new LinkedHashMap<>();
+							options.put("resX", Integer.toString(Pong.S_resX));
+							options.put("resY", Integer.toString(Pong.S_resY));
+							options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
+							options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
+							options.put("debug", Boolean.toString(Pong.S_debug));
+							options.put("show_fps", Boolean.toString(Pong.S_showFPS));
+							options.put("lastActiveProfile", Pong.S_activeProfile);
+							MainMenu.ch.setOptions(options);
+							MainMenu.ch.createConfigFile();
+							return;
+						}
+					} catch (JAXBException e) {
+						JOptionPane.showMessageDialog(null,e.toString() + "An error occured during profilecreation!"); //TODO: Find better way
+					}
+				}
+			}
 		}else if(pState == ProfileState.Delete){
 			
 		}else if(pState == ProfileState.Load){

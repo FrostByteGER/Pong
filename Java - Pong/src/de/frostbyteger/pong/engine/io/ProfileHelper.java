@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = {"profileName", "profilePath", "profileData","profileAchievements"})
 public class ProfileHelper{
 	
-	private LinkedHashMap<String, String> profileData          = new LinkedHashMap<>();
+	private LinkedHashMap<String, String> profileData         = new LinkedHashMap<>();
 	private LinkedHashMap<String, String> profileAchievements = new LinkedHashMap<>();
 	
 	private String profilePath; 
@@ -48,7 +48,7 @@ public class ProfileHelper{
 	 * @param name the name of the xml file
 	 */
 	public ProfileHelper(String path, String name) {
-		this.profilePath = path + name + fileExtension;
+		this.profilePath = path + name.toLowerCase() + fileExtension;
 		this.profileName = name;
 	}
 	
@@ -59,7 +59,7 @@ public class ProfileHelper{
 	 * @param data the LinkedHashMap with profiledata
 	 */
 	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data) {
-		this.profilePath = path + name + fileExtension;
+		this.profilePath = path + name.toLowerCase() + fileExtension;
 		this.profileName = name;
 		this.profileData = data;
 	}
@@ -72,7 +72,7 @@ public class ProfileHelper{
 	 * @param achievements the LinkedHashMap with profileachievements
 	 */
 	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data,LinkedHashMap<String, String> achievements) {
-		this.profilePath = path + name + fileExtension;
+		this.profilePath = path + name.toLowerCase() + fileExtension;
 		this.profileName = name;
 		this.profileData = data;
 		this.profileAchievements = achievements;
@@ -87,8 +87,8 @@ public class ProfileHelper{
 	 * or any other program.
 	 * 
 	 * @param override If set to true, the method will not check if the file already existed
-	 * @return returns true if file was created successfully. If false, the file already existed or the 
-	 * user had no write permission
+	 * @return returns true if file was created successfully or false if the file already existed and no
+	 * override was set.
 	 * @throws JAXBException 
 	 */
 	public boolean createProfile(boolean override) throws JAXBException{
@@ -119,8 +119,8 @@ public class ProfileHelper{
 	 * @param profilePath a specified profilePath instead of class field. 
 	 * @param profileName a specified profileName instead of class field.
 	 * @param override If set to true, the method will not check if the file already existed
-	 * @return returns true if file was created successfully. 
-	 * If false, the file already existed or the user had no write permission
+	 * @return returns true if file was created successfully or false if the file already existed and no
+	 * override was set.
 	 * @throws JAXBException 
 	 */
 	public boolean createProfile(String profilepath, String profilename, boolean override) throws JAXBException{
