@@ -4,8 +4,6 @@
 package de.frostbyteger.pong.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import javax.swing.JOptionPane;
@@ -69,6 +67,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	
 	private boolean overwriteCheck = true;
 	private int saveTimer = -1;
+	private int profileCount;
 
 	/**
 	 * 
@@ -146,6 +145,10 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				profileOptions.getCells().get(i).get(0).setActionCommand(PROFILE_OPTIONS[i]);
 			}
 		}
+		if(Pong.S_profiles.size() == 1){
+			profileOptions.getCells().get(2).get(0).setClickable(false);
+			profileOptions.getCells().get(2).get(0).setFontColor(Color.darkGray);
+		}
 		profileOptions.addBoxListener(this);
 		
 		profileDeleter = new Box(2, 1, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 100, 50, container);
@@ -160,30 +163,34 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileDeleter.getCells().get(1).get(0).setActionCommand(PROFILE_OPTIONS[3]);
 		profileDeleter.addBoxListener(this);
 		
-		profileChooser = new Box(1, Pong.S_profiles.size() - 1, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 200, 50, container);
+		if(Pong.S_profiles.size() >= 1){
+			profileCount = Pong.S_profiles.size();
+		}
+		profileChooser = new Box(1, profileCount, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 200, 50, container);
 		profileChooser.setAllAutoAdjust(true);
 		profileChooser.setEdged(false);
 		profileChooser.setKeyInput(true);
 		profileChooser.setFocus(true);
 		profileChooser.setBoxKeyCoordinates(new int[] {1,1});
-		Object[] profiles = Pong.S_profiles.values().toArray();
-		ArrayList<Profile> profiles2 = new ArrayList<>(profiles.length - 1);
-		for(int j = 0;j < profiles.length;j++){
-			if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
-				profiles2.add((Profile) profiles[j]);				
+		if(Pong.S_profiles.size() > 1){
+			Object[] profiles = Pong.S_profiles.values().toArray();
+			ArrayList<Profile> profiles2 = new ArrayList<>(profileCount - 1);
+			for(int j = 0;j < profiles.length;j++){
+				if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
+					profiles2.add((Profile) profiles[j]);				
+				}
 			}
-		}
-		for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
-			String temp = profiles2.get(i).getProfileName();
-			profileChooser.getCells().get(0).get(i).setCellText(temp);
-			profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());				
+			for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
+				String temp = profiles2.get(i).getProfileName();
+				profileChooser.getCells().get(0).get(i).setCellText(temp);
+				profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());				
+			}
 		}
 		profileChooser.addBoxListener(this);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		System.out.println(profileChooser.getCells().get(0).get(0).getActionCommand());
 		mainHeader.drawCell();
 		if(pState == ProfileState.Show){
 			profileInfos.render();
@@ -201,13 +208,18 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			profileOptionHeader.drawCell(); //TODO: Add loading functionality
 			profileOptionText.drawCell();
 			profileChooser.render();
-		}else if(pState == ProfileState.None){
-			
 		}
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		if(profileCount > 1 && !profileOptions.getCells().get(2).get(0).isClickable()){
+			profileOptions.getCells().get(2).get(0).setClickable(true);
+			profileOptions.getCells().get(2).get(0).setFontColor(Color.white);
+		}else if(profileCount == 1 && profileOptions.getCells().get(2).get(0).isClickable()){
+			profileOptions.getCells().get(2).get(0).setClickable(false);
+			profileOptions.getCells().get(2).get(0).setFontColor(Color.darkGray);
+		}
 		if(pState == ProfileState.Show){
 			profileOptions.update();
 		}else if(pState == ProfileState.Create){
@@ -232,6 +244,20 @@ public class Profiles extends BasicGameState implements ComponentListener{
 						profileOptionHeader.setCellText("Load Profile");
 						profileOptionText.setCellText("Please choose a profile and continue with ENTER.");
 						pState = ProfileState.Load;
+						profileChooser.setBoxKeyCoordinates(new int[] {1,1});
+						Object[] profiles = Pong.S_profiles.values().toArray();
+						ArrayList<Profile> profiles2 = new ArrayList<>(profileCount);
+						for(int j = 0;j < profiles.length;j++){
+							if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
+								profiles2.add((Profile) profiles[j]);				
+							}
+						}
+						for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
+							String temp = profiles2.get(i).getProfileName();
+							
+							profileChooser.getCells().get(0).get(i).setCellText(temp);
+							profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());				
+						}
 						profileChooser.setKeyInput(true);
 					}else{
 						profileOptionHeader.setCellText("Create new Profile");
@@ -254,8 +280,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 					
 				}
 			}
-		}else if(pState == ProfileState.None){
-			
 		}
 	}
 	
@@ -263,11 +287,21 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		if(pState == ProfileState.Show){
 		if(key == Input.KEY_RIGHT){
 			if(profileOptions.getBoxKeyX() < profileOptions.getBoxWidth()){
-				profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() + 1);
+				if(profileOptions.getBoxKeyX() == 2 && !profileOptions.getCells().get(2).get(0).isClickable()){
+					profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() + 2);	
+				}else{
+					profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() + 1);				
+				}
+
 			}
 		}else if(key == Input.KEY_LEFT){
 			if(profileOptions.getBoxKeyX() > 1){
-				profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() - 1);
+				if(profileOptions.getBoxKeyX() == profileOptions.getBoxWidth() && !profileOptions.getCells().get(2).get(0).isClickable()){
+					profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() - 2);
+				}else{
+					profileOptions.setBoxKeyX(profileOptions.getBoxKeyX() - 1);					
+				}
+
 			}
 		}
 		}else if(pState == ProfileState.Delete){
@@ -290,8 +324,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 					profileChooser.setBoxKeyY(profileChooser.getBoxKeyY() - 1);
 				}
 			}
-		}else if(pState == ProfileState.None){
-			
 		}
 	}
 
@@ -303,29 +335,23 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				profileCreation.setFocus(true);
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
 				pState = ProfileState.Delete;
+				profileDeleter.setKeyInput(true);
 				profileOptionHeader.setCellText("Delete Profile");
 				profileOptionText.setCellText("Do you really wanna delete your profile?");
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[2])){
 				profileOptionHeader.setCellText("Load Profile");
 				profileOptionText.setCellText("Please choose a profile and continue with ENTER.");
 				profileChooser.setBoxKeyCoordinates(new int[] {1,1});
-				try {
-					profileChooser.setBoxHeight(Pong.S_profiles.size() - 1);
-				} catch (SlickException e) {
-					e.printStackTrace(); //TODO: Add catch
-				}
+				
 				Object[] profiles = Pong.S_profiles.values().toArray();
-				ArrayList<Profile> profiles2 = new ArrayList<>(profiles.length - 1);
+				ArrayList<Profile> profiles2 = new ArrayList<>(profileCount);
 				for(int j = 0;j < profiles.length;j++){
-					System.out.println(((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile));
 					if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
-						System.out.println("TEST");
 						profiles2.add((Profile) profiles[j]);				
 					}
 				}
 				for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
 					String temp = profiles2.get(i).getProfileName();
-					
 					profileChooser.getCells().get(0).get(i).setCellText(temp);
 					profileChooser.getCells().get(0).get(i).setActionCommand(temp.toLowerCase());				
 				}
@@ -356,6 +382,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 						}else{
 							saveTimer = 0;
 							Pong.S_profiles.put(saveProfile.getProfileName().toLowerCase(), saveProfile);
+							profileCount += 1;
 							profileOptionText.setCellText("Profile successfully created");
 							Pong.S_activeProfile = saveProfile.getProfileName().toLowerCase();
 							profileInfos.setHeaderTitle("Profile:" + " " + saveProfile.getProfileName());
@@ -370,6 +397,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 							MainMenu.ch.setOptions(options);
 							MainMenu.ch.createConfigFile();
 							profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
+							profileCreation.setFocus(false);
 							profileCreation.setText("");
 							return;
 						}
@@ -383,15 +411,17 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
 					Pong.S_profiles.get(Pong.S_activeProfile).delete();
 					Pong.S_profiles.remove(Pong.S_activeProfile);
+					profileCount -= 1;
 					saveTimer = 0;
 					profileOptionText.setCellText("Profile successfully deleted");
-					return;
 				}else if(source.getActionCommand().equals(PROFILE_OPTIONS[3])){
 					profileOptionHeader.setCellText("Create new Profile");
 					profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
 					pState = ProfileState.Show;
-					return;
 				}
+				profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
+				profileDeleter.setKeyInput(false);
+				return;
 			}
 		}else if(pState == ProfileState.Load){
 			if(saveTimer == -1){
@@ -423,6 +453,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				}
 				profileChooser.setKeyInput(false);
 				saveTimer = 0;
+				profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
 				return;
 			}
 		}else if(pState == ProfileState.None){
