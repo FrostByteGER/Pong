@@ -8,9 +8,12 @@ import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
 
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import de.frostbyteger.pong.core.Game;
 import de.frostbyteger.pong.core.Lan;
@@ -77,6 +80,9 @@ public class Pong extends StateBasedGame{
 	public static AppGameContainer S_container;
 	public static ConfigHelper S_configHelper = new ConfigHelper("data/", "config",".xml");
 	
+	public static boolean S_firstStart      = true;
+	public static boolean S_profileNotFound = false;
+	
 
 	public Pong(String name) {
 		super(name);
@@ -88,7 +94,11 @@ public class Pong extends StateBasedGame{
 		addState(new Options());
 		addState(new Lan());
 		addState(new Game());
-		addState(new Profiles());		
+		addState(new Profiles());	
+		if(Pong.S_firstStart || Pong.S_profileNotFound){
+			enterState(Profiles.ID);
+		}
+		
 	}
 	
 	//TODO: Find better try/catch and if algorithm
@@ -174,7 +184,7 @@ public class Pong extends StateBasedGame{
 				f.mkdir();
 			}
 			if(f.list().length == 0){
-				createStandardProfile();
+				return 0;
 			}else{
 				File[] temp = f.listFiles();
 				for(int i = 0;i < temp.length;i++){
@@ -194,7 +204,9 @@ public class Pong extends StateBasedGame{
 				}
 			}
 			if(validProfiles == 0){
-				createStandardProfile();
+				return 0;
+			}else{
+				S_firstStart = false;
 			}
 
 		}catch(FileNotFoundException fnfe){
@@ -207,38 +219,11 @@ public class Pong extends StateBasedGame{
 				S_statisticsData.put(KEYS_STATISTICS[i], Integer.parseInt(profile.getProfileData().get(KEYS_STATISTICS[i])));
 			}
 		}catch(NullPointerException npe){
-			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, loading standardprofile");
-			if(S_profiles.get("standard") == null){
-				createStandardProfile();
-			}else{
-				S_activeProfile = "standard";
-			}
-			Profile profile = S_profiles.get(S_activeProfile);
-			for(int i = 0;i < S_statisticsData.size();i++){
-				S_statisticsData.put(KEYS_STATISTICS[i], Integer.parseInt(profile.getProfileData().get(KEYS_STATISTICS[i])));
-			}
+			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, please choose another profile");
+			S_profileNotFound = true;
 		}
 
 		return 0;
-	}
-	
-	private void createStandardProfile(){
-		Profile standard = new Profile();
-		standard.setProfilePath(PROFILE_PATH);
-		LinkedHashMap<String, String> temp = new LinkedHashMap<>(12);
-		for(int i = 0;i < S_statisticsData.size();i++){
-			temp.put(KEYS_STATISTICS[i], Integer.toString(S_statisticsData.get(KEYS_STATISTICS[i])));
-		}
-		standard.setProfileInfos(temp);
-		try {
-			standard.createProfile(true);
-		} catch (JAXBException e) {
-			JOptionPane.showMessageDialog(null,e.toString() + "\n\nCan't create standardprofile, please create a new profile!");
-			e.printStackTrace(); //TODO: If exception is thrown here, change start to create new Profile.
-		}
-		temp = null;
-		S_profiles.put("standard", standard);
-		S_activeProfile = "standard";
 	}
 
 	public static void main(String[] args) throws SlickException {

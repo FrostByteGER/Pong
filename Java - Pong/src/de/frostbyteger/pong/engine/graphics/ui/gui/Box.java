@@ -347,7 +347,7 @@ public class Box{
 			int cellY = (int) (boxY + this.cellHeight * this.boxHeight);
 			this.boxHeight = boxHeight;
 			for(int h = 0; h < cells.size();h++){
-				for(int i = cells.get(h).size();i < boxHeight;i++){
+				for(int i = cells.get(h).size();i <= boxHeight;i++){
 					Cell temp = new Cell(cellX, cellY, cellWidth, cellHeight, parentContainer);
 					temp.setFontPath(boxFontPath);
 					temp.setSize(boxFontSize);

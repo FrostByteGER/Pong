@@ -62,25 +62,26 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 		menuBox.setAllCellTitles(MENU_ARRAY);
 		menuBox.setAllActionCommands(COMMANDS);
 		menuBox.addBoxListener(this);
-
-		
 		msc = new Music("data/snd/sample.wav");
-		
 		//msc.loop();
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 128, Pong.S_resY - 15);
-		header.drawCell();
-		menuBox.render();
+		if(!Pong.S_firstStart && !Pong.S_profileNotFound){
+			g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 128, Pong.S_resY - 15);
+			header.drawCell();
+			menuBox.render();
+		}
+
 		
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		menuBox.update();
-	
+		if(!Pong.S_firstStart && !Pong.S_profileNotFound){
+			menuBox.update();
+		}
 	}
 	
 	public void keyPressed(int key, char c) {
