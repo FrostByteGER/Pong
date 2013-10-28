@@ -93,7 +93,7 @@ public class Box{
 		this.edgedBox = new Rectangle(cellX, cellY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
 		this.header = new Cell(cellX, cellY, cellWidth * boxWidth, this.boxHeaderHeight, container);
 		this.header.setFontPath(boxFontPath);
-		this.header.setSize(boxFontSize);
+		this.header.setFontsize(boxFontSize);
 		this.header.createNewFont();
 		this.header.setEdged(true);
 		this.header.setActive(false);
@@ -115,7 +115,7 @@ public class Box{
 			for(int l = 0; l < this.cells.get(k).size();l++){
 				Cell temp = this.cells.get(k).get(l);
 				temp.setFontPath(boxFontPath);
-				temp.setSize(boxFontSize);
+				temp.setFontsize(boxFontSize);
 				temp.createNewFont();
 				this.sources.add(temp);
 			}
@@ -202,6 +202,10 @@ public class Box{
 	}
 
 	/**
+	 * Returns ALL cells within the box in one unstructured array.
+	 * Since the cells are still in the right order but not structured in
+	 * a second array, it is not recommended to use this method!
+	 * 
 	 * @return the sources
 	 */
 	public ArrayList<Cell> getSources() {
@@ -269,7 +273,7 @@ public class Box{
 			this.edgedBox = new Rectangle(boxX, boxY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
 			this.header = new Cell(boxX, boxY, cellWidth * boxWidth, this.boxHeaderHeight, parentContainer);
 			this.header.setFontPath(boxFontPath);
-			this.header.setSize(boxFontSize);
+			this.header.setFontsize(boxFontSize);
 			this.header.createNewFont();
 			this.header.setCellText(text);
 			this.header.setEdged(edging);
@@ -287,7 +291,7 @@ public class Box{
 					tempCell.add(new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, parentContainer));
 					Cell temp = tempCell.get(j);
 					temp.setFontPath(boxFontPath);
-					temp.setSize(boxFontSize);
+					temp.setFontsize(boxFontSize);
 					temp.createNewFont();
 					cellY += cellHeight;
 				}
@@ -303,7 +307,7 @@ public class Box{
 			this.edgedBox = new Rectangle(boxX, boxY + this.boxHeaderHeight, cellWidth * boxWidth, cellHeight * boxHeight);
 			this.header = new Cell(boxX, boxY, cellWidth * boxWidth, this.boxHeaderHeight, parentContainer);
 			this.header.setFontPath(boxFontPath);
-			this.header.setSize(boxFontSize);
+			this.header.setFontsize(boxFontSize);
 			this.header.createNewFont();
 			this.header.setCellText(text);
 			this.header.setEdged(edging);
@@ -350,7 +354,7 @@ public class Box{
 				for(int i = cells.get(h).size();i <= boxHeight;i++){
 					Cell temp = new Cell(cellX, cellY, cellWidth, cellHeight, parentContainer);
 					temp.setFontPath(boxFontPath);
-					temp.setSize(boxFontSize);
+					temp.setFontsize(boxFontSize);
 					temp.createNewFont();
 					cellY += cellHeight;
 					this.cells.get(h).add(temp);
@@ -390,6 +394,15 @@ public class Box{
 	 */
 	public void setBoxX(int boxX) {
 		this.boxX = boxX;
+		int cellX = boxX;
+		
+		for(int i = 0;i < boxWidth;i++){
+			for(int j = 0; j < boxHeight;j++){
+				cells.get(i).get(j).setWholeCellX(cellX);
+				
+			}
+			cellX += cellWidth;
+		}
 	}
 
 	/**

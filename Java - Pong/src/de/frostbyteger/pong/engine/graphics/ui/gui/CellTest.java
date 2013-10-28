@@ -29,7 +29,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 		//cell.setImagePath("data/test_button.png");
 		//cell.createNewImage();
 		cell.setFontPath("data/Alexis.ttf");
-		cell.setSize(50);
+		cell.setFontsize(50);
 		cell.createNewFont();
 		cell.setCellText("this is a test...");
 		cell.addListener(this);
@@ -38,7 +38,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 		cell2 = new Cell("Button2",100, 175, 200, 50, container);
 		cell2.setEdged(true);
 		cell2.setFontPath("data/Alexis.ttf");
-		cell2.setSize(50);
+		cell2.setFontsize(50);
 		cell2.createNewFont();
 		cell2.setCellText("this is a test too");
 		cell2.addListener(this);
@@ -48,7 +48,7 @@ public class CellTest extends BasicGame implements ComponentListener{
 		cell3.setImagePath("data/test_button.png");
 		cell3.createNewImage();
 		cell3.setFontPath("data/Alexis.ttf");
-		cell3.setSize(50);
+		cell3.setFontsize(50);
 		cell3.createNewFont();
 		cell3.setCellText("this is test 3");
 		cell3.addListener(this);

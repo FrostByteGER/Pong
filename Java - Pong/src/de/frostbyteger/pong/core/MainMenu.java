@@ -17,6 +17,7 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
+import de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
 import de.frostbyteger.pong.start.Pong;
 
@@ -24,7 +25,7 @@ import de.frostbyteger.pong.start.Pong;
  * @author Kevin
  *
  */
-public class MainMenu extends BasicGameState implements de.frostbyteger.pong.engine.graphics.ui.gui.ComponentListener {
+public class MainMenu extends BasicGameState implements ComponentListener {
 	
 	protected static final int ID = 001;
 	
@@ -35,7 +36,7 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	
 	// Menu
 	private Box menuBox;
-	private Cell header;
+	public static Cell mainHeader;
 		
 	private Music msc;
 	
@@ -50,11 +51,13 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
-		header = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 350/2, 20, 350, 250, container);
-		header.setAutoAdjust(false);
-		header.setCellText(Pong.TITLE);
-		header.setClickable(false);
-		menuBox = new Box(1, MENU_ARRAY.length, Pong.S_resX/2 - 200/2, Pong.S_resY/2 - (5*30)/2, Pong.FONT, 30, 200, 30, container);
+		
+		mainHeader = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 175, 20, 350, 250, container);
+		mainHeader.setAutoAdjust(false);
+		mainHeader.setCellText(Pong.TITLE);
+		mainHeader.setClickable(false);
+		
+		menuBox = new Box(1, MENU_ARRAY.length, Pong.S_resX/2 - 100, Pong.S_resY/2 - 75, Pong.FONT, 30, 200, 30, container);
 		menuBox.setEdged(false);
 		menuBox.setKeyInput(true);
 		menuBox.setFocus(true);
@@ -70,7 +73,7 @@ public class MainMenu extends BasicGameState implements de.frostbyteger.pong.eng
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		if(!Pong.S_firstStart && !Pong.S_profileNotFound){
 			g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 128, Pong.S_resY - 15);
-			header.drawCell();
+			mainHeader.drawCell();
 			menuBox.render();
 		}
 

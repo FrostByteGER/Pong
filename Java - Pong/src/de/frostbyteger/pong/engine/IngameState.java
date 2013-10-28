@@ -8,5 +8,5 @@ package de.frostbyteger.pong.engine;
  *
  */
 public enum IngameState {
-	Start, Play, BallIsOut, Player1Wins, Player2Wins
+	Start, Play, BallIsOut, Player1Wins, Player2Wins, None
 }

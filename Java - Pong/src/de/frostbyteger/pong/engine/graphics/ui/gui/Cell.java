@@ -36,7 +36,7 @@ public class Cell extends CellListener{
 	private boolean right    = false;
 	private boolean bold     = false;
 	private boolean italics  = false;
-	private int size;
+	private int fontsize;
 	
 	// Image options
 	private float imageScale           = 1.0f;
@@ -145,7 +145,7 @@ public class Cell extends CellListener{
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, fontSize, false, false);
-		this.size = fontSize;
+		this.fontsize = fontSize;
 		this.cellX = x;
 		this.cellY = y;
 		this.container = container;
@@ -173,7 +173,7 @@ public class Cell extends CellListener{
 		this.cellImage = new Image(imagePath);
 		this.fontPath = fontPath;
 		this.imagePath = imagePath;
-		this.size = fontSize;
+		this.fontsize = fontSize;
 		this.cellX = x;
 		this.cellY = y;
 		this.container = container;
@@ -201,7 +201,7 @@ public class Cell extends CellListener{
 		this.cell = new Rectangle(x,y, width, height);
 		this.cellBorder = new Rectangle(x, y, width, height);
 		this.cellFont = FontHelper.newFont(fontPath, fontSize, bold, italics);
-		this.size = fontSize;
+		this.fontsize = fontSize;
 		this.cellX = x;
 		this.cellY = y;
 		this.container = container;
@@ -243,21 +243,21 @@ public class Cell extends CellListener{
 				if(autoAdjust == true){ //TODO: Add algorithm for increasing fontsize 
 					if(cellFont != null){
 						if(cellFont.getWidth(cellText) >= cell.getWidth()) {
-							float i = (float)cellFont.getWidth(cellText) / (float)size;
+							float i = (float)cellFont.getWidth(cellText) / (float)fontsize;
 							if(cell.getWidth() > cellDrawOffsetX){
-								size = (int) ((cell.getWidth() - cellDrawOffsetX) / i);			
+								fontsize = (int) ((cell.getWidth() - cellDrawOffsetX) / i);			
 							}else{
-								size = (int) (cell.getWidth() / i);			
+								fontsize = (int) (cell.getWidth() / i);			
 							}
-							cellFont = FontHelper.newFont(fontPath, size, bold, italics);
+							cellFont = FontHelper.newFont(fontPath, fontsize, bold, italics);
 						}else if(cellFont.getHeight(cellText) >= cell.getHeight()){
-							float i = (float)cellFont.getHeight(cellText) / (float)size;
+							float i = (float)cellFont.getHeight(cellText) / (float)fontsize;
 							if(cell.getHeight() > cellDrawOffsetY){
-								size = (int) ((cell.getHeight() - cellDrawOffsetY) / i);							
+								fontsize = (int) ((cell.getHeight() - cellDrawOffsetY) / i);							
 							}else{
-								size = (int) (cell.getHeight() / i);							
+								fontsize = (int) (cell.getHeight() / i);							
 							}
-							cellFont = FontHelper.newFont(fontPath, size, bold, italics);
+							cellFont = FontHelper.newFont(fontPath, fontsize, bold, italics);
 						}
 					}
 				}
@@ -312,13 +312,13 @@ public class Cell extends CellListener{
 	
 	/**
 	 * Use this method if you want to change the actual fontsettings
-	 * like size, bold and italics.
+	 * like fontsize, bold and italics.
 	 * The fontclass has no setter for these settings so you have
 	 * to overwrite the old font with a new one.
 	 * @throws SlickException
 	 */
 	public void createNewFont() throws SlickException{
-		this.cellFont = FontHelper.newFont(fontPath, size, bold, italics);
+		this.cellFont = FontHelper.newFont(fontPath, fontsize, bold, italics);
 	}
 	
 	/**
@@ -437,17 +437,18 @@ public class Cell extends CellListener{
 	}
 
 	/**
-	 * @return the size
+	 * 
+	 * @return fontsize the fontsize
 	 */
-	public int getSize() {
-		return size;
+	public int getFontsize() {
+		return fontsize;
 	}
 
 	/**
-	 * @param size the size to set
+	 * @param fontsize the fontsize to set
 	 */
-	public void setSize(int size) {
-		this.size = size;
+	public void setFontsize(int fontsize) {
+		this.fontsize = fontsize;
 	}
 
 	/**

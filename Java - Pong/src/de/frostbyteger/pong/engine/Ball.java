@@ -9,7 +9,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 
-import de.frostbyteger.pong.core.CorePong;
 import de.frostbyteger.pong.start.Pong;
 
 /**
@@ -18,14 +17,14 @@ import de.frostbyteger.pong.start.Pong;
  */
 public class Ball {
 
-	protected Circle ball;
-	protected float velocity;
-	protected Vector2f vector;
-	protected int radius;
-	protected int spin; // TODO
-	protected Random rndm;
-	protected float estimatedY;
-	protected Border lastcollision;
+	private Circle ball;
+	private float velocity;
+	private Vector2f vector;
+	private int radius;
+	private int spin;
+	private Random rndm;
+	private float estimatedY;
+	//private Border lastcollision;
 	
 	/**
 	 * 
@@ -39,7 +38,7 @@ public class Ball {
 		this.vector = new Vector2f();
 		this.velocity = 0.02f;
 		this.radius = radius;
-		this.lastcollision = Border.NONE;
+		//this.lastcollision = Border.NONE;
 		calcDirection();
 	}
 	
@@ -56,34 +55,22 @@ public class Ball {
 		this.vector = new Vector2f();
 		this.velocity = 0.02f;
 		this.radius = radius;
-		this.lastcollision = lastcollision;
+		//this.lastcollision = lastcollision;
 		calcDirection();
 	}
 
-	/**
-	 * @return the ball
-	 */
 	public Circle getBall() {
 		return ball;
 	}
 
-	/**
-	 * @param ball the ball to set
-	 */
 	public void setBall(Circle ball) {
 		this.ball = ball;
 	}
-
-	/**
-	 * @return the velocity
-	 */
+	
 	public float getVelocity() {
 		return velocity;
 	}
 
-	/**
-	 * @param velocity the velocity to set
-	 */
 	public void setVelocity(float velocity) {
 		this.velocity = velocity;
 	}
@@ -120,32 +107,12 @@ public class Ball {
 		return ball;
 	}
 
-	/**
-	 * @return the radius
-	 */
 	public int getRadius() {
 		return radius;
 	}
 
-	/**
-	 * @param radius the radius to set
-	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
-	}
-
-	/**
-	 * @return the lastcollision
-	 */
-	public Border getLastcollision() {
-		return lastcollision;
-	}
-
-	/**
-	 * @param lastcollision the lastcollision to set
-	 */
-	public void setLastcollision(Border lastcollision) {
-		this.lastcollision = lastcollision;
 	}
 
 	public void draw(Graphics g) {
@@ -221,7 +188,7 @@ public class Ball {
 	public void addVelocity(double acceleration, int delta, Border lastcollision) {
 		float hip = (float) (acceleration * delta + velocity) / 100.0f;
 		if(velocity < 3.5){
-			if (vector.getX() <= 5 && lastcollision == Border.LEFT || vector.getX() <= 5  && lastcollision == Border.RIGHT) {
+			if (vector.getX() <= 5 && lastcollision == Border.Left || vector.getX() <= 5  && lastcollision == Border.Right) {
 				velocity += 0.005f;
 				if (vector.getX() < 0) {
 					vector.set(vector.getX() - hip, vector.getY());
@@ -256,25 +223,6 @@ public class Ball {
 			vector.set(vector.getX(), vector.getY() + (velocity * (delta/10.0f)));
 		}
 	
-	}
-	
-	/**
-	 * Adds the given acceleration to the balls speed. Negative values decrease the speed.
-	 * @param acceleration
-	 * @param delta
-	 */
-	public void addDebugVelocity(float acceleration, int delta){
-		float hip = (float) (acceleration * delta + velocity) / 100;
-		if (vector.getX() < 0) {
-			vector.set(vector.getX() - hip, vector.getY());
-		} else {
-			vector.set(vector.getX() + hip, vector.getY());
-		}
-		if (vector.getY() < 0) {
-			vector.set(vector.getX(), vector.getY() - hip);
-		} else {
-			vector.set(vector.getX(), vector.getY() + hip);
-		}
 	}
 	
 	/**
@@ -319,9 +267,7 @@ public class Ball {
 		ball.setCenterY(ball.getCenterY() + vector.getY());
 	}
 	
-	/**
-	 * TODO: Change parameters to arraylist!
-	 */
+	/*
 	public Border collideBallListener(Pad pad1, Pad pad2){
 		if (ball.getMinY() <= 0) {
 			setVectorXY(vector.getX(), -vector.getY());
@@ -336,8 +282,8 @@ public class Ball {
 		}
 
 		if (pad1.intersects(ball)) {
-			if(pad1.getSpinspeed() > 0.0f){
-				addSpin(pad1.getSpinspeed());
+			if(pad1.getSpinSpeed() > 0.0f){
+				addSpin(pad1.getSpinSpeed());
 			}
 			setVectorXY(-vector.getX(), vector.getY());
 			//lastpadcollision = Border.LEFT;
@@ -359,4 +305,5 @@ public class Ball {
 			return Border.NONE;
 		}
 	}
+	*/
 }

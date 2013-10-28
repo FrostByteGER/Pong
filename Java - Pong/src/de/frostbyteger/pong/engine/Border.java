@@ -8,5 +8,5 @@ package de.frostbyteger.pong.engine;
  *
  */
 public enum Border {
-	TOP, RIGHT, BOTTOM, LEFT, NONE
+	Top, Right, Bottom, Left, None
 }

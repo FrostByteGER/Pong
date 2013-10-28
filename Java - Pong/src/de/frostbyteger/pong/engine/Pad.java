@@ -10,45 +10,164 @@ import org.newdawn.slick.geom.Shape;
  */
 public class Pad{
 
-	protected float velocity;
-	protected float spinspeed;
+	private float velocity  = 0.0f;
+	private float spinSpeed = 0.0f;
+	private int width  = 10;
+	private int height = 100;
 	
-	protected int points;
-	protected int keynr;
+	private boolean collided = false;
+		
+	private Rectangle pad;
 	
-	protected Rectangle pad;
-	
-	private final int WIDTH = 10;
-	private final int HEIGHT = 100;
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public Pad(int x, int y){
+		this.pad = new Rectangle(x, y, width, height);
+	}
 	
 	/**
 	 * 
 	 * @param x
 	 * @param y
 	 * @param velocity
-	 * @param keynr
 	 */
-	public Pad(int x, int y, float velocity, int keynr){
+	public Pad(int x, int y, float velocity){
+		this.pad = new Rectangle(x, y, width, height);
 		this.velocity = velocity;
-		this.keynr = keynr;
-		this.pad = new Rectangle(x, y, WIDTH, HEIGHT);
-		this.spinspeed = 0.0f;
 	}
 	
-	public int getPoints() {
-		return points;
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public Pad(int x, int y, int width, int height) {
+		this.pad = new Rectangle(x, y, width, height);
+		this.width = width;
+		this.height = height;
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param velocity
+	 */
+	public Pad(int x, int y, int width, int height, boolean collided) {
+		this.pad = new Rectangle(x, y, width, height);
+		this.width = width;
+		this.height = height;
+		this.collided = collided;
 	}
 
-	public void setPoints(int points) {
-		this.points = points;
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param velocity
+	 */
+	public Pad(int x, int y, int width, int height, float velocity) {
+		this.pad = new Rectangle(x, y, width, height);
+		this.velocity = velocity;
+		this.width = width;
+		this.height = height;
 	}
 	
-	public void addPoint(){
-		this.points += 1;
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param velocity
+	 */
+	public Pad(int x, int y, int width, int height, float velocity, float spinSpeed) {
+		this.pad = new Rectangle(x, y, width, height);
+		this.velocity = velocity;
+		this.spinSpeed = 0.0f;
+		this.width = width;
+		this.height = height;
 	}
 	
-	public void addPoints(int points){
-		this.points += points;
+	public float getPadX(){
+		return pad.getX();
+	}
+	
+	public void setPadX(float x){
+		pad.setX(x);
+	}
+	
+	public float getPadY(){
+		return pad.getY();
+	}
+	
+	public void setPadY(float y){
+		pad.setY(y);
+	}
+	
+	public float getPadCenterX(){
+		return pad.getCenterX();
+	}
+	
+	public void setPadCenterX(float centerX){
+		pad.setCenterX(centerX);
+	}
+	
+	public float getPadCenterY(){
+		return pad.getCenterY();
+	}
+	
+	public void setPadCenterY(float centerY){
+		pad.setCenterY(centerY);
+	}
+	
+	public float getPadMaxX(){
+		return pad.getMaxX();
+	}
+	
+	public float getPadMaxY(){
+		return pad.getMaxY();
+	}
+	
+	public float getPadMinX(){
+		return pad.getMinX();
+	}
+	
+	public float getPadMinY(){
+		return pad.getMinY();
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public boolean isCollided() {
+		return collided;
+	}
+
+	public void setCollided(boolean collided) {
+		this.collided = collided;
 	}
 
 	public Rectangle getShape(){
@@ -63,81 +182,37 @@ public class Pad{
 		this.pad = pad;
 	}
 
-	/**
-	 * @return the speed
-	 */
 	public float getVelocity() {
 		return velocity;
 	}
 
-	/**
-	 * @param speed the speed to set
-	 */
 	public void setVelocity(float velocity) {
 		this.velocity = velocity;
 	}
 
-	/**
-	 * @return the keynr
-	 */
-	public int getKeynr() {
-		return keynr;
+	public float getSpinSpeed() {
+		return spinSpeed;
 	}
 
-	/**
-	 * @param keynr the keynr to set
-	 */
-	public void setKeynr(int keynr) {
-		this.keynr = keynr;
-	}
-
-	/**
-	 * @return the spinspeed
-	 */
-	public float getSpinspeed() {
-		return spinspeed;
-	}
-
-	/**
-	 * @param spinspeed the spinspeed to set
-	 */
-	public void setSpinspeed(float spinspeed) {
-		this.spinspeed = spinspeed;
+	public void setSpinSpeed(float speed) {
+		this.spinSpeed = speed;
 	}
 	
-	/**
-	 * 
-	 * @param speed
-	 */
 	public void addSpinSpeed(float speed){
-		this.spinspeed += speed;
+		this.spinSpeed += speed;
 	}
 	
-	/**
-	 * 
-	 */
+	public void reduceSpinSpeed(float speed){
+		this.spinSpeed -= speed;
+	}
+	
 	public void resetSpinSpeed(){
-		this.spinspeed = 0.0f;
-	}
-
-	/**
-	 * @return the WIDTH
-	 */
-	public int getWIDTH() {
-		return WIDTH;
-	}
-
-	/**
-	 * @return the HEIGHT
-	 */
-	public int getHEIGHT() {
-		return HEIGHT;
+		this.spinSpeed = 0.0f;
 	}
 	
     public boolean intersects(Shape shape) {
         return this.pad.intersects(shape);
-
-  }
+    }
 
 	public void draw(Graphics g){
 		g.fill(pad);

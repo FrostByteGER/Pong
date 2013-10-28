@@ -23,13 +23,7 @@ import de.frostbyteger.pong.engine.GameState;
 import de.frostbyteger.pong.engine.Pad;
 import de.frostbyteger.pong.engine.io.ConfigHelper;
 
-public class CorePong extends BasicGame {
-	
-	
-	private final String AI = "AI-Difficulty";
-	
-
-	
+public class CorePong extends BasicGame {	
 
 	private int difficultyselection = 1;
 

@@ -3,7 +3,6 @@
  */
 package de.frostbyteger.pong.core;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -62,7 +61,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	private Box profileDeleter;
 	private Box profileOptions;
 	
-	private Cell mainHeader;
 	private Cell profileOptionHeader;
 	private Cell profileOptionText;
 	
@@ -81,12 +79,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
-		
-		// Global Header
-		mainHeader = new Cell(Pong.FONT, 160, Pong.S_resX/2 - 175, 20, 350, 250, container);
-		mainHeader.setAutoAdjust(false);
-		mainHeader.setCellText(Pong.TITLE);
-		mainHeader.setClickable(false);
 		
 		// Local Header
 		profileOptionHeader = new Cell(Pong.FONT, 50, Pong.S_resX/2 - 50, 250, 100, 50, container);
@@ -212,7 +204,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		mainHeader.drawCell();
+		MainMenu.mainHeader.drawCell();
 		if(pState == ProfileState.Show){
 			profileInfos.render();
 			profileAchievements.render();
@@ -430,7 +422,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 							options.put("resY", Integer.toString(Pong.S_resY));
 							options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
 							options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
-							options.put("debug", Boolean.toString(Pong.S_debug));
 							options.put("show_fps", Boolean.toString(Pong.S_showFPS));
 							options.put("lastActiveProfile", Pong.S_activeProfile);
 							MainMenu.ch.setOptions(options);
@@ -483,7 +474,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				options.put("resY", Integer.toString(Pong.S_resY));
 				options.put("volume", Float.toString((int)(Pong.S_container.getMusicVolume()*100)/100.0f));
 				options.put("vol_on", Boolean.toString(Pong.S_container.isMusicOn()));
-				options.put("debug", Boolean.toString(Pong.S_debug));
 				options.put("show_fps", Boolean.toString(Pong.S_showFPS));
 				options.put("lastActiveProfile", Pong.S_activeProfile);
 				MainMenu.ch.setOptions(options);
