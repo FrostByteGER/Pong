@@ -19,12 +19,11 @@ public class Ball {
 
 	private Circle ball;
 	private float velocity;
-	private Vector2f vector;
-	private int radius;
-	private int spin;
-	private Random rndm;
 	private float estimatedY;
-	//private Border lastcollision;
+	private int radius;
+	private int spin;	
+	private Vector2f vector;
+	private Random rndm;
 	
 	/**
 	 * 
@@ -38,7 +37,6 @@ public class Ball {
 		this.vector = new Vector2f();
 		this.velocity = 0.02f;
 		this.radius = radius;
-		//this.lastcollision = Border.NONE;
 		calcDirection();
 	}
 	
@@ -55,7 +53,6 @@ public class Ball {
 		this.vector = new Vector2f();
 		this.velocity = 0.02f;
 		this.radius = radius;
-		//this.lastcollision = lastcollision;
 		calcDirection();
 	}
 
@@ -67,11 +64,11 @@ public class Ball {
 		this.ball = ball;
 	}
 	
-	public float getVelocity() {
+	public float getBallVelocity() {
 		return velocity;
 	}
 
-	public void setVelocity(float velocity) {
+	public void setBallVelocity(float velocity) {
 		this.velocity = velocity;
 	}
 
@@ -95,16 +92,12 @@ public class Ball {
 		this.vector.set(x, y);
 	}
 
-	public int getSpin() {
+	public int getBallSpin() {
 		return spin;
 	}
 
-	public void setSpin(int spin) {
+	public void setBallSpin(int spin) {
 		this.spin = spin;
-	}
-
-	public Circle getShape() {
-		return ball;
 	}
 
 	public int getRadius() {
@@ -116,7 +109,10 @@ public class Ball {
 	}
 
 	public void draw(Graphics g) {
-		//TODO: Set Ballcolor if it hits the pads
+		g.fill(ball);
+	}
+	
+	public void drawColored(Graphics g){
 		g.fill(ball);
 	}
 	
@@ -162,11 +158,7 @@ public class Ball {
 			x += vector2f.getX();
 			y += vector2f.getY();
 			//Combine the 2 if-statements
-			if (y <= 0) {
-				vector2f.set(vector2f.getX(), -vector2f.getY());
-			}
-
-			if (y >= Pong.S_resY) { 
+			if (y <= 0 || y >= Pong.S_resY) {
 				vector2f.set(vector2f.getX(), -vector2f.getY());
 			}
 			
@@ -174,7 +166,7 @@ public class Ball {
 				estimatedY = y;
 				return;
 			}else{
-				calcTrajectory(vector2f, x,y);				
+				calcTrajectory(vector2f, x, y);				
 			}
 
 	}
@@ -185,7 +177,7 @@ public class Ball {
 	 * @param delta
 	 * @param lastcollision
 	 */
-	public void addVelocity(double acceleration, int delta, Border lastcollision) {
+	public void addBallVelocity(double acceleration, int delta, Border lastcollision) {
 		float hip = (float) (acceleration * delta + velocity) / 100.0f;
 		if(velocity < 3.5){
 			if (vector.getX() <= 5 && lastcollision == Border.Left || vector.getX() <= 5  && lastcollision == Border.Right) {
@@ -206,11 +198,11 @@ public class Ball {
 	}
 	
 	/**
-	 * 
+	 * Adds the given velocity to the ball
 	 * @param acceleration
 	 * @param delta
 	 */
-	public void addVelocityGravity(double acceleration, int delta) {
+	public void addBallVelocity(double acceleration, int delta) {
 		//velocity += (float) (acceleration * (delta/100));
 		if (vector.getX() < 0) {
 			vector.set(vector.getX() - (velocity * (delta/100.0f)), vector.getY());
@@ -229,7 +221,7 @@ public class Ball {
 	 * 
 	 * @param acceleration
 	 */
-	public void addSpin(float acceleration){
+	public void addBallSpin(float acceleration){
 		if (vector.getX() < 0) {
 			if(rndm.nextBoolean()){
 				vector.set(vector.getX() - acceleration, vector.getY());

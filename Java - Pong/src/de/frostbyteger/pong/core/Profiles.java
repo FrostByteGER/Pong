@@ -40,7 +40,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	
 	private StateBasedGame game;
 	
-	private final String[] PROFILE_OPTIONS           = {"new","delete","change\nprofile","back"};
+	private final String[] PROFILE_OPTIONS           = {"new","delete","change" + "\n" + "profile","back"};
 	private final String[] PROFILE_DESC_ACHIEVEMENTS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER"};
 	private final String[] PROFILE_DESC_DATA         = {"Time played:","Time played in CPU-Mode:","Time played in LAN-Mode:",
 														"Time played in Challenge-Mode:","Matches played:","Matches played in CPU-Mode:",
@@ -90,7 +90,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileOptionText = new Cell(Pong.FONT, 30, Pong.S_resX/2 - 50, 300, 100, 50, container);
 		profileOptionText.setCentered();
 		profileOptionText.setAutoAdjust(false);
-		profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+		profileOptionText.setCellText("Please enter a profilename" + "\n" + "and press ENTER to confirm");
 		profileOptionText.setClickable(false);
 		
 		// Textfield
@@ -178,7 +178,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		
 		if(Pong.S_firstStart){
 			profileOptionHeader.setCellText("Create Profile");
-			profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+			profileOptionText.setCellText("Please enter a profilename" + "\n" + "and press ENTER to confirm");
 			pState = ProfileState.Create;
 			profileCreation.setFocus(true);
 		}else if(Pong.S_profileNotFound){
@@ -204,22 +204,22 @@ public class Profiles extends BasicGameState implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		MainMenu.mainHeader.drawCell();
+		MainMenu.mainHeader.render();
 		if(pState == ProfileState.Show){
 			profileInfos.render();
 			profileAchievements.render();
 			profileOptions.render();
 		}else if(pState == ProfileState.Create){
-			profileOptionHeader.drawCell();
-			profileOptionText.drawCell();
+			profileOptionHeader.render();
+			profileOptionText.render();
 			profileCreation.render(container, g);
 		}else if(pState == ProfileState.Delete){
-			profileOptionHeader.drawCell();
-			profileOptionText.drawCell();
+			profileOptionHeader.render();
+			profileOptionText.render();
 			profileDeleter.render();
 		}else if(pState == ProfileState.Load){
-			profileOptionHeader.drawCell();
-			profileOptionText.drawCell();
+			profileOptionHeader.render();
+			profileOptionText.render();
 			profileChooser.render();
 		}
 	}
@@ -277,7 +277,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 						profileChooser.setKeyInput(true);
 					}else{
 						profileOptionHeader.setCellText("Create new Profile");
-						profileOptionText.setCellText("You deleted your last profile.\nPlease enter a profilename\nand press ENTER to confirm");
+						profileOptionText.setCellText("You deleted your last profile." + "\n" + "Please enter a profilename" + "\n" + "and press ENTER to confirm");
 						profileCreation.setFocus(true);
 						pState = ProfileState.Create;
 					}					
@@ -349,7 +349,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			if(source.getActionCommand().equals(PROFILE_OPTIONS[0])){
 				pState = ProfileState.Create;
 				profileOptionHeader.setCellText("Create new Profile");
-				profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+				profileOptionText.setCellText("Please enter a profilename" + "\n" + "and press ENTER to confirm");
 				profileCreation.setFocus(true);
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[1])){
 				pState = ProfileState.Delete;
@@ -399,7 +399,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 							overwriteCheck = saveProfile.createProfile(true);
 						}
 						if(!overwriteCheck){
-							profileOptionText.setCellText("The profile already exists, do you wanna overwrite it?\n Press ENTER to continue, ESCAPE to abort");
+							profileOptionText.setCellText("The profile already exists, do you wanna overwrite it?" + "\n" + " Press ENTER to continue, ESCAPE to abort");
 							exists = true;
 							return;
 						}else{
@@ -446,7 +446,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 					profileOptionText.setCellText("Profile successfully deleted");
 				}else if(source.getActionCommand().equals(PROFILE_OPTIONS[3])){
 					profileOptionHeader.setCellText("Create new Profile");
-					profileOptionText.setCellText("Please enter a profilename\nand press ENTER to confirm");
+					profileOptionText.setCellText("Please enter a profilename" + "\n" + "and press ENTER to confirm");
 					pState = ProfileState.Show;
 				}
 				profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});

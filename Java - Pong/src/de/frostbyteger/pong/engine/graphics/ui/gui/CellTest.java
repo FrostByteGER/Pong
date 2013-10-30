@@ -59,9 +59,9 @@ public class CellTest extends BasicGame implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
-		cell.drawCell();
-		cell2.drawCell();
-		cell3.drawCell();
+		cell.render();
+		cell2.render();
+		cell3.render();
 	}
 
 	@Override

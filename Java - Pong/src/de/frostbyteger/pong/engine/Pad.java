@@ -12,8 +12,8 @@ public class Pad{
 
 	private float velocity  = 0.0f;
 	private float spinSpeed = 0.0f;
-	private int width  = 10;
-	private int height = 100;
+	private int width       = 10;
+	private int height      = 100;
 	
 	private boolean collided = false;
 		
@@ -146,19 +146,19 @@ public class Pad{
 		return pad.getMinY();
 	}
 
-	public int getWidth() {
+	public int getPadWidth() {
 		return width;
 	}
 
-	public void setWidth(int width) {
+	public void setPadWidth(int width) {
 		this.width = width;
 	}
 
-	public int getHeight() {
+	public int getPadHeight() {
 		return height;
 	}
 
-	public void setHeight(int height) {
+	public void setPadHeight(int height) {
 		this.height = height;
 	}
 
@@ -169,10 +169,6 @@ public class Pad{
 	public void setCollided(boolean collided) {
 		this.collided = collided;
 	}
-
-	public Rectangle getShape(){
-		return pad;	
-	}
 	
 	public Rectangle getPad() {
 		return pad;
@@ -182,11 +178,11 @@ public class Pad{
 		this.pad = pad;
 	}
 
-	public float getVelocity() {
+	public float getPadVelocity() {
 		return velocity;
 	}
 
-	public void setVelocity(float velocity) {
+	public void setPadVelocity(float velocity) {
 		this.velocity = velocity;
 	}
 
@@ -211,7 +207,7 @@ public class Pad{
 	}
 	
     public boolean intersects(Shape shape) {
-        return this.pad.intersects(shape);
+        return pad.intersects(shape);
     }
 
 	public void draw(Graphics g){

@@ -73,7 +73,7 @@ public class MainMenu extends BasicGameState implements ComponentListener {
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		if(!Pong.S_firstStart && !Pong.S_profileNotFound){
 			g.drawString(Pong.VERSION_STATUS + " " + Pong.VERSION, Pong.S_resX - 128, Pong.S_resY - 15);
-			mainHeader.drawCell();
+			mainHeader.render();
 			menuBox.render();
 		}
 

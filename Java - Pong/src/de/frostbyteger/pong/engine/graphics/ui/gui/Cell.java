@@ -214,7 +214,7 @@ public class Cell extends CellListener{
 	 * missing methods in the imageclass. 
 	 * @throws SlickException
 	 */
-	public void drawCell() throws SlickException{
+	public void render() throws SlickException{
 		if(active == true){
 			if(visible == true){
 				if(edging == true){

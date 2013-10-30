@@ -8,13 +8,9 @@ import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeInTransition;
-import org.newdawn.slick.state.transition.FadeOutTransition;
-
 import de.frostbyteger.pong.core.Game;
 import de.frostbyteger.pong.core.Lan;
 import de.frostbyteger.pong.core.MainMenu;
@@ -66,7 +62,7 @@ public class Pong extends StateBasedGame{
 	
 	// Version info
 	public static final String TITLE          = "Pong";
-	public static final String VERSION        = "v1.34";
+	public static final String VERSION        = "v1.40";
 	public static final String VERSION_STATUS = "INTERNAL";
 	
 	// MD5 checksums
@@ -145,7 +141,6 @@ public class Pong extends StateBasedGame{
 			Pong.S_resY = Integer.parseInt(ch2.getOptions().get("resY"));
 			S_container.setMusicVolume(Float.parseFloat(ch2.getOptions().get("volume")));
 			S_container.setMusicOn(Boolean.parseBoolean(ch2.getOptions().get("vol_on")));
-			Pong.S_debug = Boolean.parseBoolean(ch2.getOptions().get("debug"));
 			Pong.S_showFPS = Boolean.parseBoolean(ch2.getOptions().get("show_fps"));
 			S_activeProfile = ch2.getOptions().get("lastActiveProfile");
 		}catch(FileNotFoundException | JAXBException e){

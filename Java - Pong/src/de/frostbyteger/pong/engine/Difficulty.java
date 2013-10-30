@@ -1,7 +1,7 @@
 package de.frostbyteger.pong.engine;
 
 public enum Difficulty {
-	EASY(2.5f), MEDIUM(5.0f), HARD(10.0f), UNBEATABLE(15.0f);
+	Easy(2.5f), Medium(5.0f), Hard(10.0f), Unbeatable(15.0f);
 	
 	private float difficulty;
 	

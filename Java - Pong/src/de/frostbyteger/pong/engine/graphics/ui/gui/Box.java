@@ -25,8 +25,8 @@ public class Box{
 	private UnicodeFont boxFont;
 	private String boxFontPath;
 	private ArrayList<Cell> sources;
-	private Cell header        = null;
-	private Rectangle edgedBox = null;
+	private Cell header             = null;
+	private Rectangle edgedBox      = null;
 	private int[] boxKeyCoordinates = new int[2];
 	
 	
@@ -130,7 +130,7 @@ public class Box{
 	public void render() throws SlickException{
 		for(int i = 0; i < cells.size();i++){
 			for(int j = 0; j < cells.get(i).size();j++){
-					cells.get(i).get(j).drawCell();
+					cells.get(i).get(j).render();
 			}
 		}
 		if(edged){
@@ -140,7 +140,7 @@ public class Box{
 
 		
 		if(header.isActive()){
-			header.drawCell();
+			header.render();
 		}
 		parentContainer.getGraphics().setColor(Color.white);
 	}

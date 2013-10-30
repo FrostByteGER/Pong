@@ -36,7 +36,7 @@ public class Options extends BasicGameState implements ComponentListener{
 	private StateBasedGame game;
 
 	private final String[] MENU_OPTIONS_MAIN     = {"Graphics/Sound","Controls","Network","Back"};	
-	private final String[] MENU_OPTIONS_GRAPHICS = {"Resolution: ","Volume: ","Music:","Save","Back"};
+	private final String[] MENU_OPTIONS_GRAPHICS = {"Resolution:","Volume: ","Music:","Save","Back"};
 	private final String[] MENU_OPTIONS_CONTROLS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","Save","Back"};
 	private final String[] MENU_OPTIONS_NETWORK  = {"IP:","Port:","PLACEHOLDER:","Save","Back"};
 	
@@ -222,35 +222,35 @@ public class Options extends BasicGameState implements ComponentListener{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		MainMenu.mainHeader.drawCell();
+		MainMenu.mainHeader.render();
 		if(oState == OptionState.Main){
-			optionHeader.drawCell();
+			optionHeader.render();
 			optionBoxMain.render();
 		}else if(oState == OptionState.Graphics){
-			graphicsHeader.drawCell();
+			graphicsHeader.render();
 			optionBoxGraphics.render();
 			optionBoxVariables.render();
 			optionBoxSaveReturn.render();
 			if(savebool == true && savetimer <= 2000){
-				saveCell.drawCell();
+				saveCell.render();
 			}else{
 				savebool = false;
 			}
 		}else if(oState == OptionState.Controls){
-			controlHeader.drawCell();
+			controlHeader.render();
 			optionBoxControls.render();
 			optionBoxSaveReturn.render();
 			if(savebool == true && savetimer <= 2000){
-				saveCell.drawCell();
+				saveCell.render();
 			}else{
 				savebool = false;
 			}
 		}else if(oState == OptionState.Network){
-			networkHeader.drawCell();
+			networkHeader.render();
 			optionBoxNetwork.render();
 			optionBoxSaveReturn.render();
 			if(savebool == true && savetimer <= 2000){
-				saveCell.drawCell();
+				saveCell.render();
 			}else{
 				savebool = false;
 			}

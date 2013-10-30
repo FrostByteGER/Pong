@@ -25,8 +25,6 @@ import de.frostbyteger.pong.engine.io.ConfigHelper;
 
 public class CorePong extends BasicGame {	
 
-	private int difficultyselection = 1;
-
 	
 	private int challengecounter = 0;
 
@@ -34,40 +32,12 @@ public class CorePong extends BasicGame {
 	private float time = 0.0f;
 	
 	private boolean collision = false;
-	
-
-	
-	
-	protected double hip = 0;
-	protected Random rndm = new Random();
-
-	public void init(GameContainer gc) throws SlickException {
-
-	}
 
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		
-		if(currentmenustate == MenuState.CPUSelection){
-			bigfont.drawString(S_resX/2 - bigfont.getWidth("Pong")/2, 20 + bigfont.getHeight("Pong"), "Pong", Color.white);	
-			mediumfont.drawString(S_resX/2 - mediumfont.getWidth(AI)/2, S_resY/2 - 30, AI,Color.cyan);
-			normalfont.drawString(S_resX/2 - normalfont.getWidth(MENU_DIFFICULTY_ARRAY[difficultyselection])/2, S_resY/2, MENU_DIFFICULTY_ARRAY[difficultyselection],Color.white);
-			smallfont.drawString(S_resX/2 - smallfont.getWidth(MENU_DIFFICULTY_EXPL_ARRAY[difficultyselection])/2, S_resY/2 + 20, MENU_DIFFICULTY_EXPL_ARRAY[difficultyselection],Color.lightGray);
-			arrow_left.draw(S_resX/2 - normalfont.getWidth(MENU_DIFFICULTY_ARRAY[difficultyselection])/2 - 45, S_resY/2 + 2, 0.4f);
-			arrow_right.draw(S_resX/2 + normalfont.getWidth(MENU_DIFFICULTY_ARRAY[difficultyselection])/2 + 13, S_resY/2 + 2, 0.4f);
-		}
-		
 		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN || currentmenustate == MenuState.Challenge){
-			pad1.draw(g);
-			pad2.draw(g);
-			ball.draw(g);
-			if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN){
-				g.drawString(Integer.toString(pad1.getPoints()), S_resX / 2 - 20, S_resY / 2);
-				g.drawString(":", S_resX / 2, S_resY / 2);
-				g.drawString(Integer.toString(pad2.getPoints()), S_resX / 2 + 20, S_resY / 2);
-			}
 			if (S_Debug == true) {
 				g.drawString("DEBUG Monitor", 75, 25);
-				g.drawString("Ballvelocity: " + Double.toString(ball.getVelocity()), 75,40);
+				g.drawString("Ballvelocity: " + Double.toString(ball.getPadVelocity()), 75,40);
 				g.drawString("LastCollision:" + lastcollision.toString(), 75, 55);
 				g.drawString("LastPadCollision:" + lastpadcollision.toString(), 75, 70);
 				g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 85);
@@ -76,10 +46,6 @@ public class CorePong extends BasicGame {
 				g.drawString("Ball Position: " + Float.toString(ball.getBall().getCenterX()) + "|" + Float.toString(ball.getBall().getCenterY()), 75, 130);
 				g.drawString("Delta: " + Float.toString(1.0f/FPS), 75, 145);
 				gc.setShowFPS(true);
-			}
-			
-			if(gc.isPaused() == true){
-				g.drawString("GAME PAUSED, PRESS " + "P" + " TO RESUME", S_resX / 2 - 135, S_resY / 2 + 50);
 			}
 
 			if (currentgamestate == GameState.BallIsOut) {
@@ -101,58 +67,12 @@ public class CorePong extends BasicGame {
 
 	}
 
-	public void update(GameContainer gc, int delta) throws SlickException {
-		
-		
-		if(currentmenustate == MenuState.CPUSelection){
-			if(input.isKeyPressed(Input.KEY_ESCAPE)){
-				abort();	
-			}
-			
-			if(input.isKeyPressed(Input.KEY_LEFT) && difficultyselection > 0){
-				difficultyselection -= 1;
-			}
-			if(input.isKeyPressed(Input.KEY_RIGHT) && difficultyselection < 3){
-				difficultyselection += 1;
-			}
-			if(input.isKeyPressed(Input.KEY_ENTER)){
-				if(difficultyselection == 0){
-					currentmenustate = MenuState.CPU;
-					newGame(Difficulty.EASY.getDifficulty());
-					currentgamestate = GameState.Play;
-				}
-				if(difficultyselection == 1){
-					currentmenustate = MenuState.CPU;
-					newGame(Difficulty.MEDIUM.getDifficulty());
-					currentgamestate = GameState.Play;
-				}
-				if(difficultyselection == 2){
-					currentmenustate = MenuState.CPU;
-					newGame(Difficulty.HARD.getDifficulty());
-					currentgamestate = GameState.Play;
-				}
-				if(difficultyselection == 3){
-					currentmenustate = MenuState.CPU;
-					newGame(Difficulty.UNBEATABLE.getDifficulty());
-					currentgamestate = GameState.Play;
-				}
-			}
-			
-		}
-		
-			
+	public void update(GameContainer gc, int delta) throws SlickException {		
 		if(currentmenustate == MenuState.CPU || currentmenustate == MenuState.LAN || currentmenustate == MenuState.PvP || currentmenustate == MenuState.Challenge){
 			// Pause Game
-			if (gc.hasFocus() == false || gc.isPaused() == false && input.isKeyPressed(Input.KEY_P) ) {
-				gc.setPaused(true);
-			}
-			if(gc.hasFocus() == true && input.isKeyPressed(Input.KEY_P) && gc.isPaused() == true){
-				gc.setPaused(false);
-			}
 			
 			// Abort Game
 			if(input.isKeyPressed(Input.KEY_ESCAPE)){
-
 				abort();
 			}
 			
@@ -255,12 +175,12 @@ public class CorePong extends BasicGame {
 									
 								}else{
 									if(ball.getRoundedEtimatedY() < pad2.getShape().getCenterY() && pad2.getShape().getMinY() >= 0.0){
-										for(int i = 0; i <= pad2.getVelocity();i++){
+										for(int i = 0; i <= pad2.getPadVelocity();i++){
 											pad2.getShape().setCenterY(pad2.getShape().getCenterY() - 1.0f);	
 										}
 									}
 									if(ball.getRoundedEtimatedY() > pad2.getShape().getCenterY() && pad2.getShape().getMaxY() <= S_resY){
-										for(int i = 0; i <= pad2.getVelocity();i++){
+										for(int i = 0; i <= pad2.getPadVelocity();i++){
 											pad2.getShape().setCenterY(pad2.getShape().getCenterY() + 1.0f);
 										}
 									}
@@ -280,9 +200,9 @@ public class CorePong extends BasicGame {
 							challengecounter += 1;
 							time = 0;
 						}
-						ball.addVelocityGravity(S_gravity, delta);
+						ball.addBallVelocity(S_gravity, delta);
 					}else{
-						ball.addVelocity(0.03, delta, lastcollision);
+						ball.addBallVelocity(0.03, delta, lastcollision);
 					}
 
 	
@@ -298,7 +218,7 @@ public class CorePong extends BasicGame {
 	
 					if (pad1.intersects(ball.getShape())) {
 						if(pad1.getSpinspeed() > 0.0f){
-							ball.addSpin(pad1.getSpinspeed());
+							ball.addBallSpin(pad1.getSpinspeed());
 						}
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
 						lastpadcollision = Border.LEFT;
@@ -308,7 +228,7 @@ public class CorePong extends BasicGame {
 					if (pad2.intersects(ball.getShape())) {
 						if(currentmenustate == MenuState.PvP || currentmenustate == MenuState.LAN ){
 							if(pad2.getSpinspeed() > 0.0f){
-								ball.addSpin(-pad2.getSpinspeed());
+								ball.addBallSpin(-pad2.getSpinspeed());
 							}
 						}
 						ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
@@ -358,35 +278,6 @@ public class CorePong extends BasicGame {
 					}
 				}
 		}
-	}
-	
-	private void newGame(float paddifficulty){
-		pad1 = new Pad(0 + 10, S_resY / 2, paddifficulty, 0);
-		pad1.getShape().setCenterY(S_resY/2);
-		pad2 = new Pad(S_resX - 20, S_resY / 2, paddifficulty, 0);
-		pad2.getShape().setCenterY(S_resY/2);
-		ball = new Ball(S_resX / 2 - BALLRADIUS / 2, S_resY / 2 - BALLRADIUS / 2, BALLRADIUS);
-	}
-
-	
-	private void newBall(){
-		lastcollision = Border.NONE;
-		lastpadcollision = Border.NONE;
-		time = 0;
-		challengecounter = 0;
-		ball = new Ball(S_resX / 2 - BALLRADIUS / 2, S_resY / 2 - BALLRADIUS / 2, BALLRADIUS);
-		currentgamestate = GameState.Play;
-	}
-	
-	private void abort(){
-		playerselection = 0;
-		difficultyselection = 1;
-		currentgamestate = GameState.Start;
-		time = 0;
-		challengecounter = 0;
-		lastcollision = Border.NONE;
-		lastpadcollision = Border.NONE;
-		currentmenustate = MenuState.Main;
 	}
 
 }
