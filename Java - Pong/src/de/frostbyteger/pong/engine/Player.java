@@ -8,6 +8,7 @@ public class Player {
 	
 	private Pad playerPad;
 	private int points;
+	private boolean cpuControlled;
 	
 	/**
 	 * @param playerPad
@@ -16,6 +17,19 @@ public class Player {
 	public Player(Pad playerPad, int points) {
 		this.playerPad = playerPad;
 		this.points = points;
+		cpuControlled = false;
+	}
+	
+	/**
+	 * 
+	 * @param playerPad
+	 * @param points
+	 * @param isCPUControlled
+	 */
+	public Player(Pad playerPad, int points, boolean isCPUControlled) {
+		this.playerPad = playerPad;
+		this.points = points;
+		this.cpuControlled = isCPUControlled;
 	}
 	
 	/**
@@ -76,6 +90,20 @@ public class Player {
 	 */
 	public void removePoints(int points){
 		this.points -= points;
+	}
+
+	/**
+	 * @return the cpuControlled
+	 */
+	public boolean isCpuControlled() {
+		return cpuControlled;
+	}
+
+	/**
+	 * @param cpuControlled the cpuControlled to set
+	 */
+	public void setCpuControlled(boolean cpuControlled) {
+		this.cpuControlled = cpuControlled;
 	}
 	
 	

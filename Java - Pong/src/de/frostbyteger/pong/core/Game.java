@@ -1,14 +1,10 @@
 package de.frostbyteger.pong.core;
 
-import java.util.ArrayList;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.InputListener;
-import org.newdawn.slick.KeyListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -20,10 +16,8 @@ import de.frostbyteger.pong.engine.Border;
 import de.frostbyteger.pong.engine.Difficulty;
 import de.frostbyteger.pong.engine.GameState;
 import de.frostbyteger.pong.engine.IngameState;
-import de.frostbyteger.pong.engine.OptionState;
 import de.frostbyteger.pong.engine.Pad;
 import de.frostbyteger.pong.engine.Player;
-import de.frostbyteger.pong.engine.graphics.FontHelper;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
@@ -32,7 +26,7 @@ import de.frostbyteger.pong.start.Pong;
 
 /**
  * @author Kevin
- *
+ * TODO: The ball glitches out of its boundaries when touching a border and a pad at the same time; maybe implement a better collision detection?
  */
 public class Game extends BasicGameState implements ComponentListener, InputListener{
 
@@ -53,13 +47,19 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	// Game options
 	private int ballRadius         = 5;
 	private int goal               = 10;
-	private static float S_gravity        = 0.00981f;
-	protected static boolean S_Debug_AI   = false;
+	private boolean challenge              = false;
+	private static float S_gravity         = 0.981f;
+	protected static boolean S_Debug_AI    = false;
+	protected static boolean S_Debug_AI_MP = false;
 	
 	// Game objects
 	private Player player1;
 	private Player player2;
 	private Ball ball;
+	
+	// Challengecounters
+	private int time           = 0;
+	private int challengeCount = 0;
 		
 	private GameState gState     = GameState.Main;
 	private IngameState igState  = IngameState.None;
@@ -143,69 +143,278 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 			}else if(gState == GameState.Challenge){
 				
 			}
-		}
-
-		if(igState == IngameState.Play || igState == IngameState.BallIsOut){
+		}else if(igState == IngameState.Play || igState == IngameState.BallIsOut || igState == IngameState.Player1Wins || igState == IngameState.Player2Wins){
 			player1.getPlayerPad().draw(g);
 			player2.getPlayerPad().draw(g);
 			ball.draw(g);
-			g.drawString(Integer.toString(player1.getPoints()), Pong.S_resX / 2 - 20, Pong.S_resY / 2);
-			g.drawString(":", Pong.S_resX / 2, Pong.S_resY / 2);
-			g.drawString(Integer.toString(player2.getPoints()), Pong.S_resX / 2 + 20, Pong.S_resY / 2);
-			if(game.getContainer().isPaused() == true){
+			if(!challenge){
+				g.drawString(Integer.toString(player1.getPoints()), Pong.S_resX / 2 - 20, Pong.S_resY / 2);
+				g.drawString(":", Pong.S_resX / 2, Pong.S_resY / 2);
+				g.drawString(Integer.toString(player2.getPoints()), Pong.S_resX / 2 + 20, Pong.S_resY / 2);
+			}
+			if(game.getContainer().isPaused()){
 				g.drawString("GAME PAUSED, PRESS " + "P" + " TO RESUME", Pong.S_resX / 2 - 135, Pong.S_resY / 2 + 50);
 			}
+			if (igState == IngameState.BallIsOut) {
+				g.drawString("Press ENTER to spawn a new ball!", Pong.S_resX / 2 - 135, Pong.S_resY / 2 + 30);
+			}
+			if (igState == IngameState.Player1Wins && !challenge) {
+				g.drawString("Player 1 wins!", Pong.S_resX / 2 - 50, Pong.S_resY / 2 + 30);
+				g.drawString("Press Enter to return to the mainmenu", Pong.S_resX / 2 - 160, Pong.S_resY / 2 + 50);
+			}else if(igState == IngameState.Player2Wins && !challenge) {
+				g.drawString("Player 2 wins!", Pong.S_resX / 2 - 50, Pong.S_resY / 2 + 30);
+				g.drawString("Press Enter to return to the mainmenu", Pong.S_resX / 2 - 160, Pong.S_resY / 2 + 50);
+			}
+
 		}
+		if(challenge && igState == IngameState.Play){
+			g.drawString("Seconds survived: " + Integer.toString(challengeCount), Pong.S_resX / 2 - 75, 50);
+		}
+
+		
+		
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		
-		if(gState == GameState.Main){
-			gameModeChoice.update();
-		}else if(gState == GameState.PvCPU){
-			aiDifficultyChoice.update();
-		}else if(gState == GameState.PvP){
-			
-		}else if(gState == GameState.Challenge){
-			
-		}
 		if(igState == IngameState.Play){
 			if (!game.getContainer().hasFocus() && !game.getContainer().isPaused()) {
 				game.getContainer().setPaused(true);
 			}
-			if (game.getContainer().getInput().isKeyDown(Input.KEY_UP) ^ game.getContainer().getInput().isKeyDown(Input.KEY_DOWN)) {
-				if (player1.getPlayerPad().getPadMinY() > 0.0 && player1.getPlayerPad().getPadMaxY() < Pong.S_resY) {
-					player1.getPlayerPad().addSpinSpeed(0.005f * delta);
+			if(!game.getContainer().isPaused()){
+				
+				if(Pong.S_debug){
+					if(game.getContainer().getInput().isKeyDown(Input.KEY_Q)){
+						ball.addDebugVelocity(0.25f, delta);
+					}
+					if(game.getContainer().getInput().isKeyDown(Input.KEY_E)){
+						ball.addDebugVelocity(-0.25f, delta);
+					}
 				}
+				
+				if(!S_Debug_AI_MP){
+					if (game.getContainer().getInput().isKeyDown(Input.KEY_UP) ^ game.getContainer().getInput().isKeyDown(Input.KEY_DOWN)) {
+						if (player1.getPlayerPad().getPadMinY() > 0.0 && player1.getPlayerPad().getPadMaxY() < Pong.S_resY) {
+							player1.getPlayerPad().addSpinSpeed(0.005f * delta);
+						}
+					}else{
+						player1.getPlayerPad().resetSpinSpeed();
+					}
+					if (game.getContainer().getInput().isKeyDown(Input.KEY_UP)) {
+						if (player1.getPlayerPad().getPadMinY() > 0.0) {
+							player1.getPlayerPad().setPadY((float) ((player1.getPlayerPad().getPadY() - 10.0)));
+						}
+					}
+					if (game.getContainer().getInput().isKeyDown(Input.KEY_DOWN)) {
+						if (player1.getPlayerPad().getPadMaxY() < Pong.S_resY) {
+							player1.getPlayerPad().setPadY((float) ((player1.getPlayerPad().getPadY() + 10.0)));
+						}
+					}
+				}
+
+				if(!player2.isCpuControlled()){
+					// For player 2
+					if (game.getContainer().getInput().isKeyDown(Input.KEY_W) ^ game.getContainer().getInput().isKeyDown(Input.KEY_S)) {
+						if (player2.getPlayerPad().getPadMinY() > 0.0 && player2.getPlayerPad().getPadMaxY() < Pong.S_resY) {
+							player2.getPlayerPad().addSpinSpeed(0.005f * delta);
+						}
+					}else{
+						player2.getPlayerPad().resetSpinSpeed();
+					}
+					
+					if (game.getContainer().getInput().isKeyDown(Input.KEY_W)) {
+						if (player2.getPlayerPad().getPadMinY() > 0.0) {
+							player2.getPlayerPad().setPadY((float) ((player2.getPlayerPad().getPadY() - 10.0)));
+						}
+
+					}
+					if (game.getContainer().getInput().isKeyDown(Input.KEY_S)) {
+						if (player2.getPlayerPad().getPadMaxY() < Pong.S_resY) {
+							player2.getPlayerPad().setPadY((float) ((player2.getPlayerPad().getPadY() + 10.0)));
+						}
+
+					}
+				}
+				handleAIPad(delta);
+				moveBall();
+				detectBallCollision();
+				if(challenge){
+					playChallenge(delta);
+				}else if(!challenge && !player2.isCpuControlled()){
+					playPvP();
+				}else if(!challenge && player2.isCpuControlled()){
+					playVsCPU();
+				}
+
+			}
+		}else if(igState == IngameState.BallIsOut){
+			
+		}else if(igState == IngameState.Player1Wins){
+			
+		}else if(igState == IngameState.Player2Wins){
+			
+		}else if(igState == IngameState.None)
+			if(gState == GameState.Main){
+				gameModeChoice.update();
+			}else if(gState == GameState.PvCPU){
+				aiDifficultyChoice.update();
+			}
+	}
+	
+	private void win(){
+		if(!challenge){
+			if(ball.getBall().getMaxX() < 0) {
+				player2.addPoint();
+				igState = IngameState.BallIsOut;
+				lastCollision = Border.None;
+				if(player2.getPoints() >= goal) {
+					igState = IngameState.Player2Wins;
+				}
+			}else if(ball.getBall().getMinX() > Pong.S_resX) {
+				player1.addPoint();
+				igState = IngameState.BallIsOut;
+				lastCollision = Border.None;
+				if (player1.getPoints() >= goal) {
+					igState = IngameState.Player1Wins;
+				}
+			}
+		}else{
+			if(ball.getBall().getMaxX() < 0) {
+				//TODO: Add functionality
+			}else if(ball.getBall().getMinX() > Pong.S_resX) {
+				//TODO: Add achievement unlocked: do the impossible!
+			}
+		}
+
+	}
+	
+	private void handleAIPad(int delta){ //TODO: Change methodname
+		if(S_Debug_AI || challenge) {
+			if(ball.getBall().getMinY() >= Pong.S_resY - player2.getPlayerPad().getPadHeight() / 2) {
+				//player2.getPlayerPad().resetSpinSpeed();
+			}else if(ball.getBall().getMaxY() <= 0 + player2.getPlayerPad().getPadHeight() / 2) {
+				//player2.getPlayerPad().resetSpinSpeed();
 			}else{
-				player1.getPlayerPad().resetSpinSpeed();
+				player2.getPlayerPad().setPadCenterY(ball.getBall().getCenterY());
+				//player2.getPlayerPad().addSpinSpeed(0.005f * delta);
 			}
-			if (game.getContainer().getInput().isKeyDown(Input.KEY_UP)) {
-				if (player1.getPlayerPad().getPadMinY() > 0.0) {
-					player1.getPlayerPad().setPadY((float) ((player1.getPlayerPad().getPadY() - 10.0)));
+			if(S_Debug_AI_MP){
+				if(ball.getBall().getMinY() >= Pong.S_resY - player1.getPlayerPad().getPadHeight() / 2) {
+					//player1.getPlayerPad().resetSpinSpeed();
+				}else if(ball.getBall().getMaxY() <= 0 + player1.getPlayerPad().getPadHeight() / 2) {
+					//player1.getPlayerPad().resetSpinSpeed();
+				}else{
+					player1.getPlayerPad().setPadCenterY(ball.getBall().getCenterY());
+					//player1.getPlayerPad().addSpinSpeed(0.005f * delta);
 				}
-
 			}
-			if (game.getContainer().getInput().isKeyDown(Input.KEY_DOWN)) {
-				if (player1.getPlayerPad().getPadMaxY() < Pong.S_resY) {
-					player1.getPlayerPad().setPadY((float) ((player1.getPlayerPad().getPadY() + 10.0)));
+		}else{
+			if(ball.getBall().getCenterX() > Pong.S_resX/2 + 10 && !player2.getPlayerPad().isCollided()){
+				ball.calcTrajectory(ball.getVector().copy(), ball.getBall().getCenterX(), ball.getBall().getCenterY());
+			}if(player2.getPlayerPad().getPadCenterY() != Pong.S_resY/2 && player2.getPlayerPad().isCollided()){
+				
+				//Prevents that the AI pad is glitching while floating back to middle
+				if(player2.getPlayerPad().getPadCenterY() == Pong.S_resY/2 -1 || player2.getPlayerPad().getPadCenterY() == Pong.S_resY/2 +1 ){
+					player2.getPlayerPad().setPadCenterY(Pong.S_resY/2);
+				}else{
+					if(player2.getPlayerPad().getPadCenterY() > Pong.S_resY/2){
+						for(int i = 0; i <= 2.0f;i++){
+							player2.getPlayerPad().setPadCenterY(player2.getPlayerPad().getPadCenterY() - 1.0f);
+						}
+					}else if(player2.getPlayerPad().getPadCenterY() < Pong.S_resY/2){
+						for(int i = 0; i <= 2.0f;i++){
+							player2.getPlayerPad().setPadCenterY(player2.getPlayerPad().getPadCenterY() + 1.0f);
+						}
+					}
 				}
-
+			}
+			if(ball.getBall().getCenterX() > Pong.S_resX/2 + 10 && !player2.getPlayerPad().isCollided()){
+				if(ball.getBall().getMaxY() > Pong.S_resY) {
+					
+				}else if(ball.getBall().getMinY() < 0) {
+					
+				}else{
+					if(ball.getRoundedEtimatedY() < player2.getPlayerPad().getPadCenterY() && player2.getPlayerPad().getPadMinY() >= 0.0){
+						for(int i = 0; i <= player2.getPlayerPad().getPadVelocity();i++){
+							player2.getPlayerPad().setPadCenterY(player2.getPlayerPad().getPadCenterY() - 1.0f);	
+						}
+					}
+					if(ball.getRoundedEtimatedY() > player2.getPlayerPad().getPadCenterY() && player2.getPlayerPad().getPadMaxY() <= Pong.S_resY){
+						for(int i = 0; i <= player2.getPlayerPad().getPadVelocity();i++){
+							player2.getPlayerPad().setPadCenterY(player2.getPlayerPad().getPadCenterY() + 1.0f);
+						}
+					}
+				}
 			}
 		}
 	}
 	
-	private void playVersusCPU(){
-		
+	private void playVsCPU(){
+		if(lastCollision == Border.Left || lastCollision == Border.Right){
+			ball.addBallVelocity(0.03f);
+		}
+		if(ball.getBall().getMaxX() < 0 || ball.getBall().getMinX() > Pong.S_resX){
+			win();
+		}
 	}
 	
-	private void playerVersusPlayer(){
-		
+	private void playPvP(){
+		System.out.println("TEST");
+		if(lastCollision == Border.Left || lastCollision == Border.Right){
+			ball.addBallVelocity(0.03f);
+		}
+		if(ball.getBall().getMaxX() < 0 || ball.getBall().getMinX() > Pong.S_resX){
+			win();
+		}
 	}
 	
-	private void playChallenge(){
-		
+	private void playChallenge(int delta){
+		time += delta;
+		if(time >= 1000){
+			challengeCount += 1;
+			time = 0;
+		}
+		ball.addBallVelocityGravity(S_gravity);
+	}
+	
+	private void detectBallCollision(){
+		if (ball.getBall().getMinY() <= 0) {
+			ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
+			lastCollision = Border.Top;
+		}
+
+		if (ball.getBall().getMaxY() >= Pong.S_resY) {
+			ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
+			lastCollision = Border.Bottom;
+		}
+
+		if (player1.getPlayerPad().intersects(ball.getBall())) {
+			if(player1.getPlayerPad().getSpinSpeed() > 0.0f){
+				ball.addBallSpin(player1.getPlayerPad().getSpinSpeed());
+			}
+			ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
+			player1.getPlayerPad().setCollided(true);
+			player2.getPlayerPad().setCollided(false);
+			lastCollision = Border.Left;
+		}
+
+		if (player2.getPlayerPad().intersects(ball.getBall())) {
+			if(!player2.isCpuControlled()){
+				if(player2.getPlayerPad().getSpinSpeed() > 0.0f){
+					ball.addBallSpin(-player1.getPlayerPad().getSpinSpeed());
+				}
+			}
+			ball.setVectorXY(-ball.getVectorX(), ball.getVectorY());
+			player2.getPlayerPad().setCollided(true);
+			player1.getPlayerPad().setCollided(false);
+			lastCollision = Border.Right;
+
+		}
+	}
+	
+	private void moveBall(){
+		ball.getBall().setCenterX(ball.getBall().getCenterX() + ball.getVectorX());
+		ball.getBall().setCenterY(ball.getBall().getCenterY() + ball.getVectorY());
 	}
 	
 	private void pauseGame(){
@@ -224,58 +433,95 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		ball = new Ball(Pong.S_resX/2 - ballRadius/2, Pong.S_resY/2 - ballRadius/2, ballRadius);
 	}
 
-	/*
+
 	private void newBall(){
-		lastcollision = Border.NONE;
-		lastpadcollision = Border.NONE;
+		lastCollision = Border.None;
+		player1.getPlayerPad().setCollided(false);
+		player2.getPlayerPad().setCollided(false);
 		time = 0;
-		challengecounter = 0;
-		ball = new Ball(S_resX / 2 - BALLRADIUS / 2, S_resY / 2 - BALLRADIUS / 2, BALLRADIUS);
-		currentgamestate = GameState.Play;
+		//challengecounter = 0;
+		ball = new Ball(Pong.S_resX / 2 - ballRadius / 2, Pong.S_resY / 2 - ballRadius / 2, ballRadius);
+		igState = IngameState.Play;
 	}
 	
-	private void abort(){
-		playerselection = 0;
-		difficultyselection = 1;
-		currentgamestate = GameState.Start;
+
+	private void abortGame(){
 		time = 0;
-		challengecounter = 0;
-		lastcollision = Border.NONE;
-		lastpadcollision = Border.NONE;
-		currentmenustate = MenuState.Main;
+		//challengecounter = 0;
+		player2.setCpuControlled(false);
+		lastCollision = Border.None;
+		igState = IngameState.None;
+		gState = GameState.Main;
 	}
-	*/
+
 	
 	public void keyPressed(int key, char c) {
 		if(igState == IngameState.Play){
 			if(key == Input.KEY_P){
 				pauseGame();
+			}else if(key == Input.KEY_ESCAPE){
+				abortGame();
+			}else if(key == Input.KEY_F1){
+				game.getContainer().setTargetFrameRate(10);
+			}else if(key == Input.KEY_F2){
+				game.getContainer().setTargetFrameRate(20);
+			}else if(key == Input.KEY_F3){
+				game.getContainer().setTargetFrameRate(30);
+			}else if(key == Input.KEY_F4){
+				game.getContainer().setTargetFrameRate(40);
+			}else if(key == Input.KEY_F5){
+				game.getContainer().setTargetFrameRate(50);
+			}else if(key == Input.KEY_F6){
+				game.getContainer().setTargetFrameRate(60);
+			}else if(key == Input.KEY_F7){
+				game.getContainer().setTargetFrameRate(70);
+			}else if(key == Input.KEY_F8){
+				game.getContainer().setTargetFrameRate(80);
+			}else if(key == Input.KEY_F9){
+				game.getContainer().setTargetFrameRate(90);
+			}else if(key == Input.KEY_F10){
+				game.getContainer().setTargetFrameRate(100);
+			}else if(key == Input.KEY_F11){
+				game.getContainer().setTargetFrameRate(110);
+			}else if(key == Input.KEY_F12){
+				game.getContainer().setTargetFrameRate(120);
+			}else if(key == Input.KEY_ENTER && Pong.S_debug){
+				newBall();
 			}
-		}
-		if(gState == GameState.Main){
-			if(key == Input.KEY_UP && gameModeChoice.getBoxKeyY() > 1){
-				gameModeChoice.setBoxKeyY(gameModeChoice.getBoxKeyY() - 1);
-			}else if(key == Input.KEY_DOWN && gameModeChoice.getBoxKeyY() < gameModeChoice.getBoxHeight()){
-				gameModeChoice.setBoxKeyY(gameModeChoice.getBoxKeyY() + 1);
+		}else if(igState == IngameState.BallIsOut) {
+			if(key == Input.KEY_ENTER) {
+				player1.getPlayerPad().setPadCenterY(Pong.S_resY/2);
+				player2.getPlayerPad().setPadCenterY(Pong.S_resY/2);
+				ball = new Ball(Pong.S_resX / 2 - ballRadius / 2, Pong.S_resY / 2 - ballRadius / 2, ballRadius);
+				igState = IngameState.Play;
+				
 			}
-		}else if(gState == GameState.PvCPU){
-			if(key == Input.KEY_LEFT && aiDifficultyChoice.getBoxKeyX() > 1){
-				aiDifficultyChoice.setBoxKeyX(aiDifficultyChoice.getBoxKeyX() - 1);
-				aiDifficultyChoice.setBoxX(aiDifficultyChoice.getBoxX() + 350);
-				aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX()).setVisible(false);
-				aiDifficultyExpl.setCellText(MENU_DIFFICULTY_EXPL[aiDifficultyChoice.getBoxKeyX() - 1]);
-				aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 1).setVisible(true);
-			}else if(key == Input.KEY_RIGHT && aiDifficultyChoice.getBoxKeyX() < aiDifficultyChoice.getBoxWidth()){
-				aiDifficultyChoice.setBoxKeyX(aiDifficultyChoice.getBoxKeyX() + 1);
-				aiDifficultyChoice.setBoxX(aiDifficultyChoice.getBoxX() - 350);
-				aiDifficultyExpl.setCellText(MENU_DIFFICULTY_EXPL[aiDifficultyChoice.getBoxKeyX() - 1]);
-				aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 2).setVisible(false);
-				aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 1).setVisible(true);
+		}else if(igState == IngameState.Player1Wins || igState == IngameState.Player2Wins){
+			if(key == Input.KEY_ENTER) {
+				abortGame();
 			}
-		}else if(gState == GameState.PvP){
-			
-		}else if(gState == GameState.Challenge){
-			
+		}else if(igState == IngameState.None){
+			if(gState == GameState.Main){
+				if(key == Input.KEY_UP && gameModeChoice.getBoxKeyY() > 1){
+					gameModeChoice.setBoxKeyY(gameModeChoice.getBoxKeyY() - 1);
+				}else if(key == Input.KEY_DOWN && gameModeChoice.getBoxKeyY() < gameModeChoice.getBoxHeight()){
+					gameModeChoice.setBoxKeyY(gameModeChoice.getBoxKeyY() + 1);
+				}
+			}else if(gState == GameState.PvCPU){
+				if(key == Input.KEY_LEFT && aiDifficultyChoice.getBoxKeyX() > 1){
+					aiDifficultyChoice.setBoxKeyX(aiDifficultyChoice.getBoxKeyX() - 1);
+					aiDifficultyChoice.setBoxX(aiDifficultyChoice.getBoxX() + 350);
+					aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX()).setVisible(false);
+					aiDifficultyExpl.setCellText(MENU_DIFFICULTY_EXPL[aiDifficultyChoice.getBoxKeyX() - 1]);
+					aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 1).setVisible(true);
+				}else if(key == Input.KEY_RIGHT && aiDifficultyChoice.getBoxKeyX() < aiDifficultyChoice.getBoxWidth()){
+					aiDifficultyChoice.setBoxKeyX(aiDifficultyChoice.getBoxKeyX() + 1);
+					aiDifficultyChoice.setBoxX(aiDifficultyChoice.getBoxX() - 350);
+					aiDifficultyExpl.setCellText(MENU_DIFFICULTY_EXPL[aiDifficultyChoice.getBoxKeyX() - 1]);
+					aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 2).setVisible(false);
+					aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 1).setVisible(true);
+				}
+			}
 		}
 	}
 	
@@ -286,8 +532,13 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				gState = GameState.PvCPU;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_GAME_CHOICE[1])){
 				gState = GameState.PvP;
+				newGame(Difficulty.Hard.getDifficulty());
+				igState = IngameState.Play;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_GAME_CHOICE[2])){
 				gState = GameState.Challenge;
+				newGame(Difficulty.Hard.getDifficulty());
+				challenge = true;
+				igState = IngameState.Play;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_GAME_CHOICE[3])){
 				game.enterState(MainMenu.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
 				gameModeChoice.setBoxKeyCoordinates(new int[] {1,1});
@@ -295,19 +546,21 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		}else if(gState == GameState.PvCPU){
 			if(source.getActionCommand().equals(COMMANDS_MENU_GAME_DIFFICULTY[0])){
 				newGame(Difficulty.Easy.getDifficulty());
+				player2.setCpuControlled(true);
 				igState = IngameState.Play;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_GAME_DIFFICULTY[1])){
 				newGame(Difficulty.Medium.getDifficulty());
+				player2.setCpuControlled(true);
 				igState = IngameState.Play;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_GAME_DIFFICULTY[2])){
 				newGame(Difficulty.Hard.getDifficulty());
+				player2.setCpuControlled(true);
 				igState = IngameState.Play;
 			}else if(source.getActionCommand().equals(COMMANDS_MENU_GAME_DIFFICULTY[3])){
 				newGame(Difficulty.Unbeatable.getDifficulty());
+				player2.setCpuControlled(true);
 				igState = IngameState.Play;
 			}
-		}else if(gState == GameState.PvP){
-			
 		}
 	}
 

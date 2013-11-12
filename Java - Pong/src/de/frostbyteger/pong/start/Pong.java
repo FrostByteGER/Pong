@@ -62,7 +62,7 @@ public class Pong extends StateBasedGame{
 	
 	// Version info
 	public static final String TITLE          = "Pong";
-	public static final String VERSION        = "v1.40";
+	public static final String VERSION        = "v1.50";
 	public static final String VERSION_STATUS = "INTERNAL";
 	
 	// MD5 checksums

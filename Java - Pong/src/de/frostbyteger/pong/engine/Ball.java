@@ -24,6 +24,7 @@ public class Ball {
 	private int spin;	
 	private Vector2f vector;
 	private Random rndm;
+	private final float INTERVALL = 0.01666666666666666666666666666667f;
 	
 	/**
 	 * 
@@ -170,17 +171,40 @@ public class Ball {
 			}
 
 	}
-
+	
 	/**
 	 * 
 	 * @param acceleration
-	 * @param delta
-	 * @param lastcollision
 	 */
-	public void addBallVelocity(double acceleration, int delta, Border lastcollision) {
+	public void addBallVelocity(float acceleration) {
+		float velocity = (acceleration * INTERVALL + this.velocity) / 100.0f;
+		if(this.velocity < 3.5){
+			if (vector.getX() <= 5) {
+				this.velocity += 0.005f;
+				if (vector.getX() < 0) {
+					vector.set(vector.getX() - velocity, vector.getY());
+				} else {
+					vector.set(vector.getX() + velocity, vector.getY());
+				}
+				if (vector.getY() < 0) {
+					vector.set(vector.getX(), vector.getY() - velocity);
+				} else {
+					vector.set(vector.getX(), vector.getY() + velocity);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the given acceleration to the ball velocity 
+	 * with an specified time intervall
+	 * @param acceleration the acceleration added to the ball
+	 * @param delta the time intervall
+	 */
+	public void addBallVelocity(float acceleration, int delta) {
 		float hip = (float) (acceleration * delta + velocity) / 100.0f;
 		if(velocity < 3.5){
-			if (vector.getX() <= 5 && lastcollision == Border.Left || vector.getX() <= 5  && lastcollision == Border.Right) {
+			if (vector.getX() <= 5) {
 				velocity += 0.005f;
 				if (vector.getX() < 0) {
 					vector.set(vector.getX() - hip, vector.getY());
@@ -192,30 +216,42 @@ public class Ball {
 				} else {
 					vector.set(vector.getX(), vector.getY() + hip);
 				}
-	
 			}
 		}
 	}
 	
 	/**
-	 * Adds the given velocity to the ball
-	 * @param acceleration
-	 * @param delta
+	 * Simulates gravity on the ball
+	 * @param acceleration the acceleration added to the ball
 	 */
-	public void addBallVelocity(double acceleration, int delta) {
-		//velocity += (float) (acceleration * (delta/100));
+	public void addBallVelocityGravity(float acceleration) {
+		float velocity = (acceleration * INTERVALL + this.velocity) / 100.0f;
 		if (vector.getX() < 0) {
-			vector.set(vector.getX() - (velocity * (delta/100.0f)), vector.getY());
+			vector.set(vector.getX() - velocity, vector.getY());
 		} else {
-			vector.set(vector.getX() + (velocity * (delta/100.0f)), vector.getY());
+			vector.set(vector.getX() + velocity, vector.getY());
 		}
 		if (vector.getY() < 0) {
-			vector.set(vector.getX(), vector.getY() + (velocity * (delta/10.0f)));
+			vector.set(vector.getX(), vector.getY() + (acceleration * INTERVALL));
 		} else {
-			vector.set(vector.getX(), vector.getY() + (velocity * (delta/10.0f)));
+			vector.set(vector.getX(), vector.getY() + (acceleration * INTERVALL));
 		}
 	
 	}
+	
+    public void addDebugVelocity(float acceleration, int delta){
+        float hip = (float) (acceleration * delta + velocity) / 100;
+        if (vector.getX() < 0) {
+                vector.set(vector.getX() - hip, vector.getY());
+        } else {
+                vector.set(vector.getX() + hip, vector.getY());
+        }
+        if (vector.getY() < 0) {
+                vector.set(vector.getX(), vector.getY() - hip);
+        } else {
+                vector.set(vector.getX(), vector.getY() + hip);
+        }
+}
 	
 	/**
 	 * 
