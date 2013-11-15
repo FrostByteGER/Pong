@@ -34,28 +34,27 @@ public class Pong extends StateBasedGame{
 	public static final String PROFILE_PATH = "profiles/";
 	public static String S_activeProfile = "standard";
 	public static LinkedHashMap<String, Profile> S_profiles       = new LinkedHashMap<String,Profile>();
-	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(12);
 	public static LinkedHashMap<String, String> S_achievementData = new LinkedHashMap<String, String>(6);
-	public static final String[] KEYS_STATISTICS   = {"timePlayedOverall","timePlayedCPU","timePlayedLAN",
+	public static final String[] KEYS_STATISTICS   = {"timePlayedOverall","timePlayedCPU","timePlayedPvP",
 													  "timePlayedChallenge","matchesPlayedOverall",
-													  "matchesPlayedCPU","matchesPlayedLAN",
+													  "matchesPlayedCPU","matchesPlayedPvP",
 													  "matchesPlayedChallenge","matchesWonOverall",
-													  "matchesWonCPU","matchesWonLAN","matchesWonChallenge"};
+													  "matchesWonCPU","matchesWonPvP"};
 	public static final String[] KEYS_ACHIEVEMENTS = {};
 	
 	// Statistics Data
 	public static int S_timePlayedOverall      = 0;
 	public static int S_timePlayedCPU          = 0;	
-	public static int S_timePlayedLAN          = 0;	
+	public static int S_timePlayedPvP          = 0;	
 	public static int S_timePlayedChallenge    = 0;	
 	public static int S_matchesPlayedOverall   = 0;	
 	public static int S_matchesPlayedCPU       = 0;
-	public static int S_matchesPlayedLAN       = 0;
+	public static int S_matchesPlayedPvP       = 0;
 	public static int S_matchesPlayedChallenge = 0;
 	public static int S_matchesWonOverall      = 0;
 	public static int S_matchesWonCPU          = 0;
-	public static int S_matchesWonLAN          = 0;
-	public static int S_matchesWonChallenge    = 0;
+	public static int S_matchesWonPvP          = 0;
+	//public static int S_matchesWonChallenge    = 0;
 	
 	//Achievement Data
 	public static Achievement test;
@@ -162,16 +161,16 @@ public class Pong extends StateBasedGame{
 		}		
 		S_statisticsData.put(KEYS_STATISTICS[0], S_timePlayedOverall);
 		S_statisticsData.put(KEYS_STATISTICS[1], S_timePlayedCPU);
-		S_statisticsData.put(KEYS_STATISTICS[2], S_timePlayedLAN);
+		S_statisticsData.put(KEYS_STATISTICS[2], S_timePlayedPvP);
 		S_statisticsData.put(KEYS_STATISTICS[3], S_timePlayedChallenge);
 		S_statisticsData.put(KEYS_STATISTICS[4], S_matchesPlayedOverall);
 		S_statisticsData.put(KEYS_STATISTICS[5], S_matchesPlayedCPU);
-		S_statisticsData.put(KEYS_STATISTICS[6], S_matchesPlayedLAN);
+		S_statisticsData.put(KEYS_STATISTICS[6], S_matchesPlayedPvP);
 		S_statisticsData.put(KEYS_STATISTICS[7], S_matchesPlayedChallenge);
 		S_statisticsData.put(KEYS_STATISTICS[8], S_matchesWonOverall);
 		S_statisticsData.put(KEYS_STATISTICS[9], S_matchesWonCPU);
-		S_statisticsData.put(KEYS_STATISTICS[10], S_matchesWonLAN);
-		S_statisticsData.put(KEYS_STATISTICS[11], S_matchesWonChallenge);
+		S_statisticsData.put(KEYS_STATISTICS[10], S_matchesWonPvP);
+		//S_statisticsData.put(KEYS_STATISTICS[11], S_matchesWonChallenge);
 		int validProfiles = 0;
 		try{ 
 			File f = new File("profiles");
@@ -216,6 +215,9 @@ public class Pong extends StateBasedGame{
 		}catch(NullPointerException npe){
 			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, please choose another profile");
 			S_profileNotFound = true;
+		}catch(NumberFormatException nfe){
+			JOptionPane.showMessageDialog(null,nfe.toString() + "\n\nThe game encountered a serious Error while loading the profiles. Game exits!");
+			return -1;
 		}
 
 		return 0;

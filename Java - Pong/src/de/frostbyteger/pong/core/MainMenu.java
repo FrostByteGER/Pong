@@ -57,7 +57,7 @@ public class MainMenu extends BasicGameState implements ComponentListener {
 		mainHeader.setCellText(Pong.TITLE);
 		mainHeader.setClickable(false);
 		
-		menuBox = new Box(1, MENU_ARRAY.length, Pong.S_resX/2 - 100, Pong.S_resY/2 - 75, Pong.FONT, 30, 200, 30, container);
+		menuBox = new Box(1, MENU_ARRAY.length, Pong.S_resX/2 - 125, Pong.S_resY/2 - 125, Pong.FONT, 40, 250, 50, container);
 		menuBox.setEdged(false);
 		menuBox.setKeyInput(true);
 		menuBox.setFocus(true);

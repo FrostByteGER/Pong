@@ -20,10 +20,6 @@
             <value>true</value>
         </entry>
         <entry>
-            <key>debug</key>
-            <value>true</value>
-        </entry>
-        <entry>
             <key>show_fps</key>
             <value>true</value>
         </entry>

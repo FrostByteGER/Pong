@@ -1,5 +1,10 @@
 package de.frostbyteger.pong.core;
 
+import java.util.LinkedHashMap;
+
+import javax.swing.JOptionPane;
+import javax.xml.bind.JAXBException;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -18,6 +23,7 @@ import de.frostbyteger.pong.engine.GameState;
 import de.frostbyteger.pong.engine.IngameState;
 import de.frostbyteger.pong.engine.Pad;
 import de.frostbyteger.pong.engine.Player;
+import de.frostbyteger.pong.engine.Profile;
 import de.frostbyteger.pong.engine.graphics.ui.gui.AbstractComponent;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Box;
 import de.frostbyteger.pong.engine.graphics.ui.gui.Cell;
@@ -34,6 +40,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	
 	private StateBasedGame game;
 	
+	private final String[] MENU_YES_NO_CHOICE   = {"Yes","No"};
 	private final String[] MENU_GAME_CHOICE     = {"Player vs. CPU","Player vs. Player","Challenge Mode","Back"};
 	private final String[] MENU_DIFFICULTY      = {"Easy","Medium","Hard","Unbeatable"};
 	private final String[] MENU_DIFFICULTY_EXPL = {"1/4 Speed of Player\nFor N00bs",
@@ -43,10 +50,11 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	
 	private final String[] COMMANDS_MENU_GAME_CHOICE     = {"cpu","pvp","challenge","back"};
 	private final String[] COMMANDS_MENU_GAME_DIFFICULTY = {"easy","medium","hard","unbeatable"};
+	private final String[] COMMANDS_MENU_YES_NO_CHOICE   = {"yes","no"};
 	
 	// Game options
-	private int ballRadius         = 5;
-	private int goal               = 10;
+	private int ballRadius                 = 5;
+	private int goal                       = 1;
 	private boolean challenge              = false;
 	private static float S_gravity         = 0.981f;
 	protected static boolean S_Debug_AI    = false;
@@ -57,7 +65,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	private Player player2;
 	private Ball ball;
 	
-	// Challengecounters
+	// Statistics
 	private int time           = 0;
 	private int challengeCount = 0;
 		
@@ -68,7 +76,11 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	// Game GUI
 	private Box gameModeChoice;
 	private Box aiDifficultyChoice;
+	private Box playAgain;
 	private Cell aiDifficultyExpl;
+	
+	// Other
+	private final int boxCellHeight = 50;
 	
 	
 	/**
@@ -81,13 +93,13 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = game;
 		
-		aiDifficultyExpl = new Cell(Pong.FONT, 40, Pong.S_resX/2 - 100, Pong.S_resY/2 + 25, 200, 50, container);
+		aiDifficultyExpl = new Cell(Pong.FONT, 40, Pong.S_resX/2 - 100, Pong.S_resY/2 + 25, 200, boxCellHeight, container);
 		aiDifficultyExpl.setCentered();
 		aiDifficultyExpl.setAutoAdjust(false);
 		aiDifficultyExpl.setCellText(MENU_DIFFICULTY_EXPL[1]);
 		aiDifficultyExpl.setClickable(false);
 		
-		gameModeChoice = new Box(1, 4, Pong.S_resX/2 - 175, Pong.S_resY/2 - 100, Pong.FONT, 40, 350, 50, container);
+		gameModeChoice = new Box(1, 4, Pong.S_resX/2 - 175, Pong.S_resY/2 - 100, Pong.FONT, 40, 350, boxCellHeight, container);
 		gameModeChoice.getHeader().setFontsize(60);
 		gameModeChoice.getHeader().createNewFont();
 		gameModeChoice.setHeaderTitle("Choose Gamemode");
@@ -104,7 +116,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		gameModeChoice.setAllActionCommands(COMMANDS_MENU_GAME_CHOICE);
 		gameModeChoice.addBoxListener(this);
 		
-		aiDifficultyChoice = new Box(4, 1, Pong.S_resX/2 - 525, Pong.S_resY/2 - 100, Pong.FONT, 50, 350, 50, container);
+		aiDifficultyChoice = new Box(4, 1, Pong.S_resX/2 - 525, Pong.S_resY/2 - 100, Pong.FONT, 50, 350, boxCellHeight, container);
 		aiDifficultyChoice.getHeader().setCellX(Pong.S_resX/2 - 700);
 		aiDifficultyChoice.getHeader().setFontsize(60);
 		aiDifficultyChoice.getHeader().createNewFont();
@@ -127,6 +139,19 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		aiDifficultyChoice.setAllCellTitles(MENU_DIFFICULTY);
 		aiDifficultyChoice.setAllActionCommands(COMMANDS_MENU_GAME_DIFFICULTY);
 		aiDifficultyChoice.addBoxListener(this);
+		
+		playAgain = new Box(2, 1, Pong.S_resX/2 - 100, Pong.S_resY/ 2 - 25, Pong.FONT, 40, 100, 50, container);
+		playAgain.setHeaderTitle("Play again?");
+		playAgain.setHeaderEdging(false);
+		playAgain.setHeaderActive(true);
+		playAgain.setBoxCentered();
+		playAgain.setEdged(true);
+		playAgain.setKeyInput(true);
+		playAgain.setFocus(true);
+		playAgain.setBoxKeyCoordinates(new int[] {1,1});
+		playAgain.setAllCellTitles(MENU_YES_NO_CHOICE);
+		playAgain.setAllActionCommands(COMMANDS_MENU_YES_NO_CHOICE);
+		playAgain.addBoxListener(this);
 	}
 
 	@Override
@@ -142,6 +167,8 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				
 			}else if(gState == GameState.Challenge){
 				
+			}else if(gState == GameState.PlayAgain){
+				playAgain.render();
 			}
 		}else if(igState == IngameState.Play || igState == IngameState.BallIsOut || igState == IngameState.Player1Wins || igState == IngameState.Player2Wins){
 			player1.getPlayerPad().draw(g);
@@ -238,12 +265,17 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				handleAIPad(delta);
 				moveBall();
 				detectBallCollision();
+				time += delta;
 				if(challenge){
-					playChallenge(delta);
+					playChallenge();
 				}else if(!challenge && !player2.isCpuControlled()){
 					playPvP();
 				}else if(!challenge && player2.isCpuControlled()){
 					playVsCPU();
+				}
+				if(time >= 1000){
+					Pong.S_timePlayedOverall += 1;
+					time = 0;
 				}
 
 			}
@@ -258,9 +290,14 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				gameModeChoice.update();
 			}else if(gState == GameState.PvCPU){
 				aiDifficultyChoice.update();
+			}else if(gState == GameState.PlayAgain){
+				playAgain.update();;
 			}
 	}
 	
+	/**
+	 * 
+	 */
 	private void win(){
 		if(!challenge){
 			if(ball.getBall().getMaxX() < 0) {
@@ -269,6 +306,9 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				lastCollision = Border.None;
 				if(player2.getPoints() >= goal) {
 					igState = IngameState.Player2Wins;
+					if(!player2.isCpuControlled()){
+						Pong.S_matchesWonPvP += 1;
+					}
 				}
 			}else if(ball.getBall().getMinX() > Pong.S_resX) {
 				player1.addPoint();
@@ -276,6 +316,11 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				lastCollision = Border.None;
 				if (player1.getPoints() >= goal) {
 					igState = IngameState.Player1Wins;
+					if(!player2.isCpuControlled()){
+						Pong.S_matchesWonPvP += 1;
+					}else if(player2.isCpuControlled()){
+						Pong.S_matchesWonCPU += 1;
+					}
 				}
 			}
 		}else{
@@ -288,15 +333,19 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 
 	}
 	
+	/**
+	 * 
+	 * @param delta
+	 */
 	private void handleAIPad(int delta){ //TODO: Change methodname
 		if(S_Debug_AI || challenge) {
 			if(ball.getBall().getMinY() >= Pong.S_resY - player2.getPlayerPad().getPadHeight() / 2) {
-				//player2.getPlayerPad().resetSpinSpeed();
+				player2.getPlayerPad().resetSpinSpeed();
 			}else if(ball.getBall().getMaxY() <= 0 + player2.getPlayerPad().getPadHeight() / 2) {
-				//player2.getPlayerPad().resetSpinSpeed();
+				player2.getPlayerPad().resetSpinSpeed();
 			}else{
 				player2.getPlayerPad().setPadCenterY(ball.getBall().getCenterY());
-				//player2.getPlayerPad().addSpinSpeed(0.005f * delta);
+				player2.getPlayerPad().addSpinSpeed(0.005f * delta);
 			}
 			if(S_Debug_AI_MP){
 				if(ball.getBall().getMinY() >= Pong.S_resY - player1.getPlayerPad().getPadHeight() / 2) {
@@ -305,7 +354,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 					//player1.getPlayerPad().resetSpinSpeed();
 				}else{
 					player1.getPlayerPad().setPadCenterY(ball.getBall().getCenterY());
-					//player1.getPlayerPad().addSpinSpeed(0.005f * delta);
+					//player1.getPlayerPad().addSpinSpeed(0.005f * delta); //TODO: Change algorithm to prevent glitching through the game
 				}
 			}
 		}else{
@@ -349,7 +398,13 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void playVsCPU(){
+		if(time >= 1000){
+			Pong.S_timePlayedCPU += 1;
+		}
 		if(lastCollision == Border.Left || lastCollision == Border.Right){
 			ball.addBallVelocity(0.03f);
 		}
@@ -358,8 +413,13 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		}
 	}
 	
-	private void playPvP(){
-		System.out.println("TEST");
+	/**
+	 * 
+	 */
+	private void playPvP(){		
+		if(time >= 1000){
+			Pong.S_timePlayedPvP += 1;
+		}
 		if(lastCollision == Border.Left || lastCollision == Border.Right){
 			ball.addBallVelocity(0.03f);
 		}
@@ -368,15 +428,20 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		}
 	}
 	
-	private void playChallenge(int delta){
-		time += delta;
+	/**
+	 * 
+	 * @param delta
+	 */
+	private void playChallenge(){
 		if(time >= 1000){
 			challengeCount += 1;
-			time = 0;
 		}
 		ball.addBallVelocityGravity(S_gravity);
 	}
 	
+	/**
+	 * 
+	 */
 	private void detectBallCollision(){
 		if (ball.getBall().getMinY() <= 0) {
 			ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
@@ -412,11 +477,17 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void moveBall(){
 		ball.getBall().setCenterX(ball.getBall().getCenterX() + ball.getVectorX());
 		ball.getBall().setCenterY(ball.getBall().getCenterY() + ball.getVectorY());
 	}
 	
+	/**
+	 * 
+	 */
 	private void pauseGame(){
 		if (!game.getContainer().isPaused()) {
 			game.getContainer().setPaused(true);
@@ -425,6 +496,10 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		}
 	}
 	
+	/**
+	 * 
+	 * @param paddifficulty
+	 */
 	private void newGame(float paddifficulty){
 		player1 = new Player(new Pad(0 + 10, Pong.S_resY/2, paddifficulty) ,0);
 		player1.getPlayerPad().setPadCenterY(Pong.S_resY/2);
@@ -433,7 +508,9 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		ball = new Ball(Pong.S_resX/2 - ballRadius/2, Pong.S_resY/2 - ballRadius/2, ballRadius);
 	}
 
-
+	/**
+	 * 
+	 */
 	private void newBall(){
 		lastCollision = Border.None;
 		player1.getPlayerPad().setCollided(false);
@@ -444,17 +521,42 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		igState = IngameState.Play;
 	}
 	
-
+	/**
+	 * 
+	 */
 	private void abortGame(){
 		time = 0;
 		//challengecounter = 0;
+		if(challenge){
+			Pong.S_matchesPlayedChallenge += 1;
+		}else if(!challenge && !player2.isCpuControlled()){
+			Pong.S_matchesPlayedPvP += 1;
+		}else if(!challenge && player2.isCpuControlled()){
+			Pong.S_matchesPlayedCPU += 1;
+		}
 		player2.setCpuControlled(false);
+		Pong.S_matchesPlayedOverall += 1;
+		saveStatisticsData();
 		lastCollision = Border.None;
 		igState = IngameState.None;
 		gState = GameState.Main;
 	}
-
 	
+	private void saveStatisticsData(){
+		LinkedHashMap<String, String> temp = new LinkedHashMap<>(Pong.S_statisticsData.size());
+		for(int i = 0;i < Pong.S_statisticsData.size();i++){
+			temp.put(Pong.KEYS_STATISTICS[i],Integer.toString(Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[i])));
+		}
+		Profile saveProfile = new Profile(Pong.PROFILE_PATH, Pong.S_profiles.get(Pong.S_activeProfile).getProfileName(), temp, Pong.S_achievementData);
+		try {
+			saveProfile.createProfile(true);
+		} catch (JAXBException jaxbe) {
+			JOptionPane.showMessageDialog(null,jaxbe.toString() + "\n\nThe game encountered a serious Error. Game exits!");
+			Pong.S_container.exit();
+		}
+	}
+
+	@Override
 	public void keyPressed(int key, char c) {
 		if(igState == IngameState.Play){
 			if(key == Input.KEY_P){
@@ -498,7 +600,10 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 			}
 		}else if(igState == IngameState.Player1Wins || igState == IngameState.Player2Wins){
 			if(key == Input.KEY_ENTER) {
-				abortGame();
+				time = 0;
+				//challengecounter = 0;
+				igState = IngameState.None;
+				gState = GameState.PlayAgain;
 			}
 		}else if(igState == IngameState.None){
 			if(gState == GameState.Main){
@@ -520,6 +625,12 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 					aiDifficultyExpl.setCellText(MENU_DIFFICULTY_EXPL[aiDifficultyChoice.getBoxKeyX() - 1]);
 					aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 2).setVisible(false);
 					aiDifficultyChoice.getSources().get(aiDifficultyChoice.getBoxKeyX() - 1).setVisible(true);
+				}
+			}else if(gState == GameState.PlayAgain){
+				if(key == Input.KEY_LEFT && playAgain.getBoxKeyX() > 1){
+					playAgain.setBoxKeyX(playAgain.getBoxKeyX() - 1);
+				}else if(key == Input.KEY_RIGHT && playAgain.getBoxKeyX() < playAgain.getBoxWidth()){
+					playAgain.setBoxKeyX(playAgain.getBoxKeyX() + 1);
 				}
 			}
 		}
@@ -560,6 +671,18 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				newGame(Difficulty.Unbeatable.getDifficulty());
 				player2.setCpuControlled(true);
 				igState = IngameState.Play;
+			}
+		}else if(gState == GameState.PlayAgain){
+			if(source.getActionCommand().equals(COMMANDS_MENU_YES_NO_CHOICE[0])){
+				playAgain.setBoxKeyCoordinates(1, 1);
+				saveStatisticsData();
+				aiDifficultyChoice.setBoxKeyCoordinates(2,1);
+				gState = GameState.PvCPU;
+				player2.setCpuControlled(true);
+			}else if(source.getActionCommand().equals(COMMANDS_MENU_YES_NO_CHOICE[1])){
+				playAgain.setBoxKeyCoordinates(1, 1);
+				abortGame();
+				gState = GameState.Main;
 			}
 		}
 	}

@@ -11,8 +11,10 @@ public class Achievement {
 
 	private String achievementName;
 	private String achievementDescription;
-	private boolean unlocked = false;
-	private boolean active   = true;
+	private int conditionCount  = 0;
+	private boolean countActive = false;
+	private boolean unlocked    = false;
+	private boolean active      = true;
 	
 	
 	/**
@@ -63,6 +65,39 @@ public class Achievement {
 		this.active = active;
 	}
 	
+	/**
+	 * @param achievementName
+	 * @param achievementDescription
+	 * @param conditionCount 
+	 * @param unlocked
+	 * @param active
+	 */
+	public Achievement(String achievementName, String achievementDescription, int conditionCount, boolean unlocked, boolean active) {
+		this.achievementName = achievementName;
+		this.achievementDescription = achievementDescription;
+		this.conditionCount = conditionCount;
+		this.countActive = true;
+		this.unlocked = unlocked;
+		this.active = active;
+	}
+	
+	/**
+	 * @param achievementName
+	 * @param achievementDescription
+	 * @param conditionCount
+	 * @param countActive
+	 * @param unlocked
+	 * @param active
+	 */
+	public Achievement(String achievementName, String achievementDescription, int conditionCount, boolean countActive, boolean unlocked, boolean active) {
+		this.achievementName = achievementName;
+		this.achievementDescription = achievementDescription;
+		this.conditionCount = conditionCount;
+		this.countActive = countActive;
+		this.unlocked = unlocked;
+		this.active = active;
+	}
+
 	public void showUnlockMessage(){
 		
 	}
@@ -121,6 +156,34 @@ public class Achievement {
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	/**
+	 * @return the conditionCount
+	 */
+	public int getConditionCount() {
+		return conditionCount;
+	}
+
+	/**
+	 * @param conditionCount the conditionCount to set
+	 */
+	public void setConditionCount(int conditionCount) {
+		this.conditionCount = conditionCount;
+	}
+
+	/**
+	 * @return the countActive
+	 */
+	public boolean isCountActive() {
+		return countActive;
+	}
+
+	/**
+	 * @param countActive the countActive to set
+	 */
+	public void setCountActive(boolean countActive) {
+		this.countActive = countActive;
 	}
 	
 

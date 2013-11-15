@@ -45,8 +45,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	private final String[] PROFILE_DESC_DATA         = {"Time played:","Time played in CPU-Mode:","Time played in LAN-Mode:",
 														"Time played in Challenge-Mode:","Matches played:","Matches played in CPU-Mode:",
 														"Matches played in LAN-Mode:","Matches played in Challenge-Mode:","Matches won:",
-														"Matches won in CPU-Mode:","Matches won in LAN-Mode:",
-														"Matches won in Challenge-Mode:"};
+														"Matches won in CPU-Mode:","Matches won in LAN-Mode:"};
 	private final int OFFSET_X = 25;
 	
 	private ProfileState pState = ProfileState.Show;
@@ -234,6 +233,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			profileOptions.getCells().get(2).get(0).setFontColor(Color.darkGray);
 		}
 		if(pState == ProfileState.Show){
+			reloadProfileGUI();
 			profileOptions.update();
 		}else if(pState == ProfileState.Create){
 			if(overwriteCheck && saveTimer > -1){
@@ -487,6 +487,17 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				saveTimer = 0;
 				profileOptions.setBoxKeyCoordinates(new int[] {PROFILE_OPTIONS.length,1});
 				return;
+			}
+		}
+	}
+	
+	/**
+	 * Reloads the GUI content of the active profile.
+	 */
+	private void reloadProfileGUI(){
+		if(Pong.S_statisticsData.size() != 0){
+			for(int i = 0;i < profileInfos.getCells().get(1).size();i++){
+				profileInfos.getCells().get(1).get(i).setCellText(Integer.toString(Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[i])));
 			}
 		}
 	}

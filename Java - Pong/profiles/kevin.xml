@@ -12,7 +12,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>timePlayedLAN</key>
+            <key>timePlayedPvP</key>
             <value>0</value>
         </entry>
         <entry>
@@ -28,7 +28,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>matchesPlayedLAN</key>
+            <key>matchesPlayedPvP</key>
             <value>0</value>
         </entry>
         <entry>
@@ -44,11 +44,7 @@
             <value>0</value>
         </entry>
         <entry>
-            <key>matchesWonLAN</key>
-            <value>0</value>
-        </entry>
-        <entry>
-            <key>matchesWonChallenge</key>
+            <key>matchesWonPvP</key>
             <value>0</value>
         </entry>
     </profileData>

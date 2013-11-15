@@ -8,5 +8,5 @@ package de.frostbyteger.pong.engine;
  *
  */
 public enum GameState {
-	Main, PvCPU, PvP, Challenge
+	Main, PvCPU, PvP, Challenge, PlayAgain
 }
