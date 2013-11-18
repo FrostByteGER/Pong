@@ -19,6 +19,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import de.frostbyteger.pong.engine.Achievement;
 import de.frostbyteger.pong.engine.Profile;
 import de.frostbyteger.pong.engine.ProfileState;
 import de.frostbyteger.pong.engine.graphics.FontHelper;
@@ -41,11 +42,10 @@ public class Profiles extends BasicGameState implements ComponentListener{
 	private StateBasedGame game;
 	
 	private final String[] PROFILE_OPTIONS           = {"new","delete","change" + "\n" + "profile","back"};
-	private final String[] PROFILE_DESC_ACHIEVEMENTS = {"PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER","PLACEHOLDER"};
-	private final String[] PROFILE_DESC_DATA         = {"Time played:","Time played in CPU-Mode:","Time played in LAN-Mode:",
+	private final String[] PROFILE_DESC_DATA         = {"Time played:","Time played in CPU-Mode:","Time played in PvP-Mode:",
 														"Time played in Challenge-Mode:","Matches played:","Matches played in CPU-Mode:",
-														"Matches played in LAN-Mode:","Matches played in Challenge-Mode:","Matches won:",
-														"Matches won in CPU-Mode:","Matches won in LAN-Mode:"};
+														"Matches played in PvP-Mode:","Matches played in Challenge-Mode:","Matches won:",
+														"Matches won in CPU-Mode:","Matches won in PvP-Mode:"};
 	private final int OFFSET_X = 25;
 	
 	private ProfileState pState = ProfileState.Show;
@@ -118,7 +118,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			}
 		}
 
-		profileAchievements = new Box(1, PROFILE_DESC_ACHIEVEMENTS.length, OFFSET_X + (int)(profileInfos.getBoxWidth() * profileInfos.getBoxCellWidth()), Pong.S_resY/2 - 150, Pong.FONT, 40, 375, 25, container);
+		profileAchievements = new Box(1, 6, OFFSET_X + (int)(profileInfos.getBoxWidth() * profileInfos.getBoxCellWidth()), Pong.S_resY/2 - 150, Pong.FONT, 40, 375, 25, container);
 		profileAchievements.setHeaderTitle("Achievements");
 		profileAchievements.getHeader().setLeft();
 		profileAchievements.setHeaderEdging(false);
@@ -128,7 +128,10 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileAchievements.setKeyInput(false);
 		profileAchievements.setFocus(false);
 		profileAchievements.setClickable(false);
-		profileAchievements.setColumnTitles(0, PROFILE_DESC_ACHIEVEMENTS);
+		for(int i = 0;i < 6;i++){
+			System.out.println("TEST");
+			profileAchievements.getCells().get(0).get(i).setCellText(Pong.S_achievementData.get(Pong.KEYS_ACHIEVEMENTS[i]).getAchievementDescription());
+		}
 		
 		profileOptions = new Box(PROFILE_OPTIONS.length, 1, Pong.S_resX/2 - (PROFILE_OPTIONS.length*150)/2, Pong.S_resY/2 + 200, Pong.FONT, 50, 150, 50, container);
 		profileOptions.setAllAutoAdjust(true);
@@ -387,10 +390,11 @@ public class Profiles extends BasicGameState implements ComponentListener{
 					}
 					if(overwriteCheck == true){
 						LinkedHashMap<String, String> temp = new LinkedHashMap<>(Pong.S_statisticsData.size());
+						LinkedHashMap<String, Achievement> temp2 = new LinkedHashMap<>(Pong.S_achievementData.size());
 						for(int i = 0;i < Pong.S_statisticsData.size();i++){
 							temp.put(Pong.KEYS_STATISTICS[i],Integer.toString(Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[i])));
 						}
-						saveProfile = new Profile(Pong.PROFILE_PATH, profileCreation.getText(), temp, Pong.S_achievementData);
+						saveProfile = new Profile(Pong.PROFILE_PATH, profileCreation.getText(), temp, temp2);
 					}
 					try {
 						if(overwriteCheck){

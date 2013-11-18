@@ -34,13 +34,15 @@ public class Pong extends StateBasedGame{
 	public static final String PROFILE_PATH = "profiles/";
 	public static String S_activeProfile = "standard";
 	public static LinkedHashMap<String, Profile> S_profiles       = new LinkedHashMap<String,Profile>();
-	public static LinkedHashMap<String, String> S_achievementData = new LinkedHashMap<String, String>(6);
+	public static LinkedHashMap<String, Achievement> S_achievementData = new LinkedHashMap<String, Achievement>(6);
+	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(11);
 	public static final String[] KEYS_STATISTICS   = {"timePlayedOverall","timePlayedCPU","timePlayedPvP",
 													  "timePlayedChallenge","matchesPlayedOverall",
 													  "matchesPlayedCPU","matchesPlayedPvP",
 													  "matchesPlayedChallenge","matchesWonOverall",
 													  "matchesWonCPU","matchesWonPvP"};
-	public static final String[] KEYS_ACHIEVEMENTS = {};
+	public static final String[] KEYS_ACHIEVEMENTS = {"godlike","expert","beginner","tough",
+													  "teamplayer","bro"};
 	
 	// Statistics Data
 	public static int S_timePlayedOverall      = 0;
@@ -54,15 +56,19 @@ public class Pong extends StateBasedGame{
 	public static int S_matchesWonOverall      = 0;
 	public static int S_matchesWonCPU          = 0;
 	public static int S_matchesWonPvP          = 0;
-	//public static int S_matchesWonChallenge    = 0;
 	
 	//Achievement Data
-	public static Achievement test;
+	public static Achievement S_challengeHidden;
+	public static Achievement S_challengeExpert;
+	public static Achievement S_cpuEasy;
+	public static Achievement S_cpuHard;
+	public static Achievement S_pvpEasy;
+	public static Achievement S_pvpHard;
 	
 	// Version info
 	public static final String TITLE          = "Pong";
-	public static final String VERSION        = "v1.50";
-	public static final String VERSION_STATUS = "INTERNAL";
+	public static final String VERSION        = "v1.55";
+	public static final String VERSION_STATUS = "BETA";
 	
 	// MD5 checksums
 	private static final String MD5_FONT  = "d060b8b0afa1753bf21d5fa3d3b14493";
@@ -81,6 +87,30 @@ public class Pong extends StateBasedGame{
 
 	public Pong(String name) {
 		super(name);
+		S_challengeHidden = new Achievement("Godlike", "Do the impossible!");
+		S_challengeExpert = new Achievement("Expert","Survive 120 in challenge-mode",120,false,true);
+		S_cpuEasy = new Achievement("Beginner","Win 10 matches against the AI",10,false,true);
+		S_cpuHard = new Achievement("Tough cookie","Win 100 matches against the AI",100,false,true);
+		S_pvpEasy = new Achievement("Teamplayer","Win 10 matches in Player vs. Player",10,false,true);
+		S_pvpHard = new Achievement("Bro","Win 100 matches in Player vs. Player",100,false,true);
+		S_achievementData.put(KEYS_ACHIEVEMENTS[0], S_challengeHidden);
+		S_achievementData.put(KEYS_ACHIEVEMENTS[1], S_challengeExpert);
+		S_achievementData.put(KEYS_ACHIEVEMENTS[2], S_cpuEasy);
+		S_achievementData.put(KEYS_ACHIEVEMENTS[3], S_cpuHard);
+		S_achievementData.put(KEYS_ACHIEVEMENTS[4], S_pvpEasy);
+		S_achievementData.put(KEYS_ACHIEVEMENTS[5], S_pvpHard);
+
+		S_statisticsData.put(KEYS_STATISTICS[0], S_timePlayedOverall);
+		S_statisticsData.put(KEYS_STATISTICS[1], S_timePlayedCPU);
+		S_statisticsData.put(KEYS_STATISTICS[2], S_timePlayedPvP);
+		S_statisticsData.put(KEYS_STATISTICS[3], S_timePlayedChallenge);
+		S_statisticsData.put(KEYS_STATISTICS[4], S_matchesPlayedOverall);
+		S_statisticsData.put(KEYS_STATISTICS[5], S_matchesPlayedCPU);
+		S_statisticsData.put(KEYS_STATISTICS[6], S_matchesPlayedPvP);
+		S_statisticsData.put(KEYS_STATISTICS[7], S_matchesPlayedChallenge);
+		S_statisticsData.put(KEYS_STATISTICS[8], S_matchesWonOverall);
+		S_statisticsData.put(KEYS_STATISTICS[9], S_matchesWonCPU);
+		S_statisticsData.put(KEYS_STATISTICS[10], S_matchesWonPvP);
 	}
 	
 	@Override
@@ -159,18 +189,6 @@ public class Pong extends StateBasedGame{
 				return -1;
 			}
 		}		
-		S_statisticsData.put(KEYS_STATISTICS[0], S_timePlayedOverall);
-		S_statisticsData.put(KEYS_STATISTICS[1], S_timePlayedCPU);
-		S_statisticsData.put(KEYS_STATISTICS[2], S_timePlayedPvP);
-		S_statisticsData.put(KEYS_STATISTICS[3], S_timePlayedChallenge);
-		S_statisticsData.put(KEYS_STATISTICS[4], S_matchesPlayedOverall);
-		S_statisticsData.put(KEYS_STATISTICS[5], S_matchesPlayedCPU);
-		S_statisticsData.put(KEYS_STATISTICS[6], S_matchesPlayedPvP);
-		S_statisticsData.put(KEYS_STATISTICS[7], S_matchesPlayedChallenge);
-		S_statisticsData.put(KEYS_STATISTICS[8], S_matchesWonOverall);
-		S_statisticsData.put(KEYS_STATISTICS[9], S_matchesWonCPU);
-		S_statisticsData.put(KEYS_STATISTICS[10], S_matchesWonPvP);
-		//S_statisticsData.put(KEYS_STATISTICS[11], S_matchesWonChallenge);
 		int validProfiles = 0;
 		try{ 
 			File f = new File("profiles");
@@ -211,6 +229,9 @@ public class Pong extends StateBasedGame{
 			Profile profile = S_profiles.get(S_activeProfile);
 			for(int i = 0;i < S_statisticsData.size();i++){
 				S_statisticsData.put(KEYS_STATISTICS[i], Integer.parseInt(profile.getProfileData().get(KEYS_STATISTICS[i])));
+			}
+			for(int i = 0;i < S_achievementData.size();i++){
+				S_achievementData.put(KEYS_ACHIEVEMENTS[i], profile.getProfileAchievements().get(KEYS_ACHIEVEMENTS[i]));
 			}
 		}catch(NullPointerException npe){
 			JOptionPane.showMessageDialog(null,npe.toString() + "\n\nLast loaded profile not found, please choose another profile");

@@ -16,6 +16,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import de.frostbyteger.pong.engine.Achievement;
 import de.frostbyteger.pong.engine.Ball;
 import de.frostbyteger.pong.engine.Border;
 import de.frostbyteger.pong.engine.Difficulty;
@@ -33,6 +34,7 @@ import de.frostbyteger.pong.start.Pong;
 /**
  * @author Kevin
  * TODO: The ball glitches out of its boundaries when touching a border and a pad at the same time; maybe implement a better collision detection?
+ * TODO: AI Pad glitches sometimes whenthe ball flies in its direction and touches the top and bottom border.
  */
 public class Game extends BasicGameState implements ComponentListener, InputListener{
 
@@ -174,6 +176,9 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 			player1.getPlayerPad().draw(g);
 			player2.getPlayerPad().draw(g);
 			ball.draw(g);
+			if(Pong.S_debug){
+				showDebugMonitor(g);
+			}
 			if(!challenge){
 				g.drawString(Integer.toString(player1.getPoints()), Pong.S_resX / 2 - 20, Pong.S_resY / 2);
 				g.drawString(":", Pong.S_resX / 2, Pong.S_resY / 2);
@@ -274,7 +279,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 					playVsCPU();
 				}
 				if(time >= 1000){
-					Pong.S_timePlayedOverall += 1;
+					Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[0], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[0]) + 1);
 					time = 0;
 				}
 
@@ -307,7 +312,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				if(player2.getPoints() >= goal) {
 					igState = IngameState.Player2Wins;
 					if(!player2.isCpuControlled()){
-						Pong.S_matchesWonPvP += 1;
+						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[10], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[10]) + 1);
 					}
 				}
 			}else if(ball.getBall().getMinX() > Pong.S_resX) {
@@ -317,9 +322,9 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				if (player1.getPoints() >= goal) {
 					igState = IngameState.Player1Wins;
 					if(!player2.isCpuControlled()){
-						Pong.S_matchesWonPvP += 1;
+						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[10], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[10]) + 1);
 					}else if(player2.isCpuControlled()){
-						Pong.S_matchesWonCPU += 1;
+						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[9], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[9]) + 1);
 					}
 				}
 			}
@@ -403,7 +408,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	 */
 	private void playVsCPU(){
 		if(time >= 1000){
-			Pong.S_timePlayedCPU += 1;
+			Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[1], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[1]) + 1);
 		}
 		if(lastCollision == Border.Left || lastCollision == Border.Right){
 			ball.addBallVelocity(0.03f);
@@ -418,7 +423,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	 */
 	private void playPvP(){		
 		if(time >= 1000){
-			Pong.S_timePlayedPvP += 1;
+			Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[2], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[2]) + 1);
 		}
 		if(lastCollision == Border.Left || lastCollision == Border.Right){
 			ball.addBallVelocity(0.03f);
@@ -434,6 +439,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	 */
 	private void playChallenge(){
 		if(time >= 1000){
+			Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[3], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[3]) + 1);
 			challengeCount += 1;
 		}
 		ball.addBallVelocityGravity(S_gravity);
@@ -528,14 +534,14 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 		time = 0;
 		//challengecounter = 0;
 		if(challenge){
-			Pong.S_matchesPlayedChallenge += 1;
+			Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[7], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[7]) + 1);
 		}else if(!challenge && !player2.isCpuControlled()){
-			Pong.S_matchesPlayedPvP += 1;
+			Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[6], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[6]) + 1);
 		}else if(!challenge && player2.isCpuControlled()){
-			Pong.S_matchesPlayedCPU += 1;
+			Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[5], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[5]) + 1);
 		}
 		player2.setCpuControlled(false);
-		Pong.S_matchesPlayedOverall += 1;
+		Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[4], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[4]) + 1);
 		saveStatisticsData();
 		lastCollision = Border.None;
 		igState = IngameState.None;
@@ -544,10 +550,14 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	
 	private void saveStatisticsData(){
 		LinkedHashMap<String, String> temp = new LinkedHashMap<>(Pong.S_statisticsData.size());
+		LinkedHashMap<String, Achievement> temp2 = new LinkedHashMap<>(Pong.S_achievementData.size());
 		for(int i = 0;i < Pong.S_statisticsData.size();i++){
 			temp.put(Pong.KEYS_STATISTICS[i],Integer.toString(Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[i])));
 		}
-		Profile saveProfile = new Profile(Pong.PROFILE_PATH, Pong.S_profiles.get(Pong.S_activeProfile).getProfileName(), temp, Pong.S_achievementData);
+		for(int i = 0;i < Pong.S_achievementData.size();i++){
+			temp2.put(Pong.KEYS_ACHIEVEMENTS[i],Pong.S_achievementData.get(Pong.KEYS_ACHIEVEMENTS[i]));
+		}
+		Profile saveProfile = new Profile(Pong.PROFILE_PATH, Pong.S_profiles.get(Pong.S_activeProfile).getProfileName(), temp, temp2);
 		try {
 			saveProfile.createProfile(true);
 		} catch (JAXBException jaxbe) {
@@ -690,6 +700,18 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	@Override
 	public int getID() {
 		return ID;
+	}
+	
+	private void showDebugMonitor(Graphics g){
+		g.drawString("DEBUG Monitor", 75, 25);
+		g.drawString("Ballvelocity: " + Double.toString(ball.getBallVelocity()), 75,40);
+		g.drawString("LastCollision:" + lastCollision.toString(), 75, 55);
+		g.drawString("Pad1Collision:" + player1.getPlayerPad().isCollided() + "|" + "Pad2Collision:" + player2.getPlayerPad().isCollided(), 75, 70);
+		g.drawString("Actual Vector: " + Float.toString(ball.getVectorX()) + "|" + Float.toString(ball.getVectorY()), 75, 85);
+		g.drawString("Pad1 Position: " + Float.toString(player1.getPlayerPad().getPad().getCenterY()) + " Pad2 Position: " + Float.toString(player2.getPlayerPad().getPad().getCenterY()), 75, 100);
+		g.drawString("Pad1 Spinspeed: " + Float.toString(player1.getPlayerPad().getSpinSpeed()) + "|" + "Pad2 Spinspeed: " + Float.toString(player2.getPlayerPad().getSpinSpeed()), 75, 115);
+		g.drawString("Ball Position: " + Float.toString(ball.getBall().getCenterX()) + "|" + Float.toString(ball.getBall().getCenterY()), 75, 130);
+		g.drawString("Delta: " + Float.toString(1.0f/Pong.FPS), 75, 145);
 	}
 
 

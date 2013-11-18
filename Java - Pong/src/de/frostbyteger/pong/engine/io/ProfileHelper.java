@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import de.frostbyteger.pong.engine.Achievement;
+
 /**
  * This class handles profiles with xml.
  * It saves and loads an instance of the actual class and saves it
@@ -28,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ProfileHelper{
 	
 	private LinkedHashMap<String, String> profileData         = new LinkedHashMap<>();
-	private LinkedHashMap<String, String> profileAchievements = new LinkedHashMap<>();
+	private LinkedHashMap<String, Achievement> profileAchievements = new LinkedHashMap<>();
 	
 	private String profilePath; 
 	private String profileName = "standard";
@@ -71,7 +73,7 @@ public class ProfileHelper{
 	 * @param data the LinkedHashMap with profiledata
 	 * @param achievements the LinkedHashMap with profileachievements
 	 */
-	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data,LinkedHashMap<String, String> achievements) {
+	public ProfileHelper(String path, String name, LinkedHashMap<String, String> data,LinkedHashMap<String, Achievement> achievements) {
 		this.profilePath = path + name.toLowerCase() + fileExtension;
 		this.profileName = name;
 		this.profileData = data;
@@ -233,7 +235,7 @@ public class ProfileHelper{
 	/**
 	 * @return the profileAchievements
 	 */
-	public LinkedHashMap<String, String> getProfileAchievements() {
+	public LinkedHashMap<String, Achievement> getProfileAchievements() {
 		return profileAchievements;
 	}
 
@@ -241,7 +243,7 @@ public class ProfileHelper{
 	 * @param profileAchievements the profileAchievements to set
 	 */
 	public void setProfileAchievements(
-			LinkedHashMap<String, String> profileAchievements) {
+			LinkedHashMap<String, Achievement> profileAchievements) {
 		this.profileAchievements = profileAchievements;
 	}
 

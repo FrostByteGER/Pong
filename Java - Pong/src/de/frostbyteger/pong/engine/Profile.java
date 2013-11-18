@@ -38,7 +38,7 @@ public class Profile extends ProfileHelper{
 	 * @param data
 	 * @param achievements
 	 */
-	public Profile(String path, String name, LinkedHashMap<String, String> data, LinkedHashMap<String, String> achievements) {
+	public Profile(String path, String name, LinkedHashMap<String, String> data, LinkedHashMap<String, Achievement> achievements) {
 		super(path, name, data, achievements);
 	}
 	
