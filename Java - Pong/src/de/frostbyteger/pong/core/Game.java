@@ -59,8 +59,8 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	private int goal                       = 1;
 	private boolean challenge              = false;
 	private static float S_gravity         = 0.981f;
-	protected static boolean S_Debug_AI    = false;
-	protected static boolean S_Debug_AI_MP = false;
+	protected static boolean S_Debug_AI    = true;
+	protected static boolean S_Debug_AI_MP = true;
 	
 	// Game objects
 	private Player player1;
@@ -222,6 +222,12 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 					if(game.getContainer().getInput().isKeyDown(Input.KEY_E)){
 						ball.addDebugVelocity(-0.25f, delta);
 					}
+					if(game.getContainer().getInput().isKeyDown(Input.KEY_A)){
+						player1.getPlayerPad().addSpinSpeed(1.0f);
+					}
+					if(game.getContainer().getInput().isKeyDown(Input.KEY_D)){
+						player1.getPlayerPad().reduceSpinSpeed(1.0f);
+					}
 				}
 				
 				if(!S_Debug_AI_MP){
@@ -290,7 +296,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 			
 		}else if(igState == IngameState.Player2Wins){
 			
-		}else if(igState == IngameState.None)
+		}else if(igState == IngameState.None){
 			if(gState == GameState.Main){
 				gameModeChoice.update();
 			}else if(gState == GameState.PvCPU){
@@ -298,6 +304,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 			}else if(gState == GameState.PlayAgain){
 				playAgain.update();;
 			}
+		}
 	}
 	
 	/**
@@ -312,6 +319,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				if(player2.getPoints() >= goal) {
 					igState = IngameState.Player2Wins;
 					if(!player2.isCpuControlled()){
+						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[8], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[8]) + 1);
 						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[10], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[10]) + 1);
 					}
 				}
@@ -322,8 +330,10 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 				if (player1.getPoints() >= goal) {
 					igState = IngameState.Player1Wins;
 					if(!player2.isCpuControlled()){
+						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[8], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[8]) + 1);
 						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[10], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[10]) + 1);
 					}else if(player2.isCpuControlled()){
+						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[8], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[8]) + 1);
 						Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[9], Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[9]) + 1);
 					}
 				}
@@ -449,17 +459,17 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	 * 
 	 */
 	private void detectBallCollision(){
-		if (ball.getBall().getMinY() <= 0) {
+		if (ball.getBall().getMinY() <= 0 && ball.getVectorY() <= 0 ) {
 			ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
 			lastCollision = Border.Top;
 		}
 
-		if (ball.getBall().getMaxY() >= Pong.S_resY) {
+		if (ball.getBall().getMaxY() >= Pong.S_resY && ball.getVectorY() >= 0 ) {
 			ball.setVectorXY(ball.getVectorX(), -ball.getVectorY());
 			lastCollision = Border.Bottom;
 		}
 
-		if (player1.getPlayerPad().intersects(ball.getBall())) {
+		if (player1.getPlayerPad().intersects(ball.getBall()) && ball.getVectorX() <= 0 ) {
 			if(player1.getPlayerPad().getSpinSpeed() > 0.0f){
 				ball.addBallSpin(player1.getPlayerPad().getSpinSpeed());
 			}
@@ -469,7 +479,7 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 			lastCollision = Border.Left;
 		}
 
-		if (player2.getPlayerPad().intersects(ball.getBall())) {
+		if (player2.getPlayerPad().intersects(ball.getBall()) && ball.getVectorX() >= 0 ) {
 			if(!player2.isCpuControlled()){
 				if(player2.getPlayerPad().getSpinSpeed() > 0.0f){
 					ball.addBallSpin(-player1.getPlayerPad().getSpinSpeed());

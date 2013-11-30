@@ -129,7 +129,6 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		profileAchievements.setFocus(false);
 		profileAchievements.setClickable(false);
 		for(int i = 0;i < 6;i++){
-			System.out.println("TEST");
 			profileAchievements.getCells().get(0).get(i).setCellText(Pong.S_achievementData.get(Pong.KEYS_ACHIEVEMENTS[i]).getAchievementDescription());
 		}
 		
@@ -394,6 +393,9 @@ public class Profiles extends BasicGameState implements ComponentListener{
 						for(int i = 0;i < Pong.S_statisticsData.size();i++){
 							temp.put(Pong.KEYS_STATISTICS[i],Integer.toString(Pong.S_statisticsData.get(Pong.KEYS_STATISTICS[i])));
 						}
+						for(int i = 0;i < Pong.S_achievementData.size();i++){
+							temp2.put(Pong.KEYS_ACHIEVEMENTS[i], Pong.S_achievementData.get(Pong.KEYS_ACHIEVEMENTS[i]));
+						}
 						saveProfile = new Profile(Pong.PROFILE_PATH, profileCreation.getText(), temp, temp2);
 					}
 					try {
@@ -469,10 +471,9 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				for(int i = 0;i < active.getProfileData().size();i++){
 					Pong.S_statisticsData.put(Pong.KEYS_STATISTICS[i], Integer.parseInt(active.getProfileData().get(Pong.KEYS_STATISTICS[i])));
 				}
-				/* TODO: Implement when achievements are made
 				for(int i = 0;i < active.getProfileAchievements().size();i++){
 					Pong.S_achievementData.put(Pong.KEYS_ACHIEVEMENTS[i], active.getProfileAchievements().get(Pong.KEYS_ACHIEVEMENTS[i]));
-				}*/
+				}
 				LinkedHashMap<String, String> options = new LinkedHashMap<>();
 				options.put("resX", Integer.toString(Pong.S_resX));
 				options.put("resY", Integer.toString(Pong.S_resY));

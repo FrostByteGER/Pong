@@ -12,6 +12,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/Swing Messagelogger-v1.03.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

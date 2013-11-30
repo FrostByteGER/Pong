@@ -5,35 +5,35 @@
     <profileData>
         <entry>
             <key>timePlayedOverall</key>
-            <value>0</value>
+            <value>968</value>
         </entry>
         <entry>
             <key>timePlayedCPU</key>
-            <value>0</value>
+            <value>371</value>
         </entry>
         <entry>
             <key>timePlayedPvP</key>
-            <value>0</value>
+            <value>5</value>
         </entry>
         <entry>
             <key>timePlayedChallenge</key>
-            <value>0</value>
+            <value>592</value>
         </entry>
         <entry>
             <key>matchesPlayedOverall</key>
-            <value>0</value>
+            <value>13</value>
         </entry>
         <entry>
             <key>matchesPlayedCPU</key>
-            <value>0</value>
+            <value>7</value>
         </entry>
         <entry>
             <key>matchesPlayedPvP</key>
-            <value>0</value>
+            <value>1</value>
         </entry>
         <entry>
             <key>matchesPlayedChallenge</key>
-            <value>0</value>
+            <value>5</value>
         </entry>
         <entry>
             <key>matchesWonOverall</key>
@@ -41,12 +41,79 @@
         </entry>
         <entry>
             <key>matchesWonCPU</key>
-            <value>0</value>
+            <value>3</value>
         </entry>
         <entry>
             <key>matchesWonPvP</key>
             <value>0</value>
         </entry>
     </profileData>
-    <profileAchievements/>
+    <profileAchievements>
+        <entry>
+            <key>godlike</key>
+            <value>
+                <achievementDescription>Do the impossible!</achievementDescription>
+                <achievementName>Godlike</achievementName>
+                <active>true</active>
+                <conditionCount>0</conditionCount>
+                <countActive>false</countActive>
+                <unlocked>false</unlocked>
+            </value>
+        </entry>
+        <entry>
+            <key>expert</key>
+            <value>
+                <achievementDescription>Survive 120 in challenge-mode</achievementDescription>
+                <achievementName>Expert</achievementName>
+                <active>true</active>
+                <conditionCount>120</conditionCount>
+                <countActive>true</countActive>
+                <unlocked>false</unlocked>
+            </value>
+        </entry>
+        <entry>
+            <key>beginner</key>
+            <value>
+                <achievementDescription>Win 10 matches against the AI</achievementDescription>
+                <achievementName>Beginner</achievementName>
+                <active>true</active>
+                <conditionCount>10</conditionCount>
+                <countActive>true</countActive>
+                <unlocked>false</unlocked>
+            </value>
+        </entry>
+        <entry>
+            <key>tough</key>
+            <value>
+                <achievementDescription>Win 100 matches against the AI</achievementDescription>
+                <achievementName>Tough cookie</achievementName>
+                <active>true</active>
+                <conditionCount>100</conditionCount>
+                <countActive>true</countActive>
+                <unlocked>false</unlocked>
+            </value>
+        </entry>
+        <entry>
+            <key>teamplayer</key>
+            <value>
+                <achievementDescription>Win 10 matches in Player vs. Player</achievementDescription>
+                <achievementName>Teamplayer</achievementName>
+                <active>true</active>
+                <conditionCount>10</conditionCount>
+                <countActive>true</countActive>
+                <unlocked>false</unlocked>
+            </value>
+        </entry>
+        <entry>
+            <key>bro</key>
+            <value>
+                <achievementDescription>Win 100 matches in Player vs. Player</achievementDescription>
+                <achievementName>Bro</achievementName>
+                <active>true</active>
+                <conditionCount>100</conditionCount>
+                <countActive>true</countActive>
+                <unlocked>false</unlocked>
+            </value>
+        </entry>
+    </profileAchievements>
 </Profile>
