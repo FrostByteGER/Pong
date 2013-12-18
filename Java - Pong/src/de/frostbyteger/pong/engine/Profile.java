@@ -1,5 +1,6 @@
 package de.frostbyteger.pong.engine;
 
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 

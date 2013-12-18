@@ -34,7 +34,7 @@ import de.frostbyteger.pong.start.Pong;
 /**
  * @author Kevin
  * TODO: The ball glitches out of its boundaries when touching a border and a pad at the same time; maybe implement a better collision detection?
- * TODO: AI Pad glitches sometimes whenthe ball flies in its direction and touches the top and bottom border.
+ * TODO: AI Pad glitches sometimes when the ball flies in its direction and touches the top and bottom border.
  */
 public class Game extends BasicGameState implements ComponentListener, InputListener{
 
@@ -59,8 +59,8 @@ public class Game extends BasicGameState implements ComponentListener, InputList
 	private int goal                       = 1;
 	private boolean challenge              = false;
 	private static float S_gravity         = 0.981f;
-	protected static boolean S_Debug_AI    = true;
-	protected static boolean S_Debug_AI_MP = true;
+	protected static boolean S_Debug_AI    = false;
+	protected static boolean S_Debug_AI_MP = false;
 	
 	// Game objects
 	private Player player1;
