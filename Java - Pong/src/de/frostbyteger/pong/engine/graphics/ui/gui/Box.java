@@ -103,7 +103,12 @@ public class Box{
 		
 		for(int i = 0;i < boxWidth;i++){
 			for(int j = 0; j < boxHeight;j++){
-				tempCell.add(new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, container));
+				Cell temp = new Cell(cellX, cellY + this.boxHeaderHeight, cellWidth, cellHeight, container);
+				temp.setFontPath(boxFontPath);
+				temp.setFontsize(boxFontSize);
+				temp.createNewFont();
+				tempCell.add(temp);
+				this.sources.add(temp);
 				cellY += cellHeight;
 			}
 			this.cells.add(tempCell);
@@ -111,6 +116,7 @@ public class Box{
 			cellX += cellWidth;
 			cellY -= cellHeight * boxHeight;
 		}
+		/*
 		for(int k = 0; k < this.cells.size();k++){
 			for(int l = 0; l < this.cells.get(k).size();l++){
 				Cell temp = this.cells.get(k).get(l);
@@ -120,6 +126,7 @@ public class Box{
 				this.sources.add(temp);
 			}
 		}
+		*/
 		
 	}
 	
@@ -343,21 +350,70 @@ public class Box{
 			for(int j = 0;j < cells.size();j++){
 				for(int k = this.cells.get(j).size() - 1;k >= boxHeight;k--){
 					this.cells.get(j).remove(k);
+					this.sources.remove(k);
 				}
 			}
 			return;
 		}else if(boxHeight > this.boxHeight){
 			int cellX = boxX;
-			int cellY = (int) (boxY + this.cellHeight * this.boxHeight);
 			this.boxHeight = boxHeight;
+			int cellY = (int) (boxY + this.cellHeight * this.boxHeight);
 			for(int h = 0; h < cells.size();h++){
-				for(int i = cells.get(h).size();i <= boxHeight;i++){
+				for(int i = cells.get(h).size();i < boxHeight;i++){
 					Cell temp = new Cell(cellX, cellY, cellWidth, cellHeight, parentContainer);
+					temp.setAutoAdjust(true);
+					temp.setKeysActive(true);
 					temp.setFontPath(boxFontPath);
 					temp.setFontsize(boxFontSize);
 					temp.createNewFont();
 					cellY += cellHeight;
 					this.cells.get(h).add(temp);
+				}
+				cellX += cellWidth;
+				cellY -= cellHeight * boxHeight;
+			}
+			return;
+		}else{
+			return;
+		}
+	}
+	
+	/**
+	 * Adjusts the boxes height and deletes or
+	 * adds new cells. You probably have to re-set
+	 * cell-modifiers if you add new cells.
+	 * Calling this method is in version 1.00 
+	 * very resource expensive, use it only if 
+	 * absolutely necessary. 
+	 * @param boxHeight the boxHeight to set
+	 * @throws SlickException Thrown if the font-creation
+	 * of the cell encountered an problem.
+	 */
+	public void setBoxHeight(int boxHeight, ComponentListener listener) throws SlickException {
+		if(boxHeight < this.boxHeight){
+			this.boxHeight = boxHeight;
+			for(int j = 0;j < cells.size();j++){
+				for(int k = this.cells.get(j).size() - 1;k >= boxHeight;k--){
+					this.cells.get(j).remove(k);
+				}
+			}
+			return;
+		}else if(boxHeight > this.boxHeight){
+			int cellX = boxX;
+			this.boxHeight = boxHeight;
+			int cellY = (int) (boxY + this.cellHeight * this.boxHeight);
+			for(int h = 0; h < cells.size();h++){
+				for(int i = cells.get(h).size();i < boxHeight;i++){
+					Cell temp = new Cell(cellX, cellY, cellWidth, cellHeight, parentContainer);
+					temp.setAutoAdjust(true);
+					temp.setKeysActive(true);
+					temp.addListener(listener);
+					temp.setFontPath(boxFontPath);
+					temp.setFontsize(boxFontSize);
+					temp.createNewFont();
+					cellY += cellHeight;
+					this.cells.get(h).add(temp);
+					this.sources.add(temp);
 				}
 				cellX += cellWidth;
 				cellY -= cellHeight * boxHeight;

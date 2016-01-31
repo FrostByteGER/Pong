@@ -165,8 +165,15 @@ public class Profiles extends BasicGameState implements ComponentListener{
 		if(Pong.S_profiles.size() >= 1){
 			profileCount = Pong.S_profiles.size();
 		}
+		Object[] profiles0 = Pong.S_profiles.values().toArray();
+		int profC = profileCount;
 		if(profileCount >= 1){
-			profileChooser = new Box(1, profileCount, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 200, 50, container);
+			for(int j = 0;j < profiles0.length;j++){
+				if(((ProfileHelper) profiles0[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
+					profC -= 1;
+				}
+			}
+			profileChooser = new Box(1, profC, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 200, 50, container);
 		}else{
 			profileChooser = new Box(1, 1, Pong.S_resX/2 - 100, 320, Pong.FONT, 40, 200, 50, container);
 		}
@@ -186,9 +193,9 @@ public class Profiles extends BasicGameState implements ComponentListener{
 			Object[] profiles = Pong.S_profiles.values().toArray();
 			ArrayList<Profile> profiles2 = new ArrayList<>(profileCount);
 			for(int j = 0;j < profiles.length;j++){
-				if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
+				//if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
 					profiles2.add((Profile) profiles[j]);				
-				}
+				//}
 			}
 			for(int i = 0; i < profileChooser.getCells().get(0).size();i++){
 				String temp = profiles2.get(i).getProfileName();
@@ -360,7 +367,7 @@ public class Profiles extends BasicGameState implements ComponentListener{
 				profileOptionText.setCellText("Do you really wanna delete your profile?");
 			}else if(source.getActionCommand().equals(PROFILE_OPTIONS[2])){
 				Object[] profiles = Pong.S_profiles.values().toArray();
-				ArrayList<Profile> profiles2 = new ArrayList<>(profileCount);
+				ArrayList<Profile> profiles2 = new ArrayList<>();
 				for(int j = 0;j < profiles.length;j++){
 					if(!((ProfileHelper) profiles[j]).getProfileName().toLowerCase().equals(Pong.S_activeProfile)){
 						profiles2.add((Profile) profiles[j]);				
@@ -414,11 +421,11 @@ public class Profiles extends BasicGameState implements ComponentListener{
 								Pong.S_profiles.put(saveProfile.getProfileName().toLowerCase(), saveProfile);
 								profileCount += 1;
 								if(profileCount > 1){
-									profileChooser.setBoxHeight(profileCount - 1);
+									profileChooser.setBoxHeight(profileCount - 1,this);
 								}else{
-									profileChooser.setBoxHeight(1);
+									profileChooser.setBoxHeight(1,this);
 								}
-								exists = false;
+								//exists = false;
 							}
 							profileOptionText.setCellText("Profile successfully created");
 							Pong.S_activeProfile = saveProfile.getProfileName().toLowerCase();
@@ -448,6 +455,16 @@ public class Profiles extends BasicGameState implements ComponentListener{
 					Pong.S_profiles.get(Pong.S_activeProfile).delete();
 					Pong.S_profiles.remove(Pong.S_activeProfile);
 					profileCount -= 1;
+					try {
+						if(profileCount > 1){
+							profileChooser.setBoxHeight(profileCount - 1);
+						}else{
+							profileChooser.setBoxHeight(1);
+						}
+					} catch (SlickException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					saveTimer = 0;
 					profileOptionText.setCellText("Profile successfully deleted");
 				}else if(source.getActionCommand().equals(PROFILE_OPTIONS[3])){

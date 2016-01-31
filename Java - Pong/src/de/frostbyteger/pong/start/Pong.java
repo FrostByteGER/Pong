@@ -32,7 +32,7 @@ public class Pong extends StateBasedGame{
 	
 	// Profiles Data
 	public static final String PROFILE_PATH = "profiles/";
-	public static String S_activeProfile = "standard";
+	public static String S_activeProfile = null;
 	public static LinkedHashMap<String, Profile> S_profiles       = new LinkedHashMap<String,Profile>();
 	public static LinkedHashMap<String, Achievement> S_achievementData = new LinkedHashMap<String, Achievement>(6);
 	public static LinkedHashMap<String, Integer> S_statisticsData = new LinkedHashMap<String, Integer>(11);
@@ -216,7 +216,7 @@ public class Pong extends StateBasedGame{
 				}
 			}
 			if(validProfiles == 0){
-				return 0;
+				return 0; //TODO: Errorcode
 			}else{
 				S_firstStart = false;
 			}
